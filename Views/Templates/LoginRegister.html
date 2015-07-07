@@ -1,0 +1,30 @@
+﻿<div class="loginRegisterModal" ng-controller="authController">
+    <div id="tabs" class="modal-header">
+        <ul class="nav nav-tabs">
+            <li role="presentation" data-ng-repeat="tab in ::loginModalCtrl.tabs" data-ng-class="{active:loginModalCtrl.isActiveTab(tab.url)}"
+            data-ng-click="loginModalCtrl.onClickTab(tab)">
+                <a>{{tab.title}}</a>
+            </li>
+        </ul>
+    </div>
+    <div id="mainView" class="modal-body">
+        <div ng-include="loginModalCtrl.currentTab"></div>
+    </div>
+    <script type="text/ng-template" id="Login.html">
+        <form id="loginform" class="loginform">
+            <input type="text" class="input-xs-flat" id="emailAddress" placeholder="Username" ng-model="loginModalCtrl.loginForm.username">
+            <input type="password" class="input-xs-flat" id="password" placeholder="Password" ng-model="loginModalCtrl.loginForm.password">
+            <button class="btn btn-xs btn-primary" ng-click="loginModalCtrl.login()">Sign In</button>
+            <p ng-if="loginForm.errorMessage">{{loginForm.errorMessage}}</p>
+        </form>
+    </script>
+    <script type="text/ng-template" id="Register.html">
+        <form id="registerForm" class="registerform">
+            <input type="text" class="input-xs-flat" id="emailAddress" placeholder="Username" ng-model="loginModalCtrl.registerForm.Email">
+            <input type="password" class="input-xs-flat" id="password" placeholder="Password" ng-model="loginModalCtrl.registerForm.password">
+            <input type="password" class="input-xs-flat" id="password" placeholder="Confirm Password" ng-model="loginModalCtrl.registerForm.confirmpassword">
+            <button class="btn btn-xs btn-primary" ng-click="register(registerForm)">Register</button>
+            <p ng-if="loginForm.errorMessage">{{loginForm.errorMessage}}</p>
+        </form>
+    </script>
+</div>

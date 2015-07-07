@@ -1,0 +1,30 @@
+<div class="forecastcontainer">
+      <div class="form-group form-inline sectionheader">
+            <div class="sectiontitle">
+                  <span>Forecast to</span>
+                  <i class="glyphicon glyphicon-triangle-left" ng-click="fCtrl.mthBk()"></i>
+                  <span style="width: 10%; ">{{fCtrl.forecastParams.enddate | date:"mediumDate" : "UTC" }}</span>
+                  <i class="glyphicon glyphicon-triangle-right" ng-click="fCtrl.mthFwd()"></i>
+                  <span>Starting balance</span>
+                  <input type="number" style="width:10%;" class="input-xs-flat" ng-model="fCtrl.forecastParams.startbal"
+                  step="100" id="startbal"></input>
+                  <div class="forecastviewmode">
+                        <label for="graphview">Graph View</label>
+                        <input id="graphview" type="radio" name="content" ng-model="fCtrl.forecastview" value="graph">
+                        <label for="tableview">Table View</label>
+                        <input id="tableview" type="radio" name="content" ng-model="fCtrl.forecastview" value="table">
+                  </div>
+                  <button type="button" class="btn btn-primary btn-xs" ng-click="fCtrl.refresh()">
+                        <i class="glyphicon glyphicon-refresh"></i>
+                  </button>
+            </div>
+      </div>
+      <div ng-if="fCtrl.forecastview=='graph'">
+            <stacked-bar class="graphcontainer clearfix" params="fCtrl.forecastParams"></stacked-bar>
+      </div>
+      <!--TABLE-->
+      <div ng-if="fCtrl.forecastview == 'table'">
+            <grid-by-month class="gridByMonth" params="fCtrl.forecastParams"></grid-by-month>
+      </div>
+</div>
+

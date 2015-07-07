@@ -1,0 +1,10 @@
+<ul class="transactionlist list-group">
+	<li class="list-group-item transactionstitle sectionheader clearfix">
+		<div class="sectiontitle">
+			<span>Recurring transactions</span>
+			<i style="float:right;" class="fa fa-plus fa-2x hvr-pop" ng-show="!tListCtrl.listmgr.addMode && !tListCtrl.transactionhasfocus" ng-click="tListCtrl.expandAddTransaction()"></i>
+		</div>
+		<form transaction-editor ng-if="tListCtrl.listmgr.addMode" listmgr="tListCtrl.listmgr"</form>
+	</li>
+	<transaction ng-if="tListCtrl.visible($index)" class="transaction list-group-item clearfix" listmgr="tListCtrl.listmgr" index="$index" trans="trans" delete="tListCtrl.deleteTrans" ng-repeat="trans in tListCtrl.transactions"></transaction>
+</ul>
