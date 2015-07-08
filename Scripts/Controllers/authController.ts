@@ -31,6 +31,10 @@ module Budgeter.Controllers {
 				size: 'sm',
 			})		
 		}
+		
+		logOut() {
+			this.sessionService.destroySession();
+		}
 	}
 	
 	export interface tab {Header: string, title: string, url: string};
@@ -47,16 +51,17 @@ module Budgeter.Controllers {
 		public currentTab: string; 
 		
 		
-		static $inject = ['authFactory','sessionService','$modalInstance']; 
+		static $inject = ['authFactory','sessionService','$modalInstance','$rootScope']; 
 		
-		constructor(authFactory: Budgeter.Services.authFactory, 
-			sessionService: Budgeter.Services.sessionService, modalinstance: ng.ui.bootstrap.IModalServiceInstance) {
+		constructor(authFactory: Budgeter.Services.authFactory, sessionService: Budgeter.Services.sessionService, 
+			modalinstance: ng.ui.bootstrap.IModalServiceInstance, $rootScope: ng.IRootScopeService) {
 			
 			this.tabs = [
 				{ Header: "Log in", title: 'Login', url: 'Login.html' },
 				{ Header: "Create an account", title: 'Register', url: 'Register.html' }
 			];
 			
+			this.$rootscope = $rootScope;
 			this.authFactory = authFactory;
 			this.sessionService = sessionService;
 			this.$modalInstance = modalinstance;

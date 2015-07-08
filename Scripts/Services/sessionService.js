@@ -23,7 +23,7 @@ var Budgeter;
             });
             ;
             sessionService.prototype.destroySession = function () {
-                this.cookies.remove('Authtoken');
+                this.cookies.remove('authToken');
             };
             Object.defineProperty(sessionService.prototype, "apiURL", {
                 get: function () {

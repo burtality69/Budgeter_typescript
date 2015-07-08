@@ -4,8 +4,9 @@ module Budgeter.Directives {
 	export function stackedBar (): ng.IDirective {
 		return {
 			restrict: 'EA',
-			bindToController: true,
 			require: '^forecastControls',
+			bindToController: true,
+			controller: Budgeter.Controllers.stackedBarController,
 			controllerAs: 'graphCtrl',
 			scope: {params: '='},
 			transclude: true,
@@ -20,7 +21,10 @@ module Budgeter.Directives {
                       '<headline-item class="headline savings" icon="fa fa-money fa-3x" name="Savings" value="graphCtrl.headlines.savings"></headline-item>' +
                   '</div>' +
                   '<div id="graphdiv" class="graphcontainer clearfix" ng-show="!graphCtrl.spin"></div>',
-			controller: Budgeter.Controllers.stackedBarController
+			
+			link: function() {
+				
+			}
 		}
 	}
 }

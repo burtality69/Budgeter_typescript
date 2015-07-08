@@ -3,15 +3,15 @@ var Budgeter;
 (function (Budgeter) {
     var Directives;
     (function (Directives) {
-        function forecastControls(forecastParams) {
+        function forecastControls() {
             return {
                 restrict: 'EA',
                 templateUrl: '/Views/Templates/forecastControls.html',
+                controller: Budgeter.Controllers.forecastController,
                 bindToController: true,
                 controllerAs: 'fCtrl',
                 transclude: true,
-                scope: {},
-                controller: Budgeter.Controllers.forecastController
+                scope: {}
             };
         }
         Directives.forecastControls = forecastControls;

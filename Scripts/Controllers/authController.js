@@ -20,17 +20,21 @@ var Budgeter;
                     size: 'sm',
                 });
             };
+            AuthController.prototype.logOut = function () {
+                this.sessionService.destroySession();
+            };
             AuthController.$inject = ['authFactory', 'sessionService', '$modal'];
             return AuthController;
         })();
         Controllers.AuthController = AuthController;
         ;
         var LoginModalController = (function () {
-            function LoginModalController(authFactory, sessionService, modalinstance) {
+            function LoginModalController(authFactory, sessionService, modalinstance, $rootScope) {
                 this.tabs = [
                     { Header: "Log in", title: 'Login', url: 'Login.html' },
                     { Header: "Create an account", title: 'Register', url: 'Register.html' }
                 ];
+                this.$rootscope = $rootScope;
                 this.authFactory = authFactory;
                 this.sessionService = sessionService;
                 this.$modalInstance = modalinstance;
@@ -61,7 +65,7 @@ var Budgeter;
             LoginModalController.prototype.isActiveTab = function (tabUrl) {
                 return tabUrl === this.currentTab;
             };
-            LoginModalController.$inject = ['authFactory', 'sessionService', '$modalInstance'];
+            LoginModalController.$inject = ['authFactory', 'sessionService', '$modalInstance', '$rootScope'];
             return LoginModalController;
         })();
         Controllers.LoginModalController = LoginModalController;

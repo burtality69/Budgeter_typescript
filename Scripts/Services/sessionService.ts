@@ -27,7 +27,7 @@ module Budgeter.Services {
 		
 		
 		destroySession() {
-			this.cookies.remove('Authtoken');
+			this.cookies.remove('authToken');
 		}
 		
 		get apiURL() {
