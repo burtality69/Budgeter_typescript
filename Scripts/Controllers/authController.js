@@ -1,60 +1,69 @@
-budgeterControllers.controller('authController',['$scope','authFactory','sessionService','$modal',
-function($scope,authFactory,sessionService,$modal) {
-  
-  var authCtrl = this; 
-  
-  authCtrl.loginForm = { username: undefined, password: undefined, errorMessage: undefined };
-
-  authCtrl.registerForm = { Email: undefined, password: undefined, confirmPassword: undefined, errorMessage: undefined };
-  
-  authCtrl.loggedIn = function () {
-        return sessionService.getToken() !== undefined;
-  };
-    
-  authCtrl.openModal = function () {
-
-    authCtrl.modalInstance = $modal.open({
-    templateUrl: '/Views/Templates/LoginRegister.html',
-    controller: function($modalInstance,$rootScope){
-      
-      var loginModalCtrl = this;
-      
-      loginModalCtrl.login = function() {
-
-        authFactory.login(loginModalCtrl.loginForm.username,loginModalCtrl.loginForm.password)
-          .then(function(response){
-            sessionService.setSession(response);
-            $modalInstance.close()
-            $rootScope.$broadcast('redrawChart');
-          }, function(response){
-              loginModalCtrl.loginForm.errorMessage = response.error_description;
-          });
-      };
-
-      loginModalCtrl.register = function (registerForm) {
-    
-        authFactory.register(registerForm)
-          .then(function (response) {
-              console.log(response);
-          });
-      };
-
-      loginModalCtrl.tabs = [{Header: "Log in",title: 'Login',url: 'Login.html'}, 
-        {Header: "Create an account",title: 'Register',url: 'Register.html'
-      }];
-
-      loginModalCtrl.currentTab = 'Login.html';
-    
-      loginModalCtrl.onClickTab = function (tab) {
-        loginModalCtrl.currentTab = tab.url;
-      };
-
-      loginModalCtrl.isActiveTab = function (tabUrl) {
-        return tabUrl === loginModalCtrl.currentTab;
-      };
-    },
-    controllerAs: 'loginModalCtrl',
-    size: 'sm'
-    });
-  };
-}]);
+///<reference path="../../all.d.ts"/>
+var Budgeter;
+(function (Budgeter) {
+    var Controllers;
+    (function (Controllers) {
+        var AuthController = (function () {
+            function AuthController(authFactory, sessionService, modal) {
+                this.authFactory = authFactory;
+                this.sessionService = sessionService;
+                this.$modal = modal;
+            }
+            AuthController.prototype.loggedIn = function () {
+                return this.sessionService.Token !== undefined;
+            };
+            AuthController.prototype.openModal = function () {
+                this.$modalInstance = this.$modal.open({
+                    templateUrl: '/Views/Templates/LoginRegister.html',
+                    controllerAs: 'loginModalCtrl',
+                    controller: LoginModalController,
+                    size: 'sm',
+                });
+            };
+            AuthController.$inject = ['authFactory', 'sessionService', '$modal'];
+            return AuthController;
+        })();
+        Controllers.AuthController = AuthController;
+        ;
+        var LoginModalController = (function () {
+            function LoginModalController(authFactory, sessionService, modalinstance) {
+                this.tabs = [
+                    { Header: "Log in", title: 'Login', url: 'Login.html' },
+                    { Header: "Create an account", title: 'Register', url: 'Register.html' }
+                ];
+                this.authFactory = authFactory;
+                this.sessionService = sessionService;
+                this.$modalInstance = modalinstance;
+                this.loginForm = { username: '', password: '', errorMessage: '' };
+                this.registerForm = { Email: '', password: '', confirmPassword: '', errorMessage: '' };
+                this.currentTab = 'Login.html';
+            }
+            /** hit the token endpoint, store the access token in cookies */
+            LoginModalController.prototype.login = function () {
+                var _this = this;
+                this.authFactory.login(this.loginForm)
+                    .success(function (response) {
+                    _this.sessionService.Token = response.access_token;
+                    _this.$modalInstance.close();
+                    _this.$rootscope.$broadcast('redrawChart');
+                })
+                    .error(function (err) {
+                    console.log(err.message);
+                });
+            };
+            LoginModalController.prototype.register = function (registerForm) {
+                this.authFactory.register(this.registerForm)
+                    .then(function (success) { return console.log(success); });
+            };
+            LoginModalController.prototype.onClickTab = function (tab) {
+                this.currentTab = tab.url;
+            };
+            LoginModalController.prototype.isActiveTab = function (tabUrl) {
+                return tabUrl === this.currentTab;
+            };
+            LoginModalController.$inject = ['authFactory', 'sessionService', '$modalInstance'];
+            return LoginModalController;
+        })();
+        Controllers.LoginModalController = LoginModalController;
+    })(Controllers = Budgeter.Controllers || (Budgeter.Controllers = {}));
+})(Budgeter || (Budgeter = {}));

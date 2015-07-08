@@ -10,16 +10,13 @@ var Budgeter;
             }
             Object.defineProperty(sessionService.prototype, "Token", {
                 get: function () {
-                    if (!this.cookies["Authtoken"]) {
-                        if (!this._token) {
-                            return undefined;
-                        }
-                        this.Token = this._token;
+                    if (!this.cookies.get('authToken')) {
+                        return undefined;
                     }
-                    return this.cookies["Authtoken"];
+                    return this.cookies.get('authToken');
                 },
                 set: function (token) {
-                    this.cookies["Authtoken"] = token["access_token"];
+                    this.cookies.put('authToken', token);
                 },
                 enumerable: true,
                 configurable: true

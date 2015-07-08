@@ -5,6 +5,7 @@
 ///<reference path="./scripts/Budgeter.ts"/>
 ///<reference path="./scripts/Utilities.ts"/>
 
+///<reference path="./scripts/controllers/authController.ts"/>
 ///<reference path="./scripts/controllers/forecastcontroller.ts"/>
 ///<reference path="./scripts/controllers/stackedbarController.ts"/>
 
@@ -14,7 +15,10 @@
 ///<reference path="./scripts/factories/forecastMgr.ts"/>
 
 ///<reference path="./scripts/directives/forecastControls.ts"/>
+///<reference path="./scripts/directives/stackedBar.ts"/>
 
+///<reference path="./scripts/interfaces/IAuthToken.ts"/>
+///<reference path="./scripts/interfaces/ITokenResponse.ts"/>
 ///<reference path="./scripts/interfaces/ILoginModel.ts"/>
 ///<reference path="./scripts/interfaces/IRegistrationModel.ts"/>
 ///<reference path="./scripts/interfaces/IBudgetRowModel.ts"/>

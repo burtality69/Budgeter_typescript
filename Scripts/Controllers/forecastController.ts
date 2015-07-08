@@ -18,35 +18,26 @@ module Budgeter.Controllers {
             var s: Date = new Date();
             var e: Date = utilities.lastDay(s, 0);
             this.forecastview = 'graph';
-            this.forecastParams = {
-                startdate: s,
-                enddate: e,
-                startbal: 0
-            }
-            this.headlines = {
-                balance: 0,
-                savings: 0,
-                incoming: 0,
-                outgoing: 0
-            }
+            this.forecastParams = { startdate: s, enddate: e, startbal: 0 }
+            this.headlines = { balance: 0, savings: 0, incoming: 0, outgoing: 0 }
         }
         
         /** advances the view date forward 1 month */
-        monthfwd() {
+        monthfwd(): void {
             this.mthOffset += 1;
             this.forecastParams.enddate = utilities.lastDay(this.forecastParams.enddate, this.mthOffset);
         }
         /** steps the view date back 1 month */
-        monthBk() {
+        monthBk(): void {
             this.mthOffset -= 1;
             this.forecastParams.enddate = utilities.lastDay(this.forecastParams.enddate, this.mthOffset);
         }
 
-        showParameters() {
+        showParameters(): void {
             this.parametersVisible = !this.parametersVisible;
         }
 
-        refresh() {
+        refresh(): void {
             if (this.forecastview == 'graph') {
                 this.scope.$broadcast('renderChart');
             } else {

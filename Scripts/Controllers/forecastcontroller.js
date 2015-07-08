@@ -10,17 +10,8 @@ var Budgeter;
                 var s = new Date();
                 var e = utilities.lastDay(s, 0);
                 this.forecastview = 'graph';
-                this.forecastParams = {
-                    startdate: s,
-                    enddate: e,
-                    startbal: 0
-                };
-                this.headlines = {
-                    balance: 0,
-                    savings: 0,
-                    incoming: 0,
-                    outgoing: 0
-                };
+                this.forecastParams = { startdate: s, enddate: e, startbal: 0 };
+                this.headlines = { balance: 0, savings: 0, incoming: 0, outgoing: 0 };
             }
             /** advances the view date forward 1 month */
             forecastController.prototype.monthfwd = function () {

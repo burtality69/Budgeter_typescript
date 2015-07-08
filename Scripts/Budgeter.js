@@ -1,17 +1,10 @@
 /// <reference path="../All.d.ts"/>
 var Budgeter;
 (function (Budgeter) {
-    var app = angular.module('Budgeter', [
-        'ngRoute',
-        'ngCookies',
-        'ui.bootstrap',
-        'ngAnimate',
-        'ngNotificationsBar'
-    ])
-        .controller(Budgeter.Controllers)
-        .service(Budgeter.Services)
-        .factory(Budgeter.Factories)
-        .directive(Budgeter.Directives);
+    var app = angular.module('budgeter', ['ngRoute', 'ngCookies', 'ui.bootstrap', 'ngAnimate', 'ngNotificationsBar']);
+    app.service(Budgeter.Services);
+    app.directive(Budgeter.Directives);
+    app.controller(Budgeter.Controllers);
     var ConfigFunction = function ($routeProvider, $locationProvider, notificationsConfigProvider) {
         notificationsConfigProvider.setAutoHide(true);
         // delay before hide

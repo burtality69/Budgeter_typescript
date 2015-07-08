@@ -1,18 +1,10 @@
 /// <reference path="../All.d.ts"/>
 
 module Budgeter {
-  var app = angular.module('Budgeter', [
-    'ngRoute',
-    'ngCookies',
-    'ui.bootstrap',
-    'ngAnimate',
-    'ngNotificationsBar'
-  ])
-    .controller(Budgeter.Controllers)
-    .service(Budgeter.Services)
-    .factory(Budgeter.Factories)
-    .directive(Budgeter.Directives);
-
+  var app = angular.module('budgeter', ['ngRoute', 'ngCookies', 'ui.bootstrap', 'ngAnimate', 'ngNotificationsBar'])
+  app.service(Budgeter.Services)
+  app.directive(Budgeter.Directives)
+  app.controller(Budgeter.Controllers);
 
   var ConfigFunction: Function = function($routeProvider, $locationProvider, notificationsConfigProvider) {
 
@@ -32,7 +24,7 @@ module Budgeter {
         redirectTo: '/'
       });
   };
-
+  
   ConfigFunction.$inject = ['$routeProvider', '$locationProvider', 'notificationsConfigProvider'];
   app.config(ConfigFunction);
 }
