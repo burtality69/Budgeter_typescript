@@ -3,7 +3,7 @@
 module Budgeter.Utilities {
 	/** takes a date and a month number to offset */
 	export function lastDay(date: Date, offset: number): Date {
-		return new Date(date.getFullYear(), date.getMonth() + offset, 0);
+		return new Date(date.getFullYear(), (date.getMonth()+1) + offset, 0);
 	};
 
 	export function getUTCDate(indate: Date) {

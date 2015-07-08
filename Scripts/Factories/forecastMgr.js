@@ -12,7 +12,7 @@ var Budgeter;
                     url: this.sessionSrv.apiURL + '/api/Forecast?',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + sessionService.Token
+                        'Authorization': 'Bearer ' + this.sessionSrv.Token
                     }
                 };
             }

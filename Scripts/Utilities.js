@@ -5,7 +5,7 @@ var Budgeter;
     (function (Utilities) {
         /** takes a date and a month number to offset */
         function lastDay(date, offset) {
-            return new Date(date.getFullYear(), date.getMonth() + offset, 0);
+            return new Date(date.getFullYear(), (date.getMonth() + 1) + offset, 0);
         }
         Utilities.lastDay = lastDay;
         ;
