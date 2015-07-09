@@ -21,6 +21,7 @@
 ///<reference path="./scripts/interfaces/ITokenResponse.ts"/>
 ///<reference path="./scripts/interfaces/ILoginModel.ts"/>
 ///<reference path="./scripts/interfaces/IRegistrationModel.ts"/>
+///<reference path="./scripts/interfaces/IForecastRowModel.ts"/>
 ///<reference path="./scripts/interfaces/IBudgetRowModel.ts"/>
 ///<reference path="./scripts/interfaces/IBudgetParams.ts"/>
 ///<reference path="./scripts/interfaces/IBudgetHeadlines.ts"/>
