@@ -9,19 +9,15 @@ var Budgeter;
                 this.sessionSrv = sessionService;
                 this.config = {
                     method: 'GET',
-                    url: this.sessionSrv.apiURL + '/api/Forecast?',
+                    url: this.sessionSrv.apiURL + '/api/Forecast',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': 'Bearer ' + this.sessionSrv.Token
-                    }
+                    },
                 };
             }
-            forecastMgr.prototype.buildQuery = function (params) {
-                var qs = JSON.stringify(params);
-                this.config.url = this.config.url + qs;
-            };
             forecastMgr.prototype.getForecast = function (forecastParams) {
-                this.buildQuery(forecastParams);
+                this.config.params = forecastParams;
                 return this.http(this.config);
             };
             forecastMgr.$inject = ['$http', 'sessionService'];

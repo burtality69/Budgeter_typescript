@@ -15,21 +15,16 @@ module Budgeter.Services {
 			this.sessionSrv = sessionService; 
 			this.config = {
 				method: 'GET',
-				url: this.sessionSrv.apiURL + '/api/Forecast?',
+				url: this.sessionSrv.apiURL + '/api/Forecast',
 				headers: {
 					'Content-Type': 'application/json',
 					'Authorization': 'Bearer ' + this.sessionSrv.Token
-				}
+				},
 			}
 		}
 
-		private buildQuery(params: IBudgetParams) {
-			var qs: string = JSON.stringify(params); 
-			this.config.url = this.config.url + qs;
-		}
-
 		getForecast(forecastParams: IBudgetParams): ng.IHttpPromise<any> {
-			this.buildQuery(forecastParams); 
+			this.config.params = forecastParams;
 			return this.http(this.config)
 		}
 	}

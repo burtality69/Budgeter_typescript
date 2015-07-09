@@ -6,10 +6,10 @@ module Budgeter.Controllers {
 
 		public headlines: IBudgetHeadLines;
 		static $inject = ['$scope', 'forecastController', 'forecastMgr'];
-		private data: Array<IForecastRowModel>;
+		public data: Array<IForecastRowModel>;
 		public forecastController: Budgeter.Controllers.forecastController
 		public forecastMgr: Budgeter.Services.forecastMgr
-		private spin: boolean;
+		public spin: boolean;
 
 		constructor(scope: ng.IScope, forecastController: Budgeter.Controllers.forecastController,
 			forecastMgr: Budgeter.Services.forecastMgr) {
@@ -19,7 +19,7 @@ module Budgeter.Controllers {
 		}
 
 		refresh(params: IBudgetParams) {
-			this.forecastMgr.getForecast(params)
+			this.forecastMgr.getForecast(this.forecastController.forecastParams)
 				.success((response: Array<IForecastRowModel>) => {
 
 					this.data = response;
