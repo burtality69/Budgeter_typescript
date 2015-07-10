@@ -3,14 +3,13 @@ var Budgeter;
 (function (Budgeter) {
     var Directives;
     (function (Directives) {
-        function stackedBar(stackedBarController) {
+        function stackedBar() {
             return {
                 restrict: 'EA',
                 require: '^forecastControls',
                 bindToController: true,
                 controller: Budgeter.Controllers.stackedBarController,
                 controllerAs: 'graphCtrl',
-                scope: { params: '=' },
                 transclude: true,
                 template: '<div class="graphloading spinner" ng-show="graphCtrl.spin">' +
                     '<div class="cube1"></div>' +
@@ -142,8 +141,8 @@ var Budgeter;
                         ctrl.data = [];
                     }
                     ;
-                    ctrl.refresh(ctrl.forecastController.forecastParams);
-                    scope.$on('renderChart', function () { render; });
+                    ctrl.refresh();
+                    ctrl.scope.$on('renderChart', function () { render(ctrl.data); });
                 }
             };
         }

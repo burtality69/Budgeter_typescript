@@ -3,9 +3,8 @@
 module Budgeter {
   var app = angular.module('budgeter', ['ngRoute', 'ngCookies', 'ui.bootstrap', 'ngAnimate', 'ngNotificationsBar'])
   app.service(Budgeter.Services)
-  app.directive(Budgeter.Directives)
   app.controller(Budgeter.Controllers);
-
+  app.directive(Budgeter.Directives);
   var ConfigFunction: Function = function($routeProvider, $locationProvider, notificationsConfigProvider) {
 
     notificationsConfigProvider.setAutoHide(true)

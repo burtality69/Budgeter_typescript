@@ -4,7 +4,7 @@ module Budgeter.Services {
 	
 	export class authFactory {
 		
-		static $inject = ['$http','sessionService']
+		static $inject = ['$http','sessionService'];
 		
 		private params: ng.IRequestConfig;
 		public http: ng.IHttpService; 

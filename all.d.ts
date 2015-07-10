@@ -10,6 +10,7 @@
 ///<reference path="./scripts/controllers/stackedbarController.ts"/>
 
 ///<reference path="./scripts/services/sessionService.ts"/>
+///<reference path="./scripts/services/forecastParamSvc.ts"/>
 
 ///<reference path="./scripts/factories/authFactory.ts"/>
 ///<reference path="./scripts/factories/forecastMgr.ts"/>
@@ -23,7 +24,7 @@
 ///<reference path="./scripts/interfaces/IRegistrationModel.ts"/>
 ///<reference path="./scripts/interfaces/IForecastRowModel.ts"/>
 ///<reference path="./scripts/interfaces/IBudgetRowModel.ts"/>
-///<reference path="./scripts/interfaces/IBudgetParams.ts"/>
+///<reference path="./scripts/interfaces/IForecastParams.ts"/>
 ///<reference path="./scripts/interfaces/IBudgetHeadlines.ts"/>
 ///<reference path="./scripts/interfaces/ITransactionValue.ts"/>
 ///<reference path="./scripts/interfaces/ITransaction.ts"/>

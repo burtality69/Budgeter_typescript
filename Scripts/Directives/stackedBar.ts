@@ -7,14 +7,13 @@ module Budgeter.Directives {
         labels?: string;
     }
 
-    export function stackedBar(stackedBarController: Budgeter.Controllers.stackedBarController): ng.IDirective {
+    export function stackedBar(): ng.IDirective {
         return {
             restrict: 'EA',
             require: '^forecastControls',
             bindToController: true,
             controller: Budgeter.Controllers.stackedBarController,
             controllerAs: 'graphCtrl',
-            scope: { params: '=' },
             transclude: true,
             template: '<div class="graphloading spinner" ng-show="graphCtrl.spin">' +
             '<div class="cube1"></div>' +
@@ -174,9 +173,9 @@ module Budgeter.Directives {
                     ctrl.data = [];
                 };
 
-                ctrl.refresh(ctrl.forecastController.forecastParams);
+                ctrl.refresh();
 
-                scope.$on('renderChart', function() { render });
+                ctrl.scope.$on('renderChart', function() { render(ctrl.data)});
 
             }
         }

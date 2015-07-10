@@ -5,21 +5,24 @@ module Budgeter.Controllers {
 	export class stackedBarController {
 
 		public headlines: IBudgetHeadLines;
-		static $inject = ['$scope', 'forecastController', 'forecastMgr'];
+		static $inject = ['$scope', 'forecastParamSvc', 'forecastMgr'];
 		public data: Array<IForecastRowModel>;
 		public forecastController: Budgeter.Controllers.forecastController
-		public forecastMgr: Budgeter.Services.forecastMgr
+		public forecastMgr: Budgeter.Services.forecastMgr;
+		public params: IForecastParams;
 		public spin: boolean;
+		public scope: ng.IScope;
 
-		constructor(scope: ng.IScope, forecastController: Budgeter.Controllers.forecastController,
+		constructor($scope: ng.IScope, forecastParamSvc: Budgeter.Services.forecastParamSvc,
 			forecastMgr: Budgeter.Services.forecastMgr) {
 			this.spin = true;
-			this.forecastController = forecastController;
+			this.params = forecastParamSvc.params;
 			this.forecastMgr = forecastMgr;
+			this.scope = $scope;
 		}
 
-		refresh(params: IBudgetParams) {
-			this.forecastMgr.getForecast(this.forecastController.forecastParams)
+		refresh() {
+			this.forecastMgr.getForecast()
 				.success((response: Array<IForecastRowModel>) => {
 
 					this.data = response;
@@ -36,6 +39,8 @@ module Budgeter.Controllers {
 					this.headlines.savings = lastrow.savings;
 					this.headlines.incoming = income;
 					this.headlines.outgoing = outgoing;
+					this.spin = false;
+					this.scope.$broadcast('renderChart');
 				})
 				.error((err: Error) => {
 					console.log(err.message);

@@ -4,14 +4,15 @@ var Budgeter;
     var Controllers;
     (function (Controllers) {
         var stackedBarController = (function () {
-            function stackedBarController(scope, forecastController, forecastMgr) {
+            function stackedBarController($scope, forecastParamSvc, forecastMgr) {
                 this.spin = true;
-                this.forecastController = forecastController;
+                this.params = forecastParamSvc.params;
                 this.forecastMgr = forecastMgr;
+                this.scope = $scope;
             }
-            stackedBarController.prototype.refresh = function (params) {
+            stackedBarController.prototype.refresh = function () {
                 var _this = this;
-                this.forecastMgr.getForecast(this.forecastController.forecastParams)
+                this.forecastMgr.getForecast()
                     .success(function (response) {
                     _this.data = response;
                     var lastrow = response[response.length - 1];
@@ -25,12 +26,14 @@ var Budgeter;
                     _this.headlines.savings = lastrow.savings;
                     _this.headlines.incoming = income;
                     _this.headlines.outgoing = outgoing;
+                    _this.spin = false;
+                    _this.scope.$broadcast('renderChart');
                 })
                     .error(function (err) {
                     console.log(err.message);
                 });
             };
-            stackedBarController.$inject = ['$scope', 'forecastController', 'forecastMgr'];
+            stackedBarController.$inject = ['$scope', 'forecastParamSvc', 'forecastMgr'];
             return stackedBarController;
         })();
         Controllers.stackedBarController = stackedBarController;

@@ -3,28 +3,32 @@
 module Budgeter.Services {
 
 	export class forecastMgr {
+		
+		static $inject = ['$http', 'sessionService','forecastParamSvc'];
+		
+		public http: ng.IHttpService;
+		public config: ng.IRequestConfig;
+		public forecastParams: forecastParamSvc
+		public sessionSrv: Budgeter.Services.sessionService;
 
-		private http: ng.IHttpService;
-		private config: ng.IRequestConfig;
-		private sessionSrv: Budgeter.Services.sessionService;
-
-		static $inject = ['$http', 'sessionService'];
-
-		constructor($http: angular.IHttpService, sessionService: Budgeter.Services.sessionService) {
+		constructor($http: ng.IHttpService, sessionService: Budgeter.Services.sessionService, 
+			forecastParamSvc: Budgeter.Services.forecastParamSvc ) {
+			
 			this.http = $http;
-			this.sessionSrv = sessionService; 
+			this.sessionSrv = sessionService;
+			this.forecastParams = forecastParamSvc
 			this.config = {
 				method: 'GET',
 				url: this.sessionSrv.apiURL + '/api/Forecast',
 				headers: {
 					'Content-Type': 'application/json',
 					'Authorization': 'Bearer ' + this.sessionSrv.Token
-				},
+				}
 			}
 		}
 
-		getForecast(forecastParams: IBudgetParams): ng.IHttpPromise<any> {
-			this.config.params = forecastParams;
+		getForecast(): ng.IHttpPromise<any> {
+			this.config.params = this.forecastParams.apiParams;
 			return this.http(this.config)
 		}
 	}

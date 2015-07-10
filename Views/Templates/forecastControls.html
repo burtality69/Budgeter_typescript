@@ -3,10 +3,10 @@
             <div class="sectiontitle">
                   <span>Forecast to</span>
                   <i class="glyphicon glyphicon-triangle-left" ng-click="fCtrl.mthBk()"></i>
-                  <span style="width: 10%; ">{{fCtrl.forecastParams.enddate | date:"mediumDate" : "UTC" }}</span>
+                  <span style="width: 10%; ">{{fCtrl.forecastParams.endDate | date:"mediumDate" : "UTC" }}</span>
                   <i class="glyphicon glyphicon-triangle-right" ng-click="fCtrl.mthFwd()"></i>
                   <span>Starting balance</span>
-                  <input type="number" style="width:10%;" class="input-xs-flat" ng-model="fCtrl.forecastParams.startbal"
+                  <input type="number" style="width:10%;" class="input-xs-flat" ng-model="fCtrl.forecastParams.startBal"
                   step="100" id="startbal"></input>
                   <div class="forecastviewmode">
                         <label for="graphview">Graph View</label>

@@ -5,21 +5,19 @@ var Budgeter;
     (function (Controllers) {
         /** Manages the viewstate and parameters for the main view */
         var forecastController = (function () {
-            function forecastController($scope) {
-                var s = new Date();
-                var e = Budgeter.Utilities.lastDay(s, 0);
+            function forecastController(paramSvc) {
                 this.parametersVisible = true;
                 this.forecastview = 'graph';
-                this.forecastParams = { startdate: s, enddate: e, startbal: 0 };
+                this.forecastParams = paramSvc.params;
                 this.headlines = { balance: 0, savings: 0, incoming: 0, outgoing: 0 };
             }
             /** advances the view date forward 1 month */
             forecastController.prototype.mthFwd = function () {
-                this.forecastParams.enddate = Budgeter.Utilities.lastDay(this.forecastParams.enddate, +1);
+                this.forecastParams.endDate = Budgeter.Utilities.lastDay(this.forecastParams.endDate, +1);
             };
             /** steps the view date back 1 month */
             forecastController.prototype.mthBk = function () {
-                this.forecastParams.enddate = Budgeter.Utilities.lastDay(this.forecastParams.enddate, -1);
+                this.forecastParams.endDate = Budgeter.Utilities.lastDay(this.forecastParams.endDate, -1);
             };
             forecastController.prototype.showParameters = function () {
                 this.parametersVisible = !this.parametersVisible;
@@ -32,7 +30,7 @@ var Budgeter;
                     this.scope.$broadcast('renderGrid');
                 }
             };
-            forecastController.$inject = ["$scope"];
+            forecastController.$inject = ["forecastParamSvc"];
             return forecastController;
         })();
         Controllers.forecastController = forecastController;

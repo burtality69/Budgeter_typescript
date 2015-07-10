@@ -4,31 +4,29 @@ module Budgeter.Controllers {
     export class forecastController {
         forecastview: string;
         mthOffset: number;
-        forecastParams: IBudgetParams;
+        forecastParams: IForecastParams;
         headlines: IBudgetHeadLines;
         parametersVisible: boolean;
         scope: ng.IScope;
         newItemName: string;
 
-        static $inject = ["$scope"];
+        static $inject = ["forecastParamSvc"];
 
-        constructor($scope: ng.IScope) {
+        constructor(paramSvc: Budgeter.Services.forecastParamSvc) {
 
-            var s: Date = new Date();
-            var e: Date = Budgeter.Utilities.lastDay(s, 0);
             this.parametersVisible = true;
             this.forecastview = 'graph';
-            this.forecastParams = { startdate: s, enddate: e, startbal: 0 }
+            this.forecastParams = paramSvc.params;
             this.headlines = { balance: 0, savings: 0, incoming: 0, outgoing: 0 }
         }
         
         /** advances the view date forward 1 month */
         mthFwd(): void {
-            this.forecastParams.enddate = Budgeter.Utilities.lastDay(this.forecastParams.enddate, +1);
+            this.forecastParams.endDate = Budgeter.Utilities.lastDay(this.forecastParams.endDate, +1);
         }
         /** steps the view date back 1 month */
         mthBk(): void {
-            this.forecastParams.enddate = Budgeter.Utilities.lastDay(this.forecastParams.enddate, -1);
+            this.forecastParams.endDate = Budgeter.Utilities.lastDay(this.forecastParams.endDate, -1);
         }
 
         showParameters(): void {
