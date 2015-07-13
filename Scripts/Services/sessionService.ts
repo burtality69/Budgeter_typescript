@@ -6,7 +6,7 @@ module Budgeter.Services {
 		static $inject = ['$cookies'];
 		
 		private user: string;
-		private _apiURl: string;
+		public _apiURl: string;
 		public cookies: ng.cookies.ICookiesService
 
 		constructor($cookies: ng.cookies.ICookiesService) {

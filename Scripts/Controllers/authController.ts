@@ -37,7 +37,7 @@ module Budgeter.Controllers {
 		}
 	}
 	
-	export interface tab {Header: string, title: string, url: string};
+	interface tab {Header: string, title: string, url: string};
 	
 	export class LoginModalController{
 		

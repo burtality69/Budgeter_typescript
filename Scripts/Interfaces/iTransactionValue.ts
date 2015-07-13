@@ -1,5 +1,5 @@
 ///<reference path="../../all.d.ts"/>
-interface ITransactionValue {
+interface ITransactionValueModel {
 	ID: number,
 	TransactionID: number,
 	Value: number,

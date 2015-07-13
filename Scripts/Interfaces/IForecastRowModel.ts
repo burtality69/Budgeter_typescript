@@ -1,5 +1,5 @@
 interface IForecastRowModel {
-    caldate: string,
+    caldate: Date,
     payment_details: string,
     total_payments: number,
     deduction_details: string,

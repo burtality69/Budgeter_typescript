@@ -3,17 +3,17 @@
 module Budgeter.Services {
 
 	export class forecastMgr {
-		
-		static $inject = ['$http', 'sessionService','forecastParamSvc'];
-		
+
+		static $inject = ['$http', 'sessionService', 'forecastParamSvc'];
+
 		public http: ng.IHttpService;
 		public config: ng.IRequestConfig;
 		public forecastParams: forecastParamSvc
 		public sessionSrv: Budgeter.Services.sessionService;
 
-		constructor($http: ng.IHttpService, sessionService: Budgeter.Services.sessionService, 
-			forecastParamSvc: Budgeter.Services.forecastParamSvc ) {
-			
+		constructor($http: ng.IHttpService, sessionService: Budgeter.Services.sessionService,
+			forecastParamSvc: Budgeter.Services.forecastParamSvc) {
+
 			this.http = $http;
 			this.sessionSrv = sessionService;
 			this.forecastParams = forecastParamSvc

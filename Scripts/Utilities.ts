@@ -6,12 +6,11 @@ module Budgeter.Utilities {
 		return new Date(date.getFullYear(), (date.getMonth()+1) + offset, 0);
 	};
 
-	export function getUTCDate(indate: Date) {
+	export function getUTCDate(indate: string): Date {
 
-		var d = new Date();	
-		return indate.setDate(indate.getDate() + (d.getTimezoneOffset() * 60000));
-
-		//return new Date(Date.UTC(n.getFullYear(),n.getMonth(),n.getDate()));
+		var p = new Date(indate);		
+		
+		return new Date(p.getUTCFullYear(), p.getUTCMonth(), p.getUTCDate(), p.getUTCHours(), p.getUTCMinutes(), p.getUTCSeconds());
     }
 	
 	export function stringifyDate(d: Date): string {

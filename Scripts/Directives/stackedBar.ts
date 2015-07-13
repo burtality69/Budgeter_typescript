@@ -2,15 +2,20 @@
 
 module Budgeter.Directives {
 
-    export interface IEnhancedForecastRowModel extends IForecastRowModel {
-        amounts?: Array<any>;
+    interface IBarSpec {
+        name: string;
+        yPos: number;
+        height: number;
+    }
+
+    interface IEnhancedForecastRowModel extends IForecastRowModel {
+        amounts?: Array<IBarSpec>;
         labels?: string;
     }
 
     export function stackedBar(): ng.IDirective {
         return {
             restrict: 'EA',
-            require: '^forecastControls',
             bindToController: true,
             controller: Budgeter.Controllers.stackedBarController,
             controllerAs: 'graphCtrl',
@@ -46,9 +51,18 @@ module Budgeter.Directives {
 					
                     //X axis 
                     var x: D3.Scale.TimeScale = d3.time.scale().range([0, width]);
+                    
+                    // X domain is the dates
+                    x.domain(d3.extent(data, d=> { return d.caldate; }));
 					
                     //Y Scale
                     var y: D3.Scale.LinearScale = d3.scale.linear().rangeRound([height, 0]);
+                    
+                    // Y domain is the biggest negative amount to the biggest positive
+                    y.domain([
+                        d3.min(data, d => { return Math.min(d.balance,d.total_deductions); }),
+                        d3.max(data, d => { return Math.max(d.balance, d.total_payments) })
+                    ]);
 
                     var color: D3.Scale.OrdinalScale = d3.scale.ordinal()
                         .range([positives, negatives, savings, other]);
@@ -72,45 +86,39 @@ module Budgeter.Directives {
                         .append("g")
                         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 				
-                    //START USING DATA
-					
+                    
+                    //Get the colour domain 
                     color.domain(d3.keys(data[0]).filter(key =>
                         key !== "caldate" && key !== "payment_details"
                         && key !== "deduction_details" && key !== "savings_details"
                         && key !== "savings"
                         ))
-
+                    
+                    //Map additional properties to data to represent bars 
                     data.forEach((d: IEnhancedForecastRowModel) => {
                         d.amounts = color.domain().map(name => {
                             return { name: name, yPos: Math.max(0, parseInt(d[name])), height: Math.abs(d[name]) }
                         })
                         d.labels = d.payment_details + " " + d.deduction_details;
                     });
-
+                    
+                    //Balance line
                     var balanceline = d3.svg.line()
                         .interpolate("basis")
                         .x(d => { return x(d.caldate); })
                         .y(d => { return y(d.balance); });
         
-                    //Total Savings
+                    //Savings line
                     var savingsline = d3.svg.line()
                         .interpolate("basis")
                         .x(d => { return x(d.caldate); })
                         .y(d => { return y(d.total_savings); });
         
-                    // X domain is the dates
-                    x.domain(d3.extent(data, d=> { return d.caldate; }));
-        
-                    // Y domain is the biggest negative to the biggest positive
-                    y.domain([
-                        d3.min(data, d => { return d.total_deductions; }),
-                        d3.max(data, d => { return d.balance; })
-                    ]);
-        
                     //Create an X axis
                     svg.append("g")
                         .attr("class", "xaxis")
                         .attr("transform", "translate(0," + y(0) + ")")
+                        .attr("height",height)
                         .call(xAxis)
                         .selectAll("text")
                         .style("text-anchor", "end")
@@ -145,23 +153,19 @@ module Budgeter.Directives {
                         .enter().append("g")
                         .attr("class", "g")
                         .attr("transform", d => { return "translate(" + x(d.caldate) + ",0)"; });
-                
+                        
                     //Create the rectangles 
                     bars.selectAll("rect")
-                        .data(d => { return [d.amounts[0], d.amounts[1]]; })
+                        .data((d: IEnhancedForecastRowModel) => { return [d.amounts[0], d.amounts[1]]; })
                         .enter().append("rect")
                         .attr("width", width / data.length)
-                        .attr("y", y(0))
-                        .attr("height", 0)
-                        .style("fill", d => { return color(d.name); })
-                        .on('click', d => { console.log(d); });
-                
-                    //Animate the bar transition
-                    bars.selectAll("rect")
-                        .transition()
-                        .attr("y", d => { return y(d.yPos); })
-                        .attr("height", d=> { return y(0) - y(d.height); })
-                        .duration(1000);
+                        .attr("y",y(0))
+                        .attr("height",0)
+                        .style("fill", (d: IBarSpec) => { return color(d.name); })
+                        .on('click', (d: IBarSpec) => { console.log(d); })
+                        .transition().duration(1000)
+                        .attr("y", (d: IBarSpec) => { return y(d.yPos); })
+                        .attr("height", (d: IBarSpec) => { return y(0) - y(d.height); });
         
                     //Create the labels
                     bars.selectAll("svg.title")
@@ -175,9 +179,70 @@ module Budgeter.Directives {
 
                 ctrl.refresh();
 
-                ctrl.scope.$on('renderChart', function() { render(ctrl.data)});
+                ctrl.scope.$on('chartData', function() { render(ctrl.data) });
 
             }
         }
     }
+}
+
+module Budgeter.Controllers {
+
+	export class stackedBarController {
+
+		public headlines: IBudgetHeadLines;
+		static $inject = ['$scope', 'forecastParamSvc', 'forecastMgr'];
+		public data: Array<IForecastRowModel>;
+		public forecastController: Budgeter.Controllers.forecastController
+		public forecastMgr: Budgeter.Services.forecastMgr;
+		public params: IForecastParams;
+		public spin: boolean;
+		public scope: ng.IScope;
+
+		constructor($scope: ng.IScope, forecastParamSvc: Budgeter.Services.forecastParamSvc,
+			forecastMgr: Budgeter.Services.forecastMgr) {
+			this.spin = true;
+			this.params = forecastParamSvc.params;
+			this.forecastMgr = forecastMgr;
+			this.scope = $scope;
+            this.headlines = { balance: 0, savings: 0, incoming: 0, outgoing: 0 }
+			this.scope.$on('refresh', evt => this.refresh());
+		}
+
+		refresh() {
+			this.forecastMgr.getForecast()
+				.success((response: Array<any>) => {
+					this.data = response.map(f => <IForecastRowModel>{
+						caldate: Budgeter.Utilities.getUTCDate(f.caldate),
+						payment_details: f.payment_details,
+						total_payments: f.total_payments,
+						deduction_details: f.deduction_details,
+						total_deductions: f.total_deductions,
+						savings_details: f.savings_details,
+						total_savings: f.total_savings,
+						balance: f.balance,
+						savings: f.savings
+					})
+
+					var lastrow = response[response.length - 1];
+					var income = 0;
+					var outgoing = 0;
+
+					for (var i = 0; i < response.length; i++) {
+						income += response[i].total_payments;
+						outgoing += response[i].total_deductions;
+					}
+					this.headlines.balance = lastrow.balance;
+					this.headlines.savings = lastrow.savings;
+					this.headlines.incoming = income;
+					this.headlines.outgoing = outgoing;
+					this.spin = false;
+					this.scope.$broadcast('chartData');
+				})
+				.error((err: Error) => {
+					console.log(err.message);
+				})
+		}
+
+	}
 }

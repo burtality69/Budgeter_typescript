@@ -5,19 +5,16 @@ module Budgeter.Controllers {
         forecastview: string;
         mthOffset: number;
         forecastParams: IForecastParams;
-        headlines: IBudgetHeadLines;
         parametersVisible: boolean;
         scope: ng.IScope;
         newItemName: string;
 
-        static $inject = ["forecastParamSvc"];
-
-        constructor(paramSvc: Budgeter.Services.forecastParamSvc) {
-
+        static $inject = ['$scope','forecastParamSvc'];
+        constructor($scope: ng.IScope, paramSvc: Budgeter.Services.forecastParamSvc) {
+            this.scope = $scope;
             this.parametersVisible = true;
             this.forecastview = 'graph';
             this.forecastParams = paramSvc.params;
-            this.headlines = { balance: 0, savings: 0, incoming: 0, outgoing: 0 }
         }
         
         /** advances the view date forward 1 month */
@@ -34,11 +31,7 @@ module Budgeter.Controllers {
         }
 
         refresh(): void {
-            if (this.forecastview == 'graph') {
-                this.scope.$broadcast('renderChart');
-            } else {
-                this.scope.$broadcast('renderGrid');
-            }
+            this.scope.$broadcast('refresh');
         }
 
     }

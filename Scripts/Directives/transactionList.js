@@ -1,91 +1,94 @@
-/* global budgeterDirectives */
-budgeterDirectives.directive('transactionList',['ClsTransaction','ClsTransactionValue','transactionMgr','notifications','$rootScope',
-function (ClsTransaction,ClsTransactionValue, transactionMgr,notifications,$rootScope) {
-	
-	return {
-		templateUrl: 'Views/Templates/transactionList.html',
-		scope: {},
-		controllerAs: 'tListCtrl',
-		controller: function ($scope) {
-			
-			var tListCtrl = this;
-			 
-			this.listmgr = {
-		      addMode: false,
-		      selecteditem: undefined,
-		    };
-
-    		//New Transaction
-	    	this.expandAddTransaction= function () {
-	        	tListCtrl.listmgr.addMode = true;
-			};
-			
-			//Transaction is visible when (not in add mode and selected) OR (no selection)
-			this.visible = function (index) {
-				var t = tListCtrl.listmgr;
-      			if (t.addMode) {
-					  return false; 
-				  } else if (t.selecteditem== undefined) {
-					  return true;
-				  } else if (t.selecteditem == index) {
-				  	return true;
-				  } 
-      		};
-
-		    this.cancelNewTransaction = function () {
-		        tListCtrl.listmgr.addMode = false;
-		    };
-
-		    //GET
-		    var refresh = function () {
-		        transactionMgr.get().then(
-			        function (response) {
-			            tListCtrl.transactions = response.map(ClsTransaction.build);
-			        });
-		    };
-			
-			this.deleteTrans = function(trans,index) {
-				transactionMgr.delete(trans.ID).then(
-					function (success) {
-						$rootScope.$broadcast('renderChart');
-						notifications.showSuccess({message: 'Transaction deleted successfully'});
-						tListCtrl.transactions.splice(index,1);
-						tListCtrl.listmgr.selecteditem = undefined;
-						$scope.$apply;		
-					}, function (error) {
-						notifications.showError({message: 'Unable to delete this item'});
-					});
-			};
-			
-			this.addTrans = function (trans) {
-
-				if (trans.ID == undefined) {
-	              transactionMgr.post(trans).then(
-	                function (success) {
-	                  $rootScope.$broadcast('renderChart');
-	                  notifications.showSuccess({message: 'Task added successfully'});
-					  tListCtrl.transactions.push(success);
-					  tListCtrl.listmgr.addMode = false;
-					  $scope.$apply;
-	                }, function(failure) {
-	                 notifications.showError({message: failure}); 
-	                });
-	            } else {
-	              transactionMgr.put(trans).then(
-	                function (response) {
-	                  notifications.showSuccess({message: 'Transaction updated..'})
-	                });
-	            };
-          };
-		  
-		  this.createNewTv = function(){
-			  return new ClsTransactionValue;
-		  }
-			
-		  refresh();
-			
-		}
-		
-	};
-		
-}]);
+///<reference path="../../all.d.ts"/>
+var Budgeter;
+(function (Budgeter) {
+    var Directives;
+    (function (Directives) {
+        function transactionList() {
+            return {
+                templateUrl: 'Views/Templates/transactionList.html',
+                scope: {},
+                controllerAs: 'tListCtrl',
+                controller: Budgeter.Controllers.transactionListController,
+                link: function (scope, el, att, ctrl) {
+                    ctrl.refresh();
+                }
+            };
+        }
+        Directives.transactionList = transactionList;
+    })(Directives = Budgeter.Directives || (Budgeter.Directives = {}));
+})(Budgeter || (Budgeter = {}));
+var Budgeter;
+(function (Budgeter) {
+    var Controllers;
+    (function (Controllers) {
+        ;
+        var transactionListController = (function () {
+            function transactionListController(transactionMgr, notify, $rootScope) {
+                this.listState = {
+                    addMode: false,
+                    selectedItem: null
+                };
+                this.tMgr = transactionMgr;
+                this.notify = notify;
+            }
+            /** get the list */
+            transactionListController.prototype.refresh = function () {
+                var _this = this;
+                this.tMgr.get().success(function (data) {
+                    return _this.transactions = data;
+                })
+                    .error(function (err) {
+                    return _this.notify({ message: 'Error loading data', classes: 'alert-danger' });
+                });
+            };
+            transactionListController.prototype.delete = function (t, idx) {
+                var _this = this;
+                this.tMgr.delete(t.ID).success(function (d) {
+                    _this.rootscope.$broadcast('renderChart');
+                    _this.notify({ message: 'Transaction deleted', classes: 'alert-success' });
+                    _this.transactions.splice(idx, 1);
+                    _this.listState.selectedItem = null;
+                });
+            };
+            transactionListController.prototype.add = function (t) {
+                var _this = this;
+                if (t.ID == undefined) {
+                    this.tMgr.post(t)
+                        .success(function (s) {
+                        _this.rootscope.$broadcast('renderChart');
+                        _this.notify({ message: 'Transaction added', classes: 'alert-success' });
+                        _this.transactions.push(s);
+                        _this.listState.addMode = false;
+                    })
+                        .error(function (err) {
+                        return _this.notify({ message: err, classes: 'alert-danger' });
+                    });
+                }
+                else {
+                    this.tMgr.put(t).success(function (r) {
+                        return _this.notify({ message: 'Transaction updated', classes: 'alert-success' });
+                    });
+                }
+            };
+            transactionListController.prototype.expandAddForm = function () {
+                this.listState.addMode = true;
+            };
+            transactionListController.prototype.collapseAddForm = function () {
+                this.listState.addMode = false;
+            };
+            /** should the passed transaction be visible? */
+            transactionListController.prototype.isVisible = function (idx) {
+                var t = this.listState;
+                if (t.addMode) {
+                    return false;
+                }
+                else if (t.selectedItem == null || t.selectedItem == idx) {
+                    return true;
+                }
+            };
+            transactionListController.$inject = ['transactionMgr', 'notify', '$rootScope'];
+            return transactionListController;
+        })();
+        Controllers.transactionListController = transactionListController;
+    })(Controllers = Budgeter.Controllers || (Budgeter.Controllers = {}));
+})(Budgeter || (Budgeter = {}));

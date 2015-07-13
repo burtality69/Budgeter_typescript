@@ -6,7 +6,6 @@ var Budgeter;
         function stackedBar() {
             return {
                 restrict: 'EA',
-                require: '^forecastControls',
                 bindToController: true,
                 controller: Budgeter.Controllers.stackedBarController,
                 controllerAs: 'graphCtrl',
@@ -36,8 +35,15 @@ var Budgeter;
                         var other = "#0066FF";
                         //X axis 
                         var x = d3.time.scale().range([0, width]);
+                        // X domain is the dates
+                        x.domain(d3.extent(data, function (d) { return d.caldate; }));
                         //Y Scale
                         var y = d3.scale.linear().rangeRound([height, 0]);
+                        // Y domain is the biggest negative amount to the biggest positive
+                        y.domain([
+                            d3.min(data, function (d) { return Math.min(d.balance, d.total_deductions); }),
+                            d3.max(data, function (d) { return Math.max(d.balance, d.total_payments); })
+                        ]);
                         var color = d3.scale.ordinal()
                             .range([positives, negatives, savings, other]);
                         var xAxis = d3.svg.axis()
@@ -55,38 +61,34 @@ var Budgeter;
                             .attr("height", height + margin.top + margin.bottom)
                             .append("g")
                             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-                        //START USING DATA
+                        //Get the colour domain 
                         color.domain(d3.keys(data[0]).filter(function (key) {
                             return key !== "caldate" && key !== "payment_details"
                                 && key !== "deduction_details" && key !== "savings_details"
                                 && key !== "savings";
                         }));
+                        //Map additional properties to data to represent bars 
                         data.forEach(function (d) {
                             d.amounts = color.domain().map(function (name) {
                                 return { name: name, yPos: Math.max(0, parseInt(d[name])), height: Math.abs(d[name]) };
                             });
                             d.labels = d.payment_details + " " + d.deduction_details;
                         });
+                        //Balance line
                         var balanceline = d3.svg.line()
                             .interpolate("basis")
                             .x(function (d) { return x(d.caldate); })
                             .y(function (d) { return y(d.balance); });
-                        //Total Savings
+                        //Savings line
                         var savingsline = d3.svg.line()
                             .interpolate("basis")
                             .x(function (d) { return x(d.caldate); })
                             .y(function (d) { return y(d.total_savings); });
-                        // X domain is the dates
-                        x.domain(d3.extent(data, function (d) { return d.caldate; }));
-                        // Y domain is the biggest negative to the biggest positive
-                        y.domain([
-                            d3.min(data, function (d) { return d.total_deductions; }),
-                            d3.max(data, function (d) { return d.balance; })
-                        ]);
                         //Create an X axis
                         svg.append("g")
                             .attr("class", "xaxis")
                             .attr("transform", "translate(0," + y(0) + ")")
+                            .attr("height", height)
                             .call(xAxis)
                             .selectAll("text")
                             .style("text-anchor", "end")
@@ -125,13 +127,10 @@ var Budgeter;
                             .attr("y", y(0))
                             .attr("height", 0)
                             .style("fill", function (d) { return color(d.name); })
-                            .on('click', function (d) { console.log(d); });
-                        //Animate the bar transition
-                        bars.selectAll("rect")
-                            .transition()
+                            .on('click', function (d) { console.log(d); })
+                            .transition().duration(1000)
                             .attr("y", function (d) { return y(d.yPos); })
-                            .attr("height", function (d) { return y(0) - y(d.height); })
-                            .duration(1000);
+                            .attr("height", function (d) { return y(0) - y(d.height); });
                         //Create the labels
                         bars.selectAll("svg.title")
                             .data(function (d) { return [d.labels]; })
@@ -142,10 +141,63 @@ var Budgeter;
                     }
                     ;
                     ctrl.refresh();
-                    ctrl.scope.$on('renderChart', function () { render(ctrl.data); });
+                    ctrl.scope.$on('chartData', function () { render(ctrl.data); });
                 }
             };
         }
         Directives.stackedBar = stackedBar;
     })(Directives = Budgeter.Directives || (Budgeter.Directives = {}));
+})(Budgeter || (Budgeter = {}));
+var Budgeter;
+(function (Budgeter) {
+    var Controllers;
+    (function (Controllers) {
+        var stackedBarController = (function () {
+            function stackedBarController($scope, forecastParamSvc, forecastMgr) {
+                var _this = this;
+                this.spin = true;
+                this.params = forecastParamSvc.params;
+                this.forecastMgr = forecastMgr;
+                this.scope = $scope;
+                this.headlines = { balance: 0, savings: 0, incoming: 0, outgoing: 0 };
+                this.scope.$on('refresh', function (evt) { return _this.refresh(); });
+            }
+            stackedBarController.prototype.refresh = function () {
+                var _this = this;
+                this.forecastMgr.getForecast()
+                    .success(function (response) {
+                    _this.data = response.map(function (f) { return {
+                        caldate: Budgeter.Utilities.getUTCDate(f.caldate),
+                        payment_details: f.payment_details,
+                        total_payments: f.total_payments,
+                        deduction_details: f.deduction_details,
+                        total_deductions: f.total_deductions,
+                        savings_details: f.savings_details,
+                        total_savings: f.total_savings,
+                        balance: f.balance,
+                        savings: f.savings
+                    }; });
+                    var lastrow = response[response.length - 1];
+                    var income = 0;
+                    var outgoing = 0;
+                    for (var i = 0; i < response.length; i++) {
+                        income += response[i].total_payments;
+                        outgoing += response[i].total_deductions;
+                    }
+                    _this.headlines.balance = lastrow.balance;
+                    _this.headlines.savings = lastrow.savings;
+                    _this.headlines.incoming = income;
+                    _this.headlines.outgoing = outgoing;
+                    _this.spin = false;
+                    _this.scope.$broadcast('chartData');
+                })
+                    .error(function (err) {
+                    console.log(err.message);
+                });
+            };
+            stackedBarController.$inject = ['$scope', 'forecastParamSvc', 'forecastMgr'];
+            return stackedBarController;
+        })();
+        Controllers.stackedBarController = stackedBarController;
+    })(Controllers = Budgeter.Controllers || (Budgeter.Controllers = {}));
 })(Budgeter || (Budgeter = {}));
