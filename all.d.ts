@@ -27,6 +27,7 @@
 ///<reference path="./scripts/directives/forecastControls.ts"/>
 ///<reference path="./scripts/directives/stackedBar.ts"/>
 ///<reference path="./scripts/directives/transactionList.ts"/>
+///<reference path="./scripts/directives/transaction.ts"/>
 
 //INTERFACES
 ///<reference path="./scripts/interfaces/IAuthToken.ts"/>

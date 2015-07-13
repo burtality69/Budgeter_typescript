@@ -4,5 +4,6 @@ interface ITransactionModel {
 	Name: string,
 	TypeID: number,
 	UserID: string,
+	TypeDescription: string,
 	TransactionValues: Array<ITransactionValueModel>
 }

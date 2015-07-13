@@ -20,7 +20,7 @@ module Budgeter.Directives {
 
 module Budgeter.Controllers {
 	
-	interface IListState {addMode: boolean, selectedItem: number}; 
+	export interface IListState {addMode: boolean, selectedItem: number}; 
 	
 	export class transactionListController {
 		
