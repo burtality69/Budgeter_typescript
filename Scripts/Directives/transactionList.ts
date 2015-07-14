@@ -6,9 +6,9 @@ module Budgeter.Directives {
 
 		return {
 			templateUrl: 'Views/Templates/transactionList.html',
-			scope: {},
 			controllerAs: 'tListCtrl',
 			controller: Budgeter.Controllers.transactionListController,
+			scope: {},
 			link: function(scope: ng.IScope, el: JQuery,
                 att: ng.IAttributes, ctrl: Budgeter.Controllers.transactionListController) {
 				ctrl.refresh();

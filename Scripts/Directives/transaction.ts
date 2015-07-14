@@ -3,11 +3,12 @@
 module Budgeter.Directives {
 	
 	export function transaction (): ng.IDirective {
+		
 		return {
 			restrict: 'EA',
-			require: '^transactionList',
+			replace: true,
 			templateUrl: '/Views/Templates/Transaction.html',
-			scope: {trans: '=',listmgr: '=', index: '='},
+			scope: {trans: '=',tListState: '=', index: '=', deletefn: '='},
 			bindToController: true,
 			controllerAs: 'transCtrl',
 			controller: Budgeter.Controllers.transactionController,
@@ -27,10 +28,11 @@ module Budgeter.Directives {
 
 module Budgeter.Controllers {
 	
-	interface ITransactionScope extends ng.IScope {
+	export interface ITransactionScope extends ng.IScope {
 		trans: ITransactionModel,
 		listmgr: Budgeter.Controllers.IListState
 		index: number;
+		delete: Function;
 	}
 	
 	interface ITransValueListState {
@@ -40,20 +42,18 @@ module Budgeter.Controllers {
 	
 	export class transactionController {
 		
-		static $inject = ['transactionListController'];
+		static $inject = ['$scope'];
 		trans: ITransactionModel;
 		tListState: Budgeter.Controllers.IListState;
 		tvListState: ITransValueListState; 
+		deletefn: Function;
 		index: number;
 		expanded: boolean; 
 		tlist: transactionListController;
 					
-		constructor($scope: ITransactionScope, transactionListController: Budgeter.Controllers.transactionListController) {
-			this.trans = $scope.trans;
-			this.tListState = $scope.listmgr;
-			this.index = $scope.index;
+		constructor() {
+			this.tvListState = {tvToEdit: null, addEdit: false};
 			this.expanded = false; 	
-			this.tlist = transactionListController;
 		}
 		
 		expand() {
@@ -84,7 +84,7 @@ module Budgeter.Controllers {
 		
 		/** problem - this was added to the link function as controller injection isn't available in controller */
 		delete() {
-			this.tlist.delete(this.trans,this.index);	
+			this.deletefn(this.trans,this.index);	
 		}
 	}
 }

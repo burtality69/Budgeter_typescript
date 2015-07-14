@@ -6,9 +6,9 @@ var Budgeter;
         function transactionList() {
             return {
                 templateUrl: 'Views/Templates/transactionList.html',
-                scope: {},
                 controllerAs: 'tListCtrl',
                 controller: Budgeter.Controllers.transactionListController,
+                scope: {},
                 link: function (scope, el, att, ctrl) {
                     ctrl.refresh();
                 }

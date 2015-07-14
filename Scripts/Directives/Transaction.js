@@ -6,9 +6,9 @@ var Budgeter;
         function transaction() {
             return {
                 restrict: 'EA',
-                require: '^transactionList',
+                replace: true,
                 templateUrl: '/Views/Templates/Transaction.html',
-                scope: { trans: '=', listmgr: '=', index: '=' },
+                scope: { trans: '=', tListState: '=', index: '=', deletefn: '=' },
                 bindToController: true,
                 controllerAs: 'transCtrl',
                 controller: Budgeter.Controllers.transactionController,
@@ -29,12 +29,9 @@ var Budgeter;
     var Controllers;
     (function (Controllers) {
         var transactionController = (function () {
-            function transactionController($scope, transactionListController) {
-                this.trans = $scope.trans;
-                this.tListState = $scope.listmgr;
-                this.index = $scope.index;
+            function transactionController() {
+                this.tvListState = { tvToEdit: null, addEdit: false };
                 this.expanded = false;
-                this.tlist = transactionListController;
             }
             transactionController.prototype.expand = function () {
                 if (!this.expanded) {
@@ -60,10 +57,11 @@ var Budgeter;
                 this.tvListState.tvToEdit = n;
                 this.tvListState.addEdit = true;
             };
+            /** problem - this was added to the link function as controller injection isn't available in controller */
             transactionController.prototype.delete = function () {
-                this.tlist.delete(this.trans, this.index);
+                this.deletefn(this.trans, this.index);
             };
-            transactionController.$inject = ['transactionListController'];
+            transactionController.$inject = ['$scope'];
             return transactionController;
         })();
         Controllers.transactionController = transactionController;

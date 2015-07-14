@@ -5,8 +5,8 @@
 			<i style="float:right;" class="fa fa-plus fa-2x hvr-pop" ng-show="!tListCtrl.listState.addMode"
 			ng-click="tListCtrl.expandAddForm()"></i>
 		</div>
-		<form transaction-editor ng-if="tListCtrl.listmgr.addMode" listmgr="tListCtrl.listmgr" </form>
+		<form transaction-editor ng-if="tListCtrl.listState.addMode" listmgr="tListCtrl.listState" </form>
 	</li>
-	<transaction ng-if="tListCtrl.isVisible($index)" class="transaction list-group-item clearfix" listmgr="tListCtrl.listmgr"
-	index="$index" trans="trans" delete="tListCtrl.deleteTrans" ng-repeat="trans in tListCtrl.transactions"></transaction>
+	<transaction ng-repeat="trans in tListCtrl.transactions" ng-show="tListCtrl.isVisible($index)" class="transaction list-group-item clearfix"
+	tListState="tListCtrl.listState" index="$index" trans="trans" deletefn="tListCtrl.delete"></transaction>
 </ul>
