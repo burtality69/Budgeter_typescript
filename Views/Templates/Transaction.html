@@ -16,23 +16,8 @@
     <!--EXPANDED TRANSACTION VIEW-->
     <div class="transactionexpanded" ng-if="transCtrl.expanded" style="padding:2px">
         <span class="label">{{::transCtrl.trans.TypeDescription}}</span>
-        <ul class="list-group transactionvalues">
             <!--TRANSACTION VALUES-->
-            <li class="transactionValueheader list-group-item clearfix">
-                <div class="clearfix row">
-                    <div class="col-xs-2">Starts</div>
-                    <div class="col-xs-2">Occurs</div>
-                    <div class="col-xs-1">Day</div>
-                    <div class="col-xs-2">Ends</div>
-                    <div class="col-xs-2">Value</div>
-                    <i class="fa fa-plus hvr-pop" ng-if="!transCtrl.addTVMode" ng-click="transCtrl.addTV()"></i>
-                </div>
-                <div transaction-value-editor ng-if="transCtrl.tvListMgr.addEdit" class="transactionValueEditor" tvListMgr="transCtrl.tvListMgr"
-                tv="tv" cancel="cancelNewTV"></div>
-            </li>
-            <!--TRANSACTION VALUES -->
-            <li transaction-value tvListMgr="transCtrl.tvListMgr" ng-repeat="tv in ::transCtrl.trans.TransactionValues" tv="tv"></li>
-        </ul>
+            <transaction-value-list></transaction-value-list>
         <div class="transactioncontrolpanel">
             <div class="buttons" style="float:right; padding:5px;">
                 <i class="fa fa-pencil-square-o fa-2x" ng-show="!trans.editable" ng-click="editToggle(trans)"></i>
