@@ -33,7 +33,7 @@ module Budgeter.Controllers {
 		transCtrl: Budgeter.Controllers.transactionController
 	}
 	
-	interface ITransValueListState {
+	export interface ITransValueListState {
 		tvToEdit: ITransactionValueModel;
 		addEdit: boolean; 
 	}
