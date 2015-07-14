@@ -6,18 +6,19 @@ var Budgeter;
         function transaction() {
             return {
                 restrict: 'EA',
-                replace: true,
                 templateUrl: '/Views/Templates/Transaction.html',
-                scope: { trans: '=', tListState: '=', index: '=', deletefn: '=' },
+                require: '^transactionList',
                 bindToController: true,
                 controllerAs: 'transCtrl',
+                scope: { trans: '=', tliststate: '=', index: '=', deletefn: '&' },
                 controller: Budgeter.Controllers.transactionController,
-                link: function (scope, el, att, ctrl) {
-                    var v = ctrl.trans.TypeDescription;
+                replace: true,
+                link: function (scope, el, att) {
+                    var v = scope.transCtrl.trans.TypeDescription;
                     var barclass = v == 'Income' ? 'progress-bar-success' : (v == 'Savings' ? 'progress-bar-warning' : 'progress-bar-danger');
                     var labelclass = v == 'Income' ? 'label label-success' : (v == 'Savings' ? 'label label-warning' : 'label label-danger');
-                    el.children('.label').addClass(labelclass);
-                    el.children('.progress-bar').addClass(barclass);
+                    angular.element(el[0].querySelector('.label')).addClass(labelclass);
+                    angular.element(el[0].querySelector('.progress-bar')).addClass(barclass);
                 }
             };
         }
@@ -30,16 +31,14 @@ var Budgeter;
     (function (Controllers) {
         var transactionController = (function () {
             function transactionController() {
-                this.tvListState = { tvToEdit: null, addEdit: false };
-                this.expanded = false;
             }
             transactionController.prototype.expand = function () {
                 if (!this.expanded) {
-                    this.tListState.selectedItem = this.index;
+                    this.tliststate.selectedItem = this.index;
                     this.expanded = true;
                 }
                 else {
-                    this.tListState.selectedItem = null;
+                    this.tliststate.selectedItem = null;
                     this.expanded = false;
                 }
             };
@@ -61,7 +60,6 @@ var Budgeter;
             transactionController.prototype.delete = function () {
                 this.deletefn(this.trans, this.index);
             };
-            transactionController.$inject = ['$scope'];
             return transactionController;
         })();
         Controllers.transactionController = transactionController;

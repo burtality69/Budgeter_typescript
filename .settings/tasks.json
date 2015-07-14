@@ -55,7 +55,7 @@
 	// in the output.
 	"problemMatcher": "$tsc"
 }
-*/
+
 
 // A task runner configuration for gulp. Gulp provides a less task
 // which compiles less to css. 

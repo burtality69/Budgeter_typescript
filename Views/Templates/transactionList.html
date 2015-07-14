@@ -7,6 +7,6 @@
 		</div>
 		<form transaction-editor ng-if="tListCtrl.listState.addMode" listmgr="tListCtrl.listState" </form>
 	</li>
-	<transaction ng-repeat="trans in tListCtrl.transactions" ng-show="tListCtrl.isVisible($index)" class="transaction list-group-item clearfix"
-	tListState="tListCtrl.listState" index="$index" trans="trans" deletefn="tListCtrl.delete"></transaction>
+	<transaction ng-repeat="t in tListCtrl.transactions" ng-show="tListCtrl.isVisible($index)" class="transaction list-group-item clearfix"
+	tListState="tListCtrl.listState" index="$index" trans="t" deletefn="tListCtrl.delete"></transaction>
 </ul>

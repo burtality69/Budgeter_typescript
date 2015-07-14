@@ -39,9 +39,9 @@ module Budgeter.Controllers {
 			this.listState = {
 				addMode: false, 
 				selectedItem: null 
-			}
+			};
+			
 			this.tMgr = transactionMgr; 
-			this.notify = notify; 
 		}
 		
 		/** get the list */

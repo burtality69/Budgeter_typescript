@@ -29,7 +29,6 @@ var Budgeter;
                     selectedItem: null
                 };
                 this.tMgr = transactionMgr;
-                this.notify = notify;
             }
             /** get the list */
             transactionListController.prototype.refresh = function () {

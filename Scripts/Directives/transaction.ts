@@ -6,21 +6,22 @@ module Budgeter.Directives {
 		
 		return {
 			restrict: 'EA',
-			replace: true,
 			templateUrl: '/Views/Templates/Transaction.html',
-			scope: {trans: '=',tListState: '=', index: '=', deletefn: '='},
+			require: '^transactionList',
 			bindToController: true,
 			controllerAs: 'transCtrl',
+			scope: { trans: '=', tliststate: '=', index: '=', deletefn: '&' },
 			controller: Budgeter.Controllers.transactionController,
-			link: function(scope: ng.IScope, el: JQuery, 
-				att: ng.IAttributes, ctrl: Budgeter.Controllers.transactionController) {
+			replace: true,
+			link: function(scope: Budgeter.Controllers.ITransactionScope, el: ng.IAugmentedJQuery,
+				att: ng.IAttributes) {
 					
-				var v = ctrl.trans.TypeDescription;
+				var v = scope.transCtrl.trans.TypeDescription
 				var barclass = v == 'Income' ? 'progress-bar-success' : (v == 'Savings' ? 'progress-bar-warning' : 'progress-bar-danger'); 
 				var labelclass = v == 'Income' ? 'label label-success' : (v == 'Savings' ? 'label label-warning' : 'label label-danger');
 				
-				el.children('.label').addClass(labelclass);
-				el.children('.progress-bar').addClass(barclass); 
+ 				angular.element(el[0].querySelector('.label')).addClass(labelclass);
+				angular.element(el[0].querySelector('.progress-bar')).addClass(barclass); 
 			}
 		}
 	}
@@ -29,10 +30,7 @@ module Budgeter.Directives {
 module Budgeter.Controllers {
 	
 	export interface ITransactionScope extends ng.IScope {
-		trans: ITransactionModel,
-		listmgr: Budgeter.Controllers.IListState
-		index: number;
-		delete: Function;
+		transCtrl: Budgeter.Controllers.transactionController
 	}
 	
 	interface ITransValueListState {
@@ -42,9 +40,8 @@ module Budgeter.Controllers {
 	
 	export class transactionController {
 		
-		static $inject = ['$scope'];
 		trans: ITransactionModel;
-		tListState: Budgeter.Controllers.IListState;
+		tliststate: Budgeter.Controllers.IListState;
 		tvListState: ITransValueListState; 
 		deletefn: Function;
 		index: number;
@@ -52,22 +49,20 @@ module Budgeter.Controllers {
 		tlist: transactionListController;
 					
 		constructor() {
-			this.tvListState = {tvToEdit: null, addEdit: false};
-			this.expanded = false; 	
 		}
 		
 		expand() {
-			if(!this.expanded) {
-				this.tListState.selectedItem = this.index;
+			if (!this.expanded) {
+				this.tliststate.selectedItem = this.index;
 				this.expanded = true;
 			} else {
-				this.tListState.selectedItem = null;
-				this.expanded = false; 
+				this.tliststate.selectedItem = null;
+				this.expanded = false;
 			}
 		}
 		
 		addTv() {
-			
+
 			var n: ITransactionValueModel = {
 				ID: null,
 				Start_date: null,
@@ -77,9 +72,9 @@ module Budgeter.Controllers {
 				Day: null,
 				TransactionID: this.trans.ID,
 				Value: null
-				}
+			}
 			this.tvListState.tvToEdit = n;
-			this.tvListState.addEdit = true; 				
+			this.tvListState.addEdit = true;
 		}
 		
 		/** problem - this was added to the link function as controller injection isn't available in controller */
