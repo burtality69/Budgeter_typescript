@@ -1,24 +1,6 @@
 ///<reference path="../../all.d.ts"/>
 var Budgeter;
 (function (Budgeter) {
-    var Directives;
-    (function (Directives) {
-        function transactionList() {
-            return {
-                templateUrl: 'Views/Templates/transactionList.html',
-                controllerAs: 'tListCtrl',
-                controller: Budgeter.Controllers.transactionListController,
-                scope: {},
-                link: function (scope, el, att, ctrl) {
-                    ctrl.refresh();
-                }
-            };
-        }
-        Directives.transactionList = transactionList;
-    })(Directives = Budgeter.Directives || (Budgeter.Directives = {}));
-})(Budgeter || (Budgeter = {}));
-var Budgeter;
-(function (Budgeter) {
     var Controllers;
     (function (Controllers) {
         ;
@@ -90,4 +72,22 @@ var Budgeter;
         })();
         Controllers.transactionListController = transactionListController;
     })(Controllers = Budgeter.Controllers || (Budgeter.Controllers = {}));
+})(Budgeter || (Budgeter = {}));
+var Budgeter;
+(function (Budgeter) {
+    var Directives;
+    (function (Directives) {
+        function transactionList() {
+            return {
+                templateUrl: 'Views/Templates/transactionList.html',
+                controllerAs: 'tListCtrl',
+                controller: Budgeter.Controllers.transactionListController,
+                scope: {},
+                link: function (scope, el, att, ctrl) {
+                    ctrl.refresh();
+                }
+            };
+        }
+        Directives.transactionList = transactionList;
+    })(Directives = Budgeter.Directives || (Budgeter.Directives = {}));
 })(Budgeter || (Budgeter = {}));

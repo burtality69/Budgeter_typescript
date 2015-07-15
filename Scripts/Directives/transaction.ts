@@ -49,6 +49,7 @@ module Budgeter.Controllers {
 		tlist: transactionListController;
 					
 		constructor() {
+			this.tvListState = {addEdit: false, tvToEdit: null};
 		}
 		
 		expand() {

@@ -31,6 +31,7 @@ var Budgeter;
     (function (Controllers) {
         var transactionController = (function () {
             function transactionController() {
+                this.tvListState = { addEdit: false, tvToEdit: null };
             }
             transactionController.prototype.expand = function () {
                 if (!this.expanded) {

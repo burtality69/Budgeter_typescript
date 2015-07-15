@@ -17,7 +17,7 @@
     <div class="transactionexpanded" ng-if="transCtrl.expanded" style="padding:2px">
         <span class="label">{{::transCtrl.trans.TypeDescription}}</span>
         <!--TRANSACTION VALUES-->
-        <trans-values-list list="transCtrl.trans.TransactionValues"></trans-values-list>
+        <trans-values-list transaction-values="transCtrl.trans.TransactionValues"></trans-values-list>
         <div class="transactioncontrolpanel">
             <div class="buttons" style="float:right; padding:5px;">
                 <i class="fa fa-pencil-square-o fa-2x" ng-show="!trans.editable" ng-click="editToggle(trans)"></i>

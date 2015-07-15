@@ -1,23 +1,5 @@
 ///<reference path="../../all.d.ts"/>
 
-module Budgeter.Directives {
-
-	export function transactionList(): ng.IDirective {
-
-		return {
-			templateUrl: 'Views/Templates/transactionList.html',
-			controllerAs: 'tListCtrl',
-			controller: Budgeter.Controllers.transactionListController,
-			scope: {},
-			link: function(scope: ng.IScope, el: JQuery,
-                att: ng.IAttributes, ctrl: Budgeter.Controllers.transactionListController) {
-				ctrl.refresh();
-			}
-
-		}
-	}
-}
-
 module Budgeter.Controllers {
 	
 	export interface IListState {addMode: boolean, selectedItem: number}; 
@@ -100,4 +82,24 @@ module Budgeter.Controllers {
 		}
 	}
 }
+
+module Budgeter.Directives {
+
+	export function transactionList(): ng.IDirective {
+
+		return {
+			templateUrl: 'Views/Templates/transactionList.html',
+			controllerAs: 'tListCtrl',
+			controller: Budgeter.Controllers.transactionListController,
+			scope: {},
+			link: function(scope: ng.IScope, el: JQuery,
+                att: ng.IAttributes, ctrl: Budgeter.Controllers.transactionListController) {
+				ctrl.refresh();
+			}
+
+		}
+	}
+}
+
+
 	

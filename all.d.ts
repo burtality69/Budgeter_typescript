@@ -28,6 +28,8 @@
 ///<reference path="./scripts/directives/stackedBar.ts"/>
 ///<reference path="./scripts/directives/transactionList.ts"/>
 ///<reference path="./scripts/directives/transaction.ts"/>
+///<reference path="./scripts/directives/transactionValueList.ts"/>
+///<reference path="./scripts/directives/transactionValue.ts"/>
 
 //INTERFACES
 ///<reference path="./scripts/interfaces/IAuthToken.ts"/>

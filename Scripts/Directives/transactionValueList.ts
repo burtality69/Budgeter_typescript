@@ -1,5 +1,25 @@
 ///<reference path="../../all.d.ts"/>
 
+module Budgeter.Controllers {
+	
+	export interface ITransactionValueListScope extends ng.IScope {
+		liststate: Budgeter.Controllers.ITransValueListState,
+		list: Array<ITransactionValueModel>
+	}
+	
+	export class transValueListController {
+		
+		static $inject = ['$scope'];
+		
+		listState: Budgeter.Controllers.ITransValueListState;
+		transactionValues: Array<ITransactionValueModel>
+		
+		constructor($scope: ITransactionValueListScope ) {
+			this.listState = {tvToEdit: null, addEdit: false}
+		}
+	}
+}
+
 module Budgeter.Directives {
 	
 	export function transValuesList (): ng.IDirective {
@@ -10,26 +30,7 @@ module Budgeter.Directives {
 			controller: Budgeter.Controllers.transValueListController,
 			bindToController: true,
 			controllerAs: 'tvListCtrl',
-			scope: {list:'='},
-		}
-	}
-}
-
-module Budgeter.Controllers {
-	
-	export interface ITransactionValueListScope extends ng.IScope {
-		liststate: Budgeter.Controllers.ITransValueListState,
-		list: Array<ITransactionValueModel>
-	}
-	
-	export class transValueListController {
-		
-		listState: Budgeter.Controllers.ITransValueListState;
-		transactionValues: Array<ITransactionValueModel>
-		
-		constructor($scope: ITransactionValueListScope ) {
-			this.transactionValues = $scope.list;
-			this.listState = $scope.liststate;
+			scope: {transactionValues:'='},
 		}
 	}
 }
