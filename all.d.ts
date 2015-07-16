@@ -5,7 +5,6 @@
 ///<reference path="./typings/angular-notify.d.ts"/>
 
 // APP 
-
 ///<reference path="./scripts/Budgeter.ts"/>
 
 //UTILITIES 
@@ -22,12 +21,15 @@
 ///<reference path="./scripts/factories/transactionValueMgr.ts"/>
 ///<reference path="./scripts/factories/authFactory.ts"/>
 ///<reference path="./scripts/factories/forecastMgr.ts"/>
+///<reference path="./scripts/Services/listOptionsDataSvc.ts"/>
 
 //DIRECTIVES 
 ///<reference path="./scripts/directives/forecastControls.ts"/>
+///<reference path="./scripts/directives/headlineitem.ts"/>
 ///<reference path="./scripts/directives/stackedBar.ts"/>
 ///<reference path="./scripts/directives/transactionList.ts"/>
 ///<reference path="./scripts/directives/transaction.ts"/>
+///<reference path="./scripts/directives/transactionEditor.ts"/>
 ///<reference path="./scripts/directives/transactionValueList.ts"/>
 ///<reference path="./scripts/directives/transactionValue.ts"/>
 

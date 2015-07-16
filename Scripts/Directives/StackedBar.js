@@ -15,10 +15,10 @@ var Budgeter;
                     '<div class="cube2"></div>' +
                     '</div>' +
                     '<div class="headlines">' +
-                    '<headline-item class="headline income" icon="fa fa-plus fa-3x" name="Income" value="graphCtrl.headlines.income"></headline-item>' +
-                    '<headline-item class="headline spending" icon="fa fa-minus fa-3x" name="Spending" value="graphCtrl.headlines.spending"></headline-item>' +
-                    '<headline-item class="headline balance" icon="fa fa-university fa-3x" name="Balance" value="graphCtrl.headlines.balance"></headline-item>' +
-                    '<headline-item class="headline savings" icon="fa fa-money fa-3x" name="Savings" value="graphCtrl.headlines.savings"></headline-item>' +
+                    '<headline-item class="headline income" icon="glyphicon glyphicon-arrow-up" name="Earned" value="graphCtrl.headlines.incoming"></headline-item>' +
+                    '<headline-item class="headline spending" icon="glyphicon glyphicon-arrow-down" name="Spent" value="graphCtrl.headlines.outgoing"></headline-item>' +
+                    '<headline-item class="headline savings" icon="glyphicon glyphicon-piggy-bank" name="Saved" value="graphCtrl.headlines.savings"></headline-item>' +
+                    '<headline-item class="headline balance" icon="glyphicon glyphicon-usd" name="Remaining" value="graphCtrl.headlines.balance"></headline-item>' +
                     '</div>' +
                     '<div id="graphdiv" class="graphcontainer clearfix" ng-show="!graphCtrl.spin"></div>',
                 link: function (scope, el, att, ctrl) {
@@ -26,7 +26,8 @@ var Budgeter;
                         //container size 
                         var margin = { top: 40, right: 40, bottom: 60, left: 40 };
                         var width = parseInt(d3.select('#forecast').style('width')) - (margin.left + margin.right);
-                        var height = parseInt(d3.select('#forecast').style('width')) - (margin.top + margin.bottom);
+                        //var height: number = parseInt(d3.select('#forecast').style('width')) - (margin.top + margin.bottom); 
+                        var height = window.screen.availHeight - (margin.top + margin.bottom);
                         //Colour palette
                         var positives = '#5cb85c';
                         var negatives = "#CC5343";
@@ -53,7 +54,7 @@ var Budgeter;
                             .scale(y)
                             .orient("left")
                             .tickFormat(d3.format(".2s"));
-                        d3.select("svg").remove;
+                        d3.select("svg").remove();
                         var svg = d3.select("#graphdiv")
                             .append("svg")
                             .attr("width", width + margin.left + margin.right)

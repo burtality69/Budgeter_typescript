@@ -21,6 +21,7 @@ var Budgeter;
             return {
                 restrict: 'EA',
                 require: 'transaction',
+                templateUrl: 'Views/Templates/transactionValueList.html',
                 replace: true,
                 controller: Budgeter.Controllers.transValueListController,
                 bindToController: true,

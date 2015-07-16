@@ -57,6 +57,10 @@ var Budgeter;
                 this.tvListState.tvToEdit = n;
                 this.tvListState.addEdit = true;
             };
+            transactionController.prototype.editToggle = function () {
+                this.tliststate.transactionToEdit = this.trans;
+                this.tliststate.addMode = true;
+            };
             /** problem - this was added to the link function as controller injection isn't available in controller */
             transactionController.prototype.delete = function () {
                 this.deletefn(this.trans, this.index);

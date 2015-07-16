@@ -27,6 +27,16 @@ var Budgeter;
                     headers: this.headers };
                 return this.http(config);
             };
+            transactionMgr.prototype.newBlankTrans = function () {
+                return {
+                    ID: null,
+                    Name: null,
+                    TypeID: null,
+                    UserID: null,
+                    TypeDescription: null,
+                    TransactionValues: null
+                };
+            };
             transactionMgr.$inject = ['$http', 'sessionService'];
             return transactionMgr;
         })();

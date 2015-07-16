@@ -38,5 +38,16 @@ module Budgeter.Services {
 				headers: this.headers}
 			return this.http(config);
 		}
+		
+		newBlankTrans(): ITransactionModel {
+			return {
+				ID: null,
+				Name: null,
+				TypeID: null,
+				UserID: null,
+				TypeDescription: null,
+				TransactionValues: null
+			}
+		}
 	}
 }

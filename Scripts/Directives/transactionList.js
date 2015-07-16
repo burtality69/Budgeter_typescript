@@ -8,7 +8,8 @@ var Budgeter;
             function transactionListController(transactionMgr, notify, $rootScope) {
                 this.listState = {
                     addMode: false,
-                    selectedItem: null
+                    selectedItem: null,
+                    transactionToEdit: null
                 };
                 this.tMgr = transactionMgr;
             }
@@ -51,11 +52,8 @@ var Budgeter;
                     });
                 }
             };
-            transactionListController.prototype.expandAddForm = function () {
-                this.listState.addMode = true;
-            };
-            transactionListController.prototype.collapseAddForm = function () {
-                this.listState.addMode = false;
+            transactionListController.prototype.toggleAddForm = function () {
+                this.listState.addMode = !this.listState.addMode;
             };
             /** should the passed transaction be visible? */
             transactionListController.prototype.isVisible = function (idx) {

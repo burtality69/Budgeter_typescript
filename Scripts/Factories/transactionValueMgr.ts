@@ -64,5 +64,18 @@ module Budgeter.Services {
 		formatForAPI (t: ITransactionValueModel) {
 			return {}
 		}
+		
+		getnewTransactionValue(): ITransactionValueModel {
+			return {
+				ID: null,
+				TransactionID: null,
+				Value: null,
+				FrequencyID: null,
+				FrequencyDescription: null,
+				Day: null,
+				Start_date: null,
+				End_date: null
+			}
+		}
 	}
 }

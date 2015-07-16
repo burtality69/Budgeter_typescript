@@ -2,7 +2,7 @@
 
 module Budgeter.Controllers {
 	
-	export interface IListState {addMode: boolean, selectedItem: number}; 
+	export interface IListState {addMode: boolean, selectedItem: number; transactionToEdit: ITransactionModel}; 
 	
 	export class transactionListController {
 		
@@ -20,7 +20,8 @@ module Budgeter.Controllers {
 				
 			this.listState = {
 				addMode: false, 
-				selectedItem: null 
+				selectedItem: null,
+				transactionToEdit: null 
 			};
 			
 			this.tMgr = transactionMgr; 
@@ -62,13 +63,9 @@ module Budgeter.Controllers {
 					this.notify({ message: 'Transaction updated', classes: 'alert-success' }))
 			}
 		}
-		
-		expandAddForm () {
-			this.listState.addMode = true; 
-		}
-		
-		collapseAddForm () {
-			this.listState.addMode = false; 
+
+		toggleAddForm() {
+			this.listState.addMode = !this.listState.addMode;
 		}
 		
 		/** should the passed transaction be visible? */

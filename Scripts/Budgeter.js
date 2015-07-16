@@ -8,6 +8,7 @@ var Budgeter;
     app.service('forecastMgr', Budgeter.Services.forecastMgr);
     app.service('transactionMgr', Budgeter.Services.transactionMgr);
     app.service('transactionValueMgr', Budgeter.Services.transactionValueMgr);
+    app.service('listOptionsDataSvc', Budgeter.Services.listOptionsDataSvc);
     app.controller(Budgeter.Controllers);
     app.directive(Budgeter.Directives);
     var ConfigFunction = function ($routeProvider, $locationProvider) {

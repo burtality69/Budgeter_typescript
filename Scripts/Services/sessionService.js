@@ -32,6 +32,20 @@ var Budgeter;
                 enumerable: true,
                 configurable: true
             });
+            Object.defineProperty(sessionService.prototype, "httpGetHeaders", {
+                get: function () {
+                    return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.Token };
+                },
+                enumerable: true,
+                configurable: true
+            });
+            Object.defineProperty(sessionService.prototype, "httpPostHeaders", {
+                get: function () {
+                    return {};
+                },
+                enumerable: true,
+                configurable: true
+            });
             sessionService.$inject = ['$cookies'];
             return sessionService;
         })();

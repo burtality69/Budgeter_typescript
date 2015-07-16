@@ -34,5 +34,13 @@ module Budgeter.Services {
 			return this._apiURl;
 		}
 		
+		get httpGetHeaders(): Object {
+			return {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.Token };
+		}
+		
+		get httpPostHeaders(): Object {
+			return {};
+		}
+		
 	}
 }

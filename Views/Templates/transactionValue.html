@@ -6,10 +6,10 @@
 		<div class="col-xs-2">{{::tvCtrl.tv.End_date | date:"shortDate": "UTC"}}</div>
 		<div class="col-xs-2">{{::tvCtrl.tv.Value | currency:"$" }}</div>
 		<div class="col-xs-1">
-			<i class="fa fa-pencil-square-o" ng-click="tvCtrl.edit()"></i>
+			<i class="glyphicon glyphicon-pencil" ng-click="tvCtrl.edit()"></i>
 		</div>
 		<div class="col-xs-1">
-			<i class="fa fa-trash-o" ng-click="tvCtrl.delete()"></i>
+			<i class="glyphicon glyphicon-trash" ng-click="tvCtrl.delete()"></i>
 		</div>
 		<input type="checkbox" ng-model="tvCtrl.tv.include" ng-click="tvCtrl.toggleInclude()"></input>
 	</div>

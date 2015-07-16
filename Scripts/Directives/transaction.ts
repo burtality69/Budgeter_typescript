@@ -78,6 +78,11 @@ module Budgeter.Controllers {
 			this.tvListState.addEdit = true;
 		}
 		
+		editToggle() {
+			this.tliststate.transactionToEdit = this.trans;
+			this.tliststate.addMode = true;			
+		}
+		
 		/** problem - this was added to the link function as controller injection isn't available in controller */
 		delete() {
 			this.deletefn(this.trans,this.index);	
