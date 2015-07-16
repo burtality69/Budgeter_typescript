@@ -5,19 +5,25 @@ module Budgeter.Controllers {
 	
 	export class transactionValueEditorCtrl {
 		
-		static $inject = ['transactionValueMgr','cgNotify','$rootScope','listOptionsDataSvc'];
-		listOptions: Budgeter.Services.listOptionsDataSvc;
-		tv: ITransactionValueModel; 
+		static $inject = ['transactionValueMgr','notify','$rootScope','listOptionsDataSvc'];
+		
+		listOptionsDataSvc: Budgeter.Services.listOptionsDataSvc;
+		tv: ITransactionValueClientModel; 
 		transactionValueMgr: Budgeter.Services.transactionValueMgr;
 		frequencies: Array<string>;
 		notify: ng.cgNotify.INotifyService;
 		newitem: boolean;
-		liststate: ITransValueListState;
+		listState: ITransValueListState;
 		
-		constructor($scope: Budgeter.Controllers.ITransactionValueListScope){
+		constructor(transactionValueMgr: Budgeter.Services.transactionValueMgr, notify: ng.cgNotify.INotifyService 
+			,$rootscope: ng.IRootScopeService,listOptionsDataSvc: Budgeter.Services.listOptionsDataSvc){
 			
-			if ($scope.liststate.tvToEdit != undefined) {
-				this.tv = $scope.liststate.tvToEdit;
+			this.listOptionsDataSvc = listOptionsDataSvc;
+			this.notify = notify; 
+			this.transactionValueMgr = transactionValueMgr;
+			
+			if (this.listState.tvToEdit != undefined) {
+				this.tv = this.listState.tvToEdit;
 				this.newitem = true; 
 			} else {
 				this.tv = this.transactionValueMgr.getnewTransactionValue();
@@ -28,7 +34,7 @@ module Budgeter.Controllers {
 		}
 		
 		getfrequencies() {
-			this.listOptions.transactionfrequencies
+			this.listOptionsDataSvc.transactionfrequencies
 				.success(d => {
 					this.frequencies = d;
 				})
@@ -59,7 +65,7 @@ module Budgeter.Controllers {
 		}
 		
 		cancel() {
-			this.liststate.addEdit = false;
+			this.listState.addEdit = false;
 		}
 		
 		delete() {

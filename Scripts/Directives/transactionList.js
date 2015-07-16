@@ -5,22 +5,25 @@ var Budgeter;
     (function (Controllers) {
         ;
         var transactionListController = (function () {
-            function transactionListController(transactionMgr, notify, $rootScope) {
+            function transactionListController(transactionMgr, notify, $rootScope, transactionValueMgr) {
                 this.listState = {
                     addMode: false,
                     selectedItem: null,
                     transactionToEdit: null
                 };
                 this.tMgr = transactionMgr;
+                this.tvMgr = transactionValueMgr;
             }
             /** get the list */
             transactionListController.prototype.refresh = function () {
                 var _this = this;
                 this.tMgr.get().success(function (data) {
-                    return _this.transactions = data;
+                    _this.transactions = data.map(function (d) {
+                        return _this.tMgr.transtoClientModel(d);
+                    });
                 })
                     .error(function (err) {
-                    return _this.notify({ message: 'Error loading data', classes: 'alert-danger' });
+                    _this.notify({ message: 'Error loading data', classes: 'alert-danger' });
                 });
             };
             transactionListController.prototype.delete = function (t, idx) {
@@ -65,7 +68,7 @@ var Budgeter;
                     return true;
                 }
             };
-            transactionListController.$inject = ['transactionMgr', 'notify', '$rootScope'];
+            transactionListController.$inject = ['transactionMgr', 'transactionValueMgr', 'notify', '$rootScope'];
             return transactionListController;
         })();
         Controllers.transactionListController = transactionListController;

@@ -6,17 +6,18 @@ module Budgeter.Controllers {
 	
 	export class transactionListController {
 		
-		static $inject = ['transactionMgr','notify','$rootScope']; 
+		static $inject = ['transactionMgr','transactionValueMgr','notify','$rootScope']; 
 		
 		rootscope: ng.IRootScopeService;
 		listState: IListState; 
 		notify: ng.cgNotify.INotifyService; 
 		tMgr: Budgeter.Services.transactionMgr;
 		transactions: Array<ITransactionModel>
+		tvMgr: Budgeter.Services.transactionValueMgr;
 		
 		constructor(transactionMgr: Budgeter.Services.transactionMgr, 
 			notify: ng.cgNotify.INotifyService,
-			$rootScope: ng.IRootScopeService ) {
+			$rootScope: ng.IRootScopeService, transactionValueMgr: Budgeter.Services.transactionValueMgr ) {
 				
 			this.listState = {
 				addMode: false, 
@@ -25,15 +26,20 @@ module Budgeter.Controllers {
 			};
 			
 			this.tMgr = transactionMgr; 
+			this.tvMgr = transactionValueMgr;
 		}
 		
 		/** get the list */
 		refresh() {
-			this.tMgr.get().success(data =>
-				this.transactions = data)
-				.error((err: Error)=>
+			this.tMgr.get().success((data: Array<ITransactionServerModel>) => {
+				
+				this.transactions = data.map(d => {
+					return this.tMgr.transtoClientModel(d)
+				})
+			})
+				.error((err: Error)=> {
 					this.notify({message: 'Error loading data',classes: 'alert-danger'})
-				)
+				})
 		}
 		
 		delete (t: ITransactionModel, idx: number) {

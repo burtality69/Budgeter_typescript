@@ -7,6 +7,8 @@ var Budgeter;
             function transactionValueController($scope) {
             }
             transactionValueController.prototype.edit = function () {
+                this.liststate.tvToEdit = this.tv;
+                this.liststate.addEdit = true;
             };
             return transactionValueController;
         })();

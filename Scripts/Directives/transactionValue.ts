@@ -9,11 +9,15 @@ module Budgeter.Controllers {
 	
 	export class transactionValueController {
 		
+		liststate: ITransValueListState;
+		tv: ITransactionValueModel; 
+		
 		constructor($scope: ITransactionValueScope) {
-			
 		}
 		
 		edit() {
+			this.liststate.tvToEdit = this.tv;
+			this.liststate.addEdit = true;
 		}
 	}
 }

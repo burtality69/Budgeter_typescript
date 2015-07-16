@@ -31,7 +31,7 @@ var Budgeter;
                     method: 'PUT',
                     url: this.url + '/' + t.ID,
                     headers: this.headers,
-                    data: t
+                    data: this.toServerModel(t)
                 };
                 return this.http(config);
             };
@@ -43,8 +43,41 @@ var Budgeter;
                 };
                 return this.http(config);
             };
-            transactionValueMgr.prototype.formatForAPI = function (t) {
-                return {};
+            transactionValueMgr.prototype.toServerModel = function (t) {
+                return {
+                    ID: t.ID,
+                    TransactionID: t.TransactionID,
+                    Value: t.Value,
+                    FrequencyID: t.FrequencyID,
+                    FrequencyDescription: t.FrequencyDescription,
+                    Day: t.Day,
+                    Start_date: Budgeter.Utilities.stringifyDate(t.Start_date),
+                    End_date: Budgeter.Utilities.stringifyDate(t.End_date)
+                };
+            };
+            transactionValueMgr.prototype.toClientModel = function (t) {
+                return {
+                    ID: t.ID,
+                    TransactionID: t.TransactionID,
+                    Value: t.Value,
+                    FrequencyID: t.FrequencyID,
+                    FrequencyDescription: t.FrequencyDescription,
+                    Day: t.Day,
+                    Start_date: Budgeter.Utilities.getUTCDate(t.Start_date),
+                    End_date: Budgeter.Utilities.getUTCDate(t.End_date)
+                };
+            };
+            transactionValueMgr.prototype.getnewTransactionValue = function () {
+                return {
+                    ID: null,
+                    TransactionID: null,
+                    Value: null,
+                    FrequencyID: null,
+                    FrequencyDescription: null,
+                    Day: null,
+                    Start_date: null,
+                    End_date: null
+                };
             };
             transactionValueMgr.$inject = ['$http', 'sessionService'];
             return transactionValueMgr;

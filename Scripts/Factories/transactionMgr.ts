@@ -49,5 +49,32 @@ module Budgeter.Services {
 				TransactionValues: null
 			}
 		}
+		
+		transtoClientModel(t: ITransactionServerModel): ITransactionModel {
+			return {
+				ID: t.ID,
+				Name: t.Name,
+				TypeID: t.TypeID,
+				UserID: t.UserID,
+				TypeDescription: t.TypeDescription,
+				TransactionValues: t.TransactionValues.map(tv => {
+					return this.tvToClientModel(tv);
+				})
+			}
+		}
+		
+		tvToClientModel(t: ITransactionValueServerModel): ITransactionValueClientModel {
+			return {
+				ID: t.ID,
+				TransactionID: t.TransactionID,
+				Value: t.Value,
+				FrequencyID: t.FrequencyID,
+				FrequencyDescription: t.FrequencyDescription,
+				Day: t.Day,
+				Start_date: Utilities.getUTCDate(t.Start_date),
+				End_date: Utilities.getUTCDate(t.End_date)
+			}
+		}
+		
 	}
 }

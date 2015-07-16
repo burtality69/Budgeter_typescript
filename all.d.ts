@@ -32,6 +32,7 @@
 ///<reference path="./scripts/directives/transactionEditor.ts"/>
 ///<reference path="./scripts/directives/transactionValueList.ts"/>
 ///<reference path="./scripts/directives/transactionValue.ts"/>
+///<reference path="./scripts/directives/transactionValueEditor.ts"/>
 
 //INTERFACES
 ///<reference path="./scripts/interfaces/IAuthToken.ts"/>
@@ -42,6 +43,8 @@
 ///<reference path="./scripts/interfaces/IBudgetRowModel.ts"/>
 ///<reference path="./scripts/interfaces/IForecastParams.ts"/>
 ///<reference path="./scripts/interfaces/IBudgetHeadlines.ts"/>
-///<reference path="./scripts/interfaces/ITransactionValue.ts"/>
-///<reference path="./scripts/interfaces/ITransaction.ts"/>
+///<reference path="./scripts/interfaces/ITransactionValueClientModel.ts"/>
+///<reference path="./scripts/interfaces/ITransactionValueServerModel.ts"/>
+///<reference path="./scripts/interfaces/ITransactionModel.ts"/>
+///<reference path="./scripts/interfaces/ITransactionServerModel.ts"/>
 

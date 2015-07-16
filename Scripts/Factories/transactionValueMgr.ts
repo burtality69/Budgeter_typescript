@@ -29,7 +29,7 @@ module Budgeter.Services {
 			return this.http(config);
 		}
 		
-		post(t: ITransactionValueModel): ng.IHttpPromise<any> {
+		post(t: ITransactionValueClientModel): ng.IHttpPromise<any> {
 			var config: ng.IRequestConfig = {
 				method: 'POST',
 				url: this.url,
@@ -40,12 +40,12 @@ module Budgeter.Services {
 			return this.http(config);
 		}
 		
-		put(t: ITransactionValueModel): ng.IHttpPromise<any> {
+		put(t: ITransactionValueClientModel): ng.IHttpPromise<any> {
 			var config: ng.IRequestConfig = {
 				method: 'PUT',
 				url: this.url + '/' + t.ID,
 				headers: this.headers,
-				data: t				
+				data: this.toServerModel(t)				
 			}
 			
 			return this.http(config); 
@@ -61,11 +61,33 @@ module Budgeter.Services {
 			return this.http(config); 
 		}
 		
-		formatForAPI (t: ITransactionValueModel) {
-			return {}
+		toServerModel(t: ITransactionValueClientModel) {
+			return {
+				ID: t.ID,
+				TransactionID: t.TransactionID,
+				Value: t.Value,
+				FrequencyID: t.FrequencyID,
+				FrequencyDescription: t.FrequencyDescription,
+				Day: t.Day,
+				Start_date: Utilities.stringifyDate(t.Start_date),
+				End_date: Utilities.stringifyDate(t.End_date)
+			}
 		}
 		
-		getnewTransactionValue(): ITransactionValueModel {
+		toClientModel(t: ITransactionValueServerModel): ITransactionValueClientModel {
+			return {
+				ID: t.ID,
+				TransactionID: t.TransactionID,
+				Value: t.Value,
+				FrequencyID: t.FrequencyID,
+				FrequencyDescription: t.FrequencyDescription,
+				Day: t.Day,
+				Start_date: Utilities.getUTCDate(t.Start_date),
+				End_date: Utilities.getUTCDate(t.End_date)
+			}
+		}
+		
+		getnewTransactionValue(): ITransactionValueClientModel {
 			return {
 				ID: null,
 				TransactionID: null,

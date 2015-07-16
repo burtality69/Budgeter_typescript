@@ -3,7 +3,7 @@
 module Budgeter.Controllers {
 	
 	export interface ITransactionValueListScope extends ng.IScope {
-		liststate: Budgeter.Controllers.ITransValueListState,
+		listState: Budgeter.Controllers.ITransValueListState,
 		list: Array<ITransactionValueModel>
 	}
 	

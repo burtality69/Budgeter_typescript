@@ -37,6 +37,31 @@ var Budgeter;
                     TransactionValues: null
                 };
             };
+            transactionMgr.prototype.transtoClientModel = function (t) {
+                var _this = this;
+                return {
+                    ID: t.ID,
+                    Name: t.Name,
+                    TypeID: t.TypeID,
+                    UserID: t.UserID,
+                    TypeDescription: t.TypeDescription,
+                    TransactionValues: t.TransactionValues.map(function (tv) {
+                        return _this.tvToClientModel(tv);
+                    })
+                };
+            };
+            transactionMgr.prototype.tvToClientModel = function (t) {
+                return {
+                    ID: t.ID,
+                    TransactionID: t.TransactionID,
+                    Value: t.Value,
+                    FrequencyID: t.FrequencyID,
+                    FrequencyDescription: t.FrequencyDescription,
+                    Day: t.Day,
+                    Start_date: Budgeter.Utilities.getUTCDate(t.Start_date),
+                    End_date: Budgeter.Utilities.getUTCDate(t.End_date)
+                };
+            };
             transactionMgr.$inject = ['$http', 'sessionService'];
             return transactionMgr;
         })();
