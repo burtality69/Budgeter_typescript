@@ -34,7 +34,7 @@ module Budgeter.Controllers {
 	}
 	
 	export interface ITransValueListState {
-		tvToEdit: ITransactionValueModel;
+		tvToEdit: ITransactionValueClientModel;
 		addEdit: boolean; 
 	}
 	
@@ -52,6 +52,7 @@ module Budgeter.Controllers {
 			this.tvListState = {addEdit: false, tvToEdit: null};
 		}
 		
+		/**expand this transaction - trigger the contraction of all others */
 		expand() {
 			if (!this.expanded) {
 				this.tliststate.selectedItem = this.index;
@@ -62,28 +63,12 @@ module Budgeter.Controllers {
 			}
 		}
 		
-		addTv() {
-
-			var n: ITransactionValueModel = {
-				ID: null,
-				Start_date: null,
-				End_date: null,
-				FrequencyID: null,
-				FrequencyDescription: null,
-				Day: null,
-				TransactionID: this.trans.ID,
-				Value: null
-			}
-			this.tvListState.tvToEdit = n;
-			this.tvListState.addEdit = true;
-		}
-		
 		editToggle() {
 			this.tliststate.transactionToEdit = this.trans;
 			this.tliststate.addMode = true;			
 		}
 		
-		/** problem - this was added to the link function as controller injection isn't available in controller */
+		/** inheriting from the list controller */
 		delete() {
 			this.deletefn(this.trans,this.index);	
 		}

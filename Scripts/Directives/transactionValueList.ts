@@ -4,7 +4,7 @@ module Budgeter.Controllers {
 	
 	export interface ITransactionValueListScope extends ng.IScope {
 		listState: Budgeter.Controllers.ITransValueListState,
-		list: Array<ITransactionValueModel>
+		list: Array<ITransactionValueClientModel>
 	}
 	
 	export class transValueListController {
@@ -12,11 +12,12 @@ module Budgeter.Controllers {
 		static $inject = ['$scope'];
 		
 		listState: Budgeter.Controllers.ITransValueListState;
-		transactionValues: Array<ITransactionValueModel>
+		transactionValues: Array<ITransactionValueClientModel>
 		
 		constructor($scope: ITransactionValueListScope ) {
 			this.listState = {tvToEdit: null, addEdit: false}
 		}
+		
 	}
 }
 

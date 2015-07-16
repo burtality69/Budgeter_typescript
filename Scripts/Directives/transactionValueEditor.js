@@ -10,11 +10,11 @@ var Budgeter;
                 this.transactionValueMgr = transactionValueMgr;
                 if (this.listState.tvToEdit != undefined) {
                     this.tv = this.listState.tvToEdit;
-                    this.newitem = true;
+                    this.newitem = false;
                 }
                 else {
                     this.tv = this.transactionValueMgr.getnewTransactionValue();
-                    this.newitem = false;
+                    this.newitem = true;
                 }
                 this.getfrequencies();
             }

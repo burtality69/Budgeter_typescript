@@ -43,20 +43,6 @@ var Budgeter;
                     this.expanded = false;
                 }
             };
-            transactionController.prototype.addTv = function () {
-                var n = {
-                    ID: null,
-                    Start_date: null,
-                    End_date: null,
-                    FrequencyID: null,
-                    FrequencyDescription: null,
-                    Day: null,
-                    TransactionID: this.trans.ID,
-                    Value: null
-                };
-                this.tvListState.tvToEdit = n;
-                this.tvListState.addEdit = true;
-            };
             transactionController.prototype.editToggle = function () {
                 this.tliststate.transactionToEdit = this.trans;
                 this.tliststate.addMode = true;

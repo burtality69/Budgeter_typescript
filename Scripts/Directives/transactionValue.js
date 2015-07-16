@@ -4,12 +4,25 @@ var Budgeter;
     var Controllers;
     (function (Controllers) {
         var transactionValueController = (function () {
-            function transactionValueController($scope) {
+            function transactionValueController(transactionValueMgr, notify) {
+                this.tvMgr = transactionValueMgr;
+                this.notify = notify;
             }
             transactionValueController.prototype.edit = function () {
                 this.liststate.tvToEdit = this.tv;
                 this.liststate.addEdit = true;
             };
+            transactionValueController.prototype.delete = function () {
+                var _this = this;
+                this.tvMgr.delete(this.tv.ID)
+                    .success(function (d) {
+                    _this.notify({ message: 'Item deleted successfully', classes: 'alert-success' });
+                })
+                    .error(function (e) {
+                    _this.notify({ message: "Couldn't delete this transaction: " + e, classes: 'alert-danger' });
+                });
+            };
+            transactionValueController.$inject = ['transactionValueMgr', 'notify'];
             return transactionValueController;
         })();
         Controllers.transactionValueController = transactionValueController;

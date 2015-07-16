@@ -22,7 +22,7 @@ var Budgeter;
                     method: 'POST',
                     url: this.url,
                     headers: this.headers,
-                    data: t
+                    data: this.toServerModel(t)
                 };
                 return this.http(config);
             };
