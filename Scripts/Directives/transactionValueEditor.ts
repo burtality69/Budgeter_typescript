@@ -14,6 +14,7 @@ module Budgeter.Controllers {
 		notify: ng.cgNotify.INotifyService;
 		newitem: boolean;
 		listState: ITransValueListState;
+		transactionID: number;
 		
 		constructor(transactionValueMgr: Budgeter.Services.transactionValueMgr, notify: ng.cgNotify.INotifyService 
 			,$rootscope: ng.IRootScopeService,listOptionsDataSvc: Budgeter.Services.listOptionsDataSvc){
@@ -27,6 +28,7 @@ module Budgeter.Controllers {
 				this.newitem = false;
 			} else {
 				this.tv = this.transactionValueMgr.getnewTransactionValue();
+				this.tv.ID = this.transactionID;
 				this.newitem = true;
 			}
 			
@@ -83,7 +85,7 @@ module Budgeter.Directives {
 	export function transactionValueEditor(): ng.IDirective {
 		return {
 			restrict: 'EA',
-			scope: {listState: '='},
+			scope: {listState: '=',transactionID: '='},
 			require: '^transaction',
 			controllerAs: 'tvEditCtrl',
 			bindToController: true,

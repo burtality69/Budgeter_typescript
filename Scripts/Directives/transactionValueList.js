@@ -7,6 +7,9 @@ var Budgeter;
             function transValueListController($scope) {
                 this.listState = { tvToEdit: null, addEdit: false };
             }
+            transValueListController.prototype.addNew = function () {
+                this.listState.addEdit = true;
+            };
             transValueListController.$inject = ['$scope'];
             return transValueListController;
         })();

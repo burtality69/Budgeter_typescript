@@ -14,6 +14,7 @@ var Budgeter;
                 }
                 else {
                     this.tv = this.transactionValueMgr.getnewTransactionValue();
+                    this.tv.ID = this.transactionID;
                     this.newitem = true;
                 }
                 this.getfrequencies();
@@ -76,7 +77,7 @@ var Budgeter;
         function transactionValueEditor() {
             return {
                 restrict: 'EA',
-                scope: { listState: '=' },
+                scope: { listState: '=', transactionID: '=' },
                 require: '^transaction',
                 controllerAs: 'tvEditCtrl',
                 bindToController: true,

@@ -10,7 +10,7 @@ module Budgeter.Directives {
 			require: '^transactionList',
 			bindToController: true,
 			controllerAs: 'transCtrl',
-			scope: { trans: '=', tliststate: '=', index: '=', deletefn: '&' },
+			scope: { trans: '=', tliststate: '=', index: '=', deletefn: '&', list:'='},
 			controller: Budgeter.Controllers.transactionController,
 			replace: true,
 			link: function(scope: Budgeter.Controllers.ITransactionScope, el: ng.IAugmentedJQuery,
@@ -40,6 +40,8 @@ module Budgeter.Controllers {
 	
 	export class transactionController {
 		
+		static $inject = ['transactionMgr','notify'];
+		
 		trans: ITransactionModel;
 		tliststate: Budgeter.Controllers.IListState;
 		tvListState: ITransValueListState; 
@@ -47,9 +49,14 @@ module Budgeter.Controllers {
 		index: number;
 		expanded: boolean; 
 		tlist: transactionListController;
+		transactionMgr: Budgeter.Services.transactionMgr; 
+		notify: ng.cgNotify.INotifyService;
+		list: Array<ITransactionModel>
 					
-		constructor() {
+		constructor(transactionMgr: Budgeter.Services.transactionMgr, notify: ng.cgNotify.INotifyService) {
 			this.tvListState = {addEdit: false, tvToEdit: null};
+			this.notify = notify;
+			this.transactionMgr = transactionMgr;
 		}
 		
 		/**expand this transaction - trigger the contraction of all others */
@@ -69,8 +76,15 @@ module Budgeter.Controllers {
 		}
 		
 		/** inheriting from the list controller */
-		delete() {
-			this.deletefn(this.trans,this.index);	
+		delete(idx: number) {
+			this.transactionMgr.delete(this.trans.ID)
+			.success(d=>{
+				this.list.splice(idx,1);
+				this.notify({message: 'Item deleted successfully', classes: 'alert-success'});
+			})
+			.error(d=>{
+				this.notify({message:'There was a problem deleting this item',classes:'alert-danger',duration: 5000});
+			})
 		}
 	}
 }

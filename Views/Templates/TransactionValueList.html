@@ -1,16 +1,21 @@
 <ul class="list-group transactionvalues">
     <!--TRANSACTION VALUES-->
-    <li class="transactionValueheader list-group-item clearfix">
-        <div class="clearfix row">
-            <div class="col-xs-2">Starts</div>
-            <div class="col-xs-2">Occurs</div>
-            <div class="col-xs-1">Day</div>
-            <div class="col-xs-2">Ends</div>
-            <div class="col-xs-2">Value</div>
-            <i class="fa fa-plus hvr-pop" ng-if="!tvListCtrl.listState.addEdit" ng-click="transCtrl.addTV()"></i>
-        </div>
-    </li>
-    <!--TRANSACTION VALUES -->
-    <li transaction-value liststate="tvListCtrl.listState" ng-repeat="tv in ::tvListCtrl.transactionValues" tv="tv"></li>
-    <li transaction-value-editor ng-if="tvListCtrl.listState.addEdit" class="transactionValueEditor" list-state="tvListCtrl.listState"
+    <div ng-if="!tvListCtrl.listState.addEdit">
+        <li class="transactionValueheader list-group-item clearfix">
+            <div class="clearfix row">
+                <div class="col-xs-2">Starts</div>
+                <div class="col-xs-2">Occurs</div>
+                <div class="col-xs-1">Day</div>
+                <div class="col-xs-2">Ends</div>
+                <div class="col-xs-2">Value</div>
+                <i class="fa fa-plus hvr-pop" ng-if="!tvListCtrl.listState.addEdit" ng-click="transCtrl.addTV()"></i>
+            </div>
+        </li>
+        <!--TRANSACTION VALUES -->
+        <li transaction-value liststate="tvListCtrl.listState" ng-if="!tvListCtrl.listState.addEdit" ng-repeat="tv in ::tvListCtrl.transactionValues"
+        tv="tv"></li>
+        <li class="list-group-item clearfix" ng-click="tvListCtrl.addNew()">Add a new amount</li>
+    </div>
+    <li transaction-value-editor ng-if="tvListCtrl.listState.addEdit" class="transactionValueEditor" transaction-id="transCtrl.trans.ID"
+    list-state="tvListCtrl.listState"></li>
 </ul>

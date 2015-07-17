@@ -6,7 +6,7 @@ module Budgeter.Controllers {
 	
 	export class transactionListController {
 		
-		static $inject = ['transactionMgr','transactionValueMgr','notify','$rootScope']; 
+		static $inject = ['transactionMgr','transactionValueMgr','notify','$rootScope','apiFormatSvc']; 
 		
 		rootscope: ng.IRootScopeService;
 		listState: IListState; 
@@ -14,10 +14,12 @@ module Budgeter.Controllers {
 		tMgr: Budgeter.Services.transactionMgr;
 		transactions: Array<ITransactionModel>
 		tvMgr: Budgeter.Services.transactionValueMgr;
+		formatter: Budgeter.Services.apiFormatSvc;
 		
 		constructor(transactionMgr: Budgeter.Services.transactionMgr, 
 			notify: ng.cgNotify.INotifyService,
-			$rootScope: ng.IRootScopeService, transactionValueMgr: Budgeter.Services.transactionValueMgr ) {
+			$rootScope: ng.IRootScopeService, transactionValueMgr: Budgeter.Services.transactionValueMgr,
+			apiFormatSvc: Budgeter.Services.apiFormatSvc ) {
 				
 			this.listState = {
 				addMode: false, 
@@ -25,6 +27,7 @@ module Budgeter.Controllers {
 				transactionToEdit: null 
 			};
 			
+			this.formatter = apiFormatSvc;
 			this.tMgr = transactionMgr; 
 			this.tvMgr = transactionValueMgr;
 		}
@@ -34,7 +37,7 @@ module Budgeter.Controllers {
 			this.tMgr.get().success((data: Array<ITransactionServerModel>) => {
 				
 				this.transactions = data.map(d => {
-					return this.tMgr.transtoClientModel(d)
+					return this.formatter.transtoClientFmt(d)
 				})
 			})
 				.error((err: Error)=> {

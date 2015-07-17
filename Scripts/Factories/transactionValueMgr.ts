@@ -4,26 +4,27 @@ module Budgeter.Services {
 
 	export class transactionValueMgr {
 
-		static $inject = ['$http', 'sessionService'];
+		static $inject = ['$http', 'sessionService','apiFormatSvc'];
 
-		headers: Object;
 		url: string;
 		http: ng.IHttpService;
 		sessionService: Budgeter.Services.sessionService;
+		formatter: Budgeter.Services.apiFormatSvc;
 
-		constructor($http: ng.IHttpService, sessionService: Budgeter.Services.sessionService) {
+		constructor($http: ng.IHttpService, sessionService: Budgeter.Services.sessionService,
+			apiFormatSvc: Budgeter.Services.apiFormatSvc) {
 
 			this.http = $http;
 			this.url = sessionService.apiURL + '/api/transactionValues'
-			this.headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + sessionService.Token }
-
+			this.formatter = apiFormatSvc;
+			this.sessionService = sessionService;
 		}
 		
 		get(): ng.IHttpPromise<any> {
 			var config: ng.IRequestConfig = {
 				method: 'GET',
 				url: this.url,
-				headers: this.headers
+				headers: this.sessionService.httpGetHeaders
 			};
 
 			return this.http(config);
@@ -33,8 +34,8 @@ module Budgeter.Services {
 			var config: ng.IRequestConfig = {
 				method: 'POST',
 				url: this.url,
-				headers: this.headers,
-				data: this.toServerModel(t)		
+				headers: this.sessionService.httpGetHeaders,
+				data: this.formatter.tvtoServerFmt(t)		
 			};
 
 			return this.http(config);
@@ -44,8 +45,8 @@ module Budgeter.Services {
 			var config: ng.IRequestConfig = {
 				method: 'PUT',
 				url: this.url + '/' + t.ID,
-				headers: this.headers,
-				data: this.toServerModel(t)				
+				headers: this.sessionService.httpGetHeaders,
+				data: this.formatter.tvtoServerFmt(t)				
 			}
 			
 			return this.http(config); 
@@ -55,48 +56,22 @@ module Budgeter.Services {
 			var config: ng.IRequestConfig = {
 				method: 'DELETE',
 				url: this.url + '/' + ID,
-				headers: this.headers,
+				headers: this.sessionService.httpGetHeaders,
 			}
 			
 			return this.http(config); 
 		}
-		
-		toServerModel(t: ITransactionValueClientModel) {
-			return {
-				ID: t.ID,
-				TransactionID: t.TransactionID,
-				Value: t.Value,
-				FrequencyID: t.FrequencyID,
-				FrequencyDescription: t.FrequencyDescription,
-				Day: t.Day,
-				Start_date: Utilities.stringifyDate(t.Start_date),
-				End_date: Utilities.stringifyDate(t.End_date)
-			}
-		}
-		
-		toClientModel(t: ITransactionValueServerModel): ITransactionValueClientModel {
-			return {
-				ID: t.ID,
-				TransactionID: t.TransactionID,
-				Value: t.Value,
-				FrequencyID: t.FrequencyID,
-				FrequencyDescription: t.FrequencyDescription,
-				Day: t.Day,
-				Start_date: Utilities.getUTCDate(t.Start_date),
-				End_date: Utilities.getUTCDate(t.End_date)
-			}
-		}
-		
+				
 		getnewTransactionValue(): ITransactionValueClientModel {
 			return {
-				ID: null,
-				TransactionID: null,
-				Value: null,
-				FrequencyID: null,
-				FrequencyDescription: null,
-				Day: null,
-				Start_date: null,
-				End_date: null
+				ID: undefined,
+				TransactionID: undefined,
+				Value: undefined,
+				FrequencyID: undefined,
+				FrequencyDescription: undefined,
+				Day: undefined,
+				Start_date: undefined,
+				End_date: undefined
 			}
 		}
 	}

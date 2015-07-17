@@ -22,6 +22,7 @@
 ///<reference path="./scripts/factories/authFactory.ts"/>
 ///<reference path="./scripts/factories/forecastMgr.ts"/>
 ///<reference path="./scripts/Services/listOptionsDataSvc.ts"/>
+///<reference path="./scripts/Services/apiFormatSvc.ts"/>
 
 //DIRECTIVES 
 ///<reference path="./scripts/directives/forecastControls.ts"/>

@@ -11,7 +11,7 @@
             <div class="col-sm-5">
                 <div class="transactioncontrols" style="float: right;">
                         <span class="glyphicon glyphicon-pencil" style="padding: 5px;" ng-show="!trans.editable" ng-click="transCtrl.editToggle()"></span>
-                        <span class="glyphicon glyphicon-remove" style="padding: 5px;" ng-show="!trans.editable" ng-click="transCtrl.delete()"></span>
+                        <span class="glyphicon glyphicon-remove" style="padding: 5px;" ng-show="!trans.editable" ng-click="transCtrl.delete($index)"></span>
                 </div>
             </div>
         </div>

@@ -5,12 +5,13 @@ var Budgeter;
     (function (Controllers) {
         ;
         var transactionListController = (function () {
-            function transactionListController(transactionMgr, notify, $rootScope, transactionValueMgr) {
+            function transactionListController(transactionMgr, notify, $rootScope, transactionValueMgr, apiFormatSvc) {
                 this.listState = {
                     addMode: false,
                     selectedItem: null,
                     transactionToEdit: null
                 };
+                this.formatter = apiFormatSvc;
                 this.tMgr = transactionMgr;
                 this.tvMgr = transactionValueMgr;
             }
@@ -19,7 +20,7 @@ var Budgeter;
                 var _this = this;
                 this.tMgr.get().success(function (data) {
                     _this.transactions = data.map(function (d) {
-                        return _this.tMgr.transtoClientModel(d);
+                        return _this.formatter.transtoClientFmt(d);
                     });
                 })
                     .error(function (err) {
@@ -68,7 +69,7 @@ var Budgeter;
                     return true;
                 }
             };
-            transactionListController.$inject = ['transactionMgr', 'transactionValueMgr', 'notify', '$rootScope'];
+            transactionListController.$inject = ['transactionMgr', 'transactionValueMgr', 'notify', '$rootScope', 'apiFormatSvc'];
             return transactionListController;
         })();
         Controllers.transactionListController = transactionListController;

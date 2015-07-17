@@ -18,6 +18,10 @@ module Budgeter.Controllers {
 			this.listState = {tvToEdit: null, addEdit: false}
 		}
 		
+		addNew() {
+			this.listState.addEdit = true;
+		}
+		
 	}
 }
 

@@ -17,7 +17,7 @@
         </div>
         <div class="form-group form-inline">
             <label for="newitemFreq">Occurs</label>
-            <select class="input-xs-flat" type="text" ng-options="freq.ID as freq.Description for freq in ::transEdit.frequencies"
+            <select class="input-xs-flat" type="text" ng-options="freq.ID as freq.Description for freq in ::transEditCtrl.frequencies"
             placeholder="frequency" ng-model="transEditCtrl.trans.TransactionValues[0].FrequencyID" />
         </div>
         <div class="form-group form-inline">

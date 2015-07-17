@@ -5,6 +5,7 @@ var Budgeter;
     app.service('sessionService', Budgeter.Services.sessionService);
     app.service('forecastParamSvc', Budgeter.Services.forecastParamSvc);
     app.service('authFactory', Budgeter.Services.authFactory);
+    app.service('apiFormatSvc', Budgeter.Services.apiFormatSvc);
     app.service('forecastMgr', Budgeter.Services.forecastMgr);
     app.service('transactionMgr', Budgeter.Services.transactionMgr);
     app.service('transactionValueMgr', Budgeter.Services.transactionValueMgr);
