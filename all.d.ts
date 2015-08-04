@@ -12,7 +12,6 @@
 
 //CONTROLLERS 
 ///<reference path="./scripts/controllers/authController.ts"/>
-///<reference path="./scripts/controllers/forecastcontroller.ts"/>
 
 //SERVICES 
 ///<reference path="./scripts/services/sessionService.ts"/>

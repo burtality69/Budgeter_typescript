@@ -4,7 +4,6 @@
     <head>
         <title>Budgeter</title>
         <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" href="bower_components\bootstrap\dist\css\bootstrap.min.css">
         <link rel="stylesheet" href="Styles\Site.css">
         <link rel="stylesheet" href="Styles\ng-notify.min.css">
         <base href="/">
@@ -31,7 +30,6 @@
         <script src="Scripts\Factories\ForecastMgr.js"></script>
         <!--Controllers-->
         <script src="Scripts\Controllers\Authcontroller.js"></script>
-        <script src="Scripts\Controllers\forecastController.js"></script>
         <!--Directives-->
         <script src="Scripts\Directives\forecastControls.js"></script>
         <script src="Scripts\Directives\headlineItem.js"></script>
@@ -56,13 +54,13 @@
         </header>
         <main>
             <!--FORECAST-->
-            <section id="forecast" class="forecast col-lg-8">
-                <forecast-controls></forecast-controls>
-            </section>
+            <div id="forecast" class="forecast col-lg-8">
+            <forecast-controls></forecast-controls>
+            </div>
             <!-- Transactions table -->
-            <section class="col-lg-4 transactionlistcontainer">
+            <aside id="transactionlist" class="col-lg-4 transactionlistcontainer">
                 <transaction-list class="list-group transactionlist"></transaction-list>
-            </section>
+            </aside>
         </main>
     </body>
 

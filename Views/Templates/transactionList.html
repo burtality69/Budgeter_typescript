@@ -1,16 +1,14 @@
-<ul class="transactionlist list-group">
-	<li class="list-group-item transactionstitle sectionheader clearfix">
-		<div class="sectiontitle">
-			<span>Payments and deductions</span>
-		</div>
+<ul class="transactionlist">
+	<li>
+		<span>Payments and deductions</span>
 	</li>
-	<transaction ng-repeat="t in tListCtrl.transactions" ng-show="tListCtrl.isVisible($index)" class="transaction list-group-item clearfix"
+	<transaction ng-repeat="t in tListCtrl.transactions" ng-show="tListCtrl.isVisible($index)" class="transaction"
 	tListState="tListCtrl.listState" index="$index" trans="t" deletefn="tListCtrl.delete"></transaction>
 	<div class="transaction list-group-item">
 		<div class="transactioncompact">
 			<div class="row">
 				<div class="col-sm-5">
-					<p style="font-style: italic;">Add a new payment or deduction</p>
+					<p style="font-style: italic;">Create new item</p>
 				</div>
 				<div class="col-sm-2">
 					<i ng-click="tListCtrl.toggleAddForm()" tooltip="Click to expand" tooltip-placement="left" ng-class="transEditCtrl.expanded ? 'glyphicon glyphicon-menu-up' : 'glyphicon glyphicon-menu-down'"></i>

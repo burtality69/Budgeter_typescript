@@ -41,15 +41,8 @@ module Budgeter.Directives {
                     //container size 
                     var margin = { top: 40, right: 40, bottom: 60, left: 40 }
                     var width: number = parseInt(d3.select('#forecast').style('width')) - (margin.left + margin.right);
-                    //var height: number = parseInt(d3.select('#forecast').style('width')) - (margin.top + margin.bottom); 
-					var height: number = window.screen.availHeight - (margin.top + margin.bottom);
-                    //Colour palette
-                    var positives: string = '#5cb85c';
-                    var negatives: string = "#CC5343";
-                    var savings: string = "#3829AA";
-                    var accumulation: string = "#f0ad4e";
-                    var other: string = "#0066FF";
-					
+					var height: number = parseInt(d3.select('#forecast').style('height')) - (margin.top + margin.bottom);
+                    
                     //X axis 
                     var x: D3.Scale.TimeScale = d3.time.scale().range([0, width]);
                     
@@ -61,12 +54,9 @@ module Budgeter.Directives {
                     
                     // Y domain is the biggest negative amount to the biggest positive
                     y.domain([
-                        d3.min(data, d => { return Math.min(d.balance,d.total_deductions); }),
+                        d3.min(data, d => { return Math.min(d.balance, d.total_deductions); }),
                         d3.max(data, d => { return Math.max(d.balance, d.total_payments) })
                     ]);
-
-                    var color: D3.Scale.OrdinalScale = d3.scale.ordinal()
-                        .range([positives, negatives, savings, other]);
 
                     var xAxis = d3.svg.axis()
                         .scale(x)
@@ -86,23 +76,7 @@ module Budgeter.Directives {
                         .attr("height", height + margin.top + margin.bottom)
                         .append("g")
                         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-				
-                    
-                    //Get the colour domain 
-                    color.domain(d3.keys(data[0]).filter(key =>
-                        key !== "caldate" && key !== "payment_details"
-                        && key !== "deduction_details" && key !== "savings_details"
-                        && key !== "savings"
-                        ))
-                    
-                    //Map additional properties to data to represent bars 
-                    data.forEach((d: IEnhancedForecastRowModel) => {
-                        d.amounts = color.domain().map(name => {
-                            return { name: name, yPos: Math.max(0, parseInt(d[name])), height: Math.abs(d[name]) }
-                        })
-                        d.labels = d.payment_details + " " + d.deduction_details;
-                    });
-                    
+                                                            
                     //Balance line
                     var balanceline = d3.svg.line()
                         .interpolate("basis")
@@ -137,40 +111,51 @@ module Budgeter.Directives {
                         .attr("dy", ".71em")
                         .style("text-anchor", "end");
         
-                    // Create a line for the totals
+                    // Balance Accumulation Line 
                     svg.append("path")
                         .datum(data)
                         .attr("class", "balanceline")
                         .attr("d", balanceline);
-
+                        
+                    // Savings Accumulation Line 
                     svg.append("path")
                         .datum(data)
                         .attr("class", "savingsline")
                         .attr("d", savingsline);
-        
-                    //Create an array of G's to contain the newVal
-                    var bars = svg.selectAll(".date")
-                        .data(data)
-                        .enter().append("g")
-                        .attr("class", "g")
-                        .attr("transform", d => { return "translate(" + x(d.caldate) + ",0)"; });
-                        
-                    //Create the rectangles 
-                    bars.selectAll("rect")
-                        .data((d: IEnhancedForecastRowModel) => { return [d.amounts[0], d.amounts[1]]; })
+
+                    //Create payments 
+                    var payments = svg.selectAll("payment")
+                        .data(data.filter(d=>{return Math.abs(d.total_payments) > 0}))
                         .enter().append("rect")
+                        .attr("transform", d => { return "translate(" + x(d.caldate) + ",0)"; })
                         .attr("width", width / data.length)
                         .attr("y",y(0))
                         .attr("height",0)
-                        .style("fill", (d: IBarSpec) => { return color(d.name); })
-                        .on('click', (d: IBarSpec) => { console.log(d); })
+                        .attr("class","payment")
+                        .on('click', (d: IForecastRowModel) => { console.log(d); })
                         .transition().duration(1000)
-                        .attr("y", (d: IBarSpec) => { return y(d.yPos); })
-                        .attr("height", (d: IBarSpec) => { return y(0) - y(d.height); });
-        
+                        .attr("y", (d: IForecastRowModel) => { return y(d.total_payments); })
+                        .attr("height", (d: IForecastRowModel) => {return y(0) - y(Math.abs(d.total_payments)); });
+                    
+                    //Create deductions
+                    var deductions = svg.selectAll("deduction")
+                        .data(data.filter(d=> { return Math.abs(d.total_deductions) > 0 }))
+                        .enter().append("rect")
+                        .attr("transform", d => { return "translate(" + x(d.caldate) + ",0)"; })
+                        .attr("width", width / data.length)
+                        .attr("class", "deduction")
+                        .attr("y",y(0))
+                        .attr("height",0)
+                        .on("click", (d: IForecastRowModel) => { console.log(d) });
+                        
+                        deductions.transition().duration(1000)
+                        .attr("y", y(0))
+                        .attr("height", (d: IForecastRowModel) => { return y(d.total_deductions) - y(0); })
+                           
+                        
                     //Create the labels
-                    bars.selectAll("svg.title")
-                        .data(d => { return [d.labels]; })
+                    deductions.selectAll("svg.title")
+                        .data(data)
                         .enter().append("svg:title")
                         .text(d => { return JSON.stringify(d); });
 
@@ -230,7 +215,7 @@ module Budgeter.Controllers {
 					var outgoing = 0;
 
 					for (var i = 0; i < response.length; i++) {
-						income += response[i].total_payments;
+						income += Math.abs(response[i].total_payments);
 						outgoing += response[i].total_deductions;
 					}
 					this.headlines.balance = lastrow.balance;

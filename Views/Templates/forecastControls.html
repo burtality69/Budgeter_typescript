@@ -1,10 +1,9 @@
 <div class="forecastcontainer">
-      <div class="form-group form-inline sectionheader">
-            <div class="sectiontitle">
+      <div class="forecast-controlbar">
                   <span>Forecast to</span>
-                  <i class="glyphicon glyphicon-triangle-left" ng-click="fCtrl.mthBk()"></i>
+                  <i class="fctrl-leftarrow" ng-click="fCtrl.mthBk()">&#8882</i>
                   <span style="width: 10%; ">{{fCtrl.forecastParams.endDate | date:"mediumDate" : "UTC" }}</span>
-                  <i class="glyphicon glyphicon-triangle-right" ng-click="fCtrl.mthFwd()"></i>
+                  <i class="fctrl-rightarrow" ng-click="fCtrl.mthFwd()">&#x022B2</i>
                   <span>Starting balance</span>
                   <input type="number" style="width:10%;" class="input-xs-flat" ng-model="fCtrl.forecastParams.startBal"
                   step="100" id="startbal"></input>
@@ -17,7 +16,6 @@
                   <button type="button" class="btn btn-primary btn-xs" ng-click="fCtrl.refresh()">
                         <i class="glyphicon glyphicon-refresh"></i>
                   </button>
-            </div>
       </div>
       <div ng-if="fCtrl.forecastview=='graph'">
             <stacked-bar class="graphcontainer clearfix" params="fCtrl.forecastParams"></stacked-bar>

@@ -23,6 +23,14 @@ module Budgeter.Services {
 				headers: {
 					'Content-Type': 'application/json',
 					'Authorization': 'Bearer ' + this.sessionSrv.Token
+				},
+				transformResponse: function(data) {
+					var dat = JSON.parse(data);
+					var ret = [];
+					Object.keys(dat).forEach(p=>{
+						ret.push(dat[p]); 
+					})
+					return ret;
 				}
 			}
 		}

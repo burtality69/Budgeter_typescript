@@ -26,14 +26,7 @@ var Budgeter;
                         //container size 
                         var margin = { top: 40, right: 40, bottom: 60, left: 40 };
                         var width = parseInt(d3.select('#forecast').style('width')) - (margin.left + margin.right);
-                        //var height: number = parseInt(d3.select('#forecast').style('width')) - (margin.top + margin.bottom); 
-                        var height = window.screen.availHeight - (margin.top + margin.bottom);
-                        //Colour palette
-                        var positives = '#5cb85c';
-                        var negatives = "#CC5343";
-                        var savings = "#3829AA";
-                        var accumulation = "#f0ad4e";
-                        var other = "#0066FF";
+                        var height = parseInt(d3.select('#forecast').style('height')) - (margin.top + margin.bottom);
                         //X axis 
                         var x = d3.time.scale().range([0, width]);
                         // X domain is the dates
@@ -45,8 +38,6 @@ var Budgeter;
                             d3.min(data, function (d) { return Math.min(d.balance, d.total_deductions); }),
                             d3.max(data, function (d) { return Math.max(d.balance, d.total_payments); })
                         ]);
-                        var color = d3.scale.ordinal()
-                            .range([positives, negatives, savings, other]);
                         var xAxis = d3.svg.axis()
                             .scale(x)
                             .orient("bottom");
@@ -62,19 +53,6 @@ var Budgeter;
                             .attr("height", height + margin.top + margin.bottom)
                             .append("g")
                             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-                        //Get the colour domain 
-                        color.domain(d3.keys(data[0]).filter(function (key) {
-                            return key !== "caldate" && key !== "payment_details"
-                                && key !== "deduction_details" && key !== "savings_details"
-                                && key !== "savings";
-                        }));
-                        //Map additional properties to data to represent bars 
-                        data.forEach(function (d) {
-                            d.amounts = color.domain().map(function (name) {
-                                return { name: name, yPos: Math.max(0, parseInt(d[name])), height: Math.abs(d[name]) };
-                            });
-                            d.labels = d.payment_details + " " + d.deduction_details;
-                        });
                         //Balance line
                         var balanceline = d3.svg.line()
                             .interpolate("basis")
@@ -105,36 +83,45 @@ var Budgeter;
                             .attr("y", 6)
                             .attr("dy", ".71em")
                             .style("text-anchor", "end");
-                        // Create a line for the totals
+                        // Balance Accumulation Line 
                         svg.append("path")
                             .datum(data)
                             .attr("class", "balanceline")
                             .attr("d", balanceline);
+                        // Savings Accumulation Line 
                         svg.append("path")
                             .datum(data)
                             .attr("class", "savingsline")
                             .attr("d", savingsline);
-                        //Create an array of G's to contain the newVal
-                        var bars = svg.selectAll(".date")
-                            .data(data)
-                            .enter().append("g")
-                            .attr("class", "g")
-                            .attr("transform", function (d) { return "translate(" + x(d.caldate) + ",0)"; });
-                        //Create the rectangles 
-                        bars.selectAll("rect")
-                            .data(function (d) { return [d.amounts[0], d.amounts[1]]; })
+                        //Create payments 
+                        var payments = svg.selectAll("payment")
+                            .data(data.filter(function (d) { return Math.abs(d.total_payments) > 0; }))
                             .enter().append("rect")
+                            .attr("transform", function (d) { return "translate(" + x(d.caldate) + ",0)"; })
                             .attr("width", width / data.length)
                             .attr("y", y(0))
                             .attr("height", 0)
-                            .style("fill", function (d) { return color(d.name); })
+                            .attr("class", "payment")
                             .on('click', function (d) { console.log(d); })
                             .transition().duration(1000)
-                            .attr("y", function (d) { return y(d.yPos); })
-                            .attr("height", function (d) { return y(0) - y(d.height); });
+                            .attr("y", function (d) { return y(d.total_payments); })
+                            .attr("height", function (d) { return y(0) - y(Math.abs(d.total_payments)); });
+                        //Create deductions
+                        var deductions = svg.selectAll("deduction")
+                            .data(data.filter(function (d) { return Math.abs(d.total_deductions) > 0; }))
+                            .enter().append("rect")
+                            .attr("transform", function (d) { return "translate(" + x(d.caldate) + ",0)"; })
+                            .attr("width", width / data.length)
+                            .attr("class", "deduction")
+                            .attr("y", y(0))
+                            .attr("height", 0)
+                            .on("click", function (d) { console.log(d); });
+                        deductions.transition().duration(1000)
+                            .attr("y", y(0))
+                            .attr("height", function (d) { return y(d.total_deductions) - y(0); });
                         //Create the labels
-                        bars.selectAll("svg.title")
-                            .data(function (d) { return [d.labels]; })
+                        deductions.selectAll("svg.title")
+                            .data(data)
                             .enter().append("svg:title")
                             .text(function (d) { return JSON.stringify(d); });
                         ctrl.spin = false;
@@ -182,7 +169,7 @@ var Budgeter;
                     var income = 0;
                     var outgoing = 0;
                     for (var i = 0; i < response.length; i++) {
-                        income += response[i].total_payments;
+                        income += Math.abs(response[i].total_payments);
                         outgoing += response[i].total_deductions;
                     }
                     _this.headlines.balance = lastrow.balance;

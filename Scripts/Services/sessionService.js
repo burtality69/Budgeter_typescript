@@ -6,8 +6,8 @@ var Budgeter;
         var sessionService = (function () {
             function sessionService($cookies) {
                 this.cookies = $cookies;
-                //this._apiURl = 'http://budgeter.azurewebsites.net'
-                this._apiURl = 'http://localhost:52243/';
+                this._apiURl = 'http://budgeter.azurewebsites.net';
+                //this._apiURl = 'http://localhost:52243/'
             }
             Object.defineProperty(sessionService.prototype, "Token", {
                 get: function () {

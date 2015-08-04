@@ -17,11 +17,9 @@ module Budgeter.Directives {
 				att: ng.IAttributes) {
 					
 				var v = scope.transCtrl.trans.TypeDescription
-				var barclass = v == 'Income' ? 'progress-bar-success' : (v == 'Savings' ? 'progress-bar-warning' : 'progress-bar-danger'); 
-				var labelclass = v == 'Income' ? 'label label-success' : (v == 'Savings' ? 'label label-warning' : 'label label-danger');
-				
- 				angular.element(el[0].querySelector('.label')).addClass(labelclass);
-				angular.element(el[0].querySelector('.progress-bar')).addClass(barclass); 
+				var barclass = v == 'Income' ? 'payment' : (v == 'Savings' ? 'savings' : 'deduction'); 
+
+ 				angular.element(el[0]).addClass(barclass);
 			}
 		}
 	}

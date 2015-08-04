@@ -2,190 +2,85 @@
 html {
     height: 100%;
     font-family: 'Open Sans Condensed', sans-serif;
+    margin: 0;
 }
 
 body {
     height: 100%;
     font-family: 'Montserrat', sans-serif;
     font-size: 16px;
-}
-
-/* NAV */
-.NavBar {
-    /*background-color: #799198;*/ 
-    height: 4%;
-    width: 100%;
-    border-bottom: 1px solid #ddd;
-    background-color: #7c9ed9;
-}
-
-.NavBar .loginpanel {
-    float: right;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
-    padding-right: 15px;
-}
-
-.NavBar .loginpanel a {
-  color:  #ffa500;
-}
-
-.btn .btn-primary {
-  color: #ffa500;
-}
-
-.glyphicon:hover {
-  color: #ffa500;
-}
-
-.loginRegisterModal .loginRegisterModalTabs
-{
-    list-style: none;
-    display: inline-block;
-}
-
-.sectionheader {
-    width: 100%;
-    background-color: #eeeeff;
-    border-bottom: 1px solid #ddd;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-    padding: 0;
     margin: 0;
 }
-
-.sectiontitle {
-  padding: 5px 10px 5px 10px;
-  font-size: 14px;
+a {
+  text-decoration: none;
 }
 
-section {
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-  border: 1px solid #ddd;
-  background-color: #fff;
+ul {
+  list-style-type: none;
 }
 
-/* MAIN */
-main {
-    height: 100%;
-    padding: 10px;
-    border: 0;
+header, main{
+  display: flex;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  flex: 1 100%;
 }
 
-.button-round {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  position: absolute;
-  line-height: 25px;
-  background-color:#2980b9;
-  z-index:1;
-  border: none;
-  right: 25px;
-  bottom:-25px;
-  box-shadow: 1px 1px 1px black;
+header {
+  height: 10%;
+  background-color: #4a4444;
 }
 
-.button-round i {
-    color: #fff;
-    font: 30px Helvetica, Verdana, Tahoma;
-    height: 50px;
-    width: 50px;
-    display:table-cell;
-    text-align: center;
-    vertical-align: middle;
-}
-
-.button-round-xs {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  position: absolute;
-  line-height: 25px;
-  background-color:#2980b9;
-  z-index:1;
-  border: none;
-  right: 20px;
-  bottom: -13px;
-  box-shadow: 0 1px 4px rgba(0,0,0,.3);
-}
-
-.button-round-xs i {
-    color: #fff;
-    font: 15px Helvetica, Verdana, Tahoma;
-    height: 30px;
-    width: 30px;
-    display:table-cell;
-    text-align: center;
-    vertical-align: middle;
-}
-
-.input-xs-flat {
-    height: 22px;
-    padding: 0 5px;
-    font-size: 12px;
-    line-height: 1.5;
-    border: none;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.input-xxs-flat {
-    height: 15px;
-    padding: 0 2px;
-    font-size: 8px;
-    line-height: 1.5;
-    border: none;
-    border-bottom: .5px solid #e0e0e0;
-}
-
-.input-xs-flat:focus {
-    border-bottom: 2px solid steelblue;
-}
-
-.form-line {
-    vertical-align: middle;
-}
-
-input:focus {
-    outline: none;
-}
-
-.glyphicon:hover {
-  color: rgba(81, 203, 238, 1);
-}
-
-/* FORECAST */
-
-.forecast {
-    position: relative;
-    padding: 0;
-}
-
-.forecastdetails {
-    display: inline;
-}
-
-.forecastviewmode {
+header.loginpanel {
   float: right;
 }
 
-.forecastheader {
-    padding: 5px;
+main {
+  margin: 8px;
 }
 
-.graphloading {
-  height: 100%;
-}
-.graphcontainer {
-    height: 60%;
-    width: 100%;
-    top: 50px;
+/* NAV */
+
+#forecast {
+  flex: 3 0 0;
+  flex-direction: column;
 }
 
-.graphcontainer rect {
- }
+.forecast-controlbar *{
+  display: inline;
+  background-color: #f7f7f7;
+}
+
+#transactionlist {
+  flex: 1 0 0;
+  display: flex;
+  list-style-type: none;
+  flex-direction: column;
+}
+
+#transactionlist .transaction {
+  background-color: #f7f7f7;
+  border-left: 6px solid;
+  display: block;
+  margin: 5px;
+}
+
+#transactionlist .transactioncompact {
+  margin-left: 5px;
+  padding: 0.5rem 1.25rem 0.5rem 0.5rem; 
+}
+#transactionlist .payment{
+  border-color: #5cb85c;
+}
+
+#transactionlist .deduction{
+  border-color: #f53f3f;
+}
+
+#transactionlist .savings{
+  border-color: #f0ad4e;
+}
+
 
 .graphcontainer text {
     fill: black;
@@ -205,16 +100,21 @@ input:focus {
     shape-rendering: crispEdges;
 }
 
-.graphcontainer .balanceline {
-    fill: none;
-    stroke: steelblue;
-    stroke-width: 3px;
+.deduction {
+  fill: #f53f3f;
 }
-
-.graphcontainer .savingsline {
-    fill: none;
-    stroke: #f0ad4e;
-    stroke-width: 3px;
+.payment {
+  fill: #5cb85c;
+}
+.balanceline {
+  fill: none;
+  stroke: #0066FF;
+  stroke-width: 3px;
+}
+.savingsline {
+  fill: none;
+  stroke: #f0ad4e;
+  stroke-width: 3px;
 }
 
 .headlines {
@@ -266,180 +166,10 @@ input:focus {
 
 /* GRIDBYMONTH */
 
-.gridByMonth {
-  padding-top:10px;
-  overflow-x: scroll;
-  float: left;
-}
-.datagrid {
-  padding: 10px;
-  white-space: nowrap;
-}
 
-.datagrid td {
-  color:#0066cc;
-  font-weight: lighter;
-}
-
-.datagrid td, th {
-  text-align: center;
-}
-
-.datagrid tr :first-child {
-  font-weight: 600;
-  text-align: right;
-}
-
-.datagrid th {
-  font-weight: 600;
-}
  /* TRANSACTION LIST */
 
-.transactionlistcontainer {
-  padding: 0;
-}
 
-.transactionlist {
-    width: 100%;
-    position: relative;
-    float: right;
-    font-size: 10px;
-    padding-right: 0;
-    margin-bottom: 0;
-}
-
-.transactionlist .transaction .list-group-item{
-    border-bottom: 1px solid #ddd;
-    padding: 5px 15px;
-}
-
-.transactionlist .transactioneditor {
-  padding: 5px 0 5px 0;
-}
-
-.activetransaction {
-   color: #0066cc;
-   font-size: 12px;
-}
-
-.transactioncollapse {
-  float: left;
-  font-size: 40px;
-}
-
-.transactioncollapse:hover {
-  box-shadow: 0 1px 4px rgba(81, 203, 238, 1);
-  cursor: pointer;
-}
-
-.transactionlist .transaction:hover, .transactionvalue:hover {
-     box-shadow: 0 1px 4px rgba(81, 203, 238, 1);
-     background-color: #F9F9F9;
-}
-
-.transactionvalues .transactionValueheader {
-  font: bold 10px Helvetica, Verdana, Tahoma;
-}
-
-
-.transactionlist .transactioncompact {
-    padding: 2px;
-}
-
-.transactionlist .transactioncompact .transactiononeliner p{
-    display: inline;
-}
-
-.transactionlist .transactioncompact .progress{
-    height: 5px;
-    margin-bottom: 5px;
-}
-
-.transactionlist .payment {
-    background-color: #44cc44;
-}
-
-.transactionlist .deduction {
-    background-color: #f87878;
-}
-
-.transactionlist .transactiondetails .transactionexpanded{
-    height: 100%;
-}
-
-.transactionlist .transactiondetails .form-group{
-    margin-bottom: 5px;
-}
-
-/* Transaction list animations */
-.transactionexpanded.ng-hide-remove {
-   -webkit-transition: 1s linear all;
-   -moz-transition: 1s linear all;
-   -ms-transition: 1s linear all;
-   -o-transition: 1s linear all;
-   transition: 1s linear all;
-}
-
-.transactionexpanded.ng-hide-add {
-   -webkit-transition: 0ms linear all;
-   -moz-transition: 0ms linear all;
-   -ms-transition: 0ms linear all;
-   -o-transition: 0ms linear all;
-   transition: 0ms linear all;
-}
-/* du début de l'entrée */
-.transactionexpanded.ng-hide-remove,
-.transactionexpanded.ng-hide-add.ng-hide-add-active
- {
-   max-height: 0;
-   opacity: 0;
-}
-
-/* à la fin de l'entrée */
-.transactionexpanded.ng-hide-add,
-.transactionexpanded.ng-hide-remove.ng-hide-remove-active
-{
-   max-height: 999px;
-   opacity:1;
-}
-
-/* EFFECTS */
-
-@-webkit-keyframes hvr-pop {
-  50% {
-    -webkit-transform: scale(1.2);
-    transform: scale(1.2);
-  }
-}
-
-@keyframes hvr-pop {
-  50% {
-    -webkit-transform: scale(1.2);
-    transform: scale(1.2);
-  }
-}
-
-.hvr-pop {
-  display: inline-block;
-  vertical-align: middle;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  -moz-osx-font-smoothing: grayscale;
-}
-.hvr-pop:hover, .hvr-pop:focus, .hvr-pop:active {
-  cursor: pointer;
-  -webkit-animation-name: hvr-pop;
-  animation-name: hvr-pop;
-  -webkit-animation-duration: 0.5s;
-  animation-duration: 0.5s;
-  -webkit-animation-timing-function: linear;
-  animation-timing-function: linear;
-  -webkit-animation-iteration-count: 1;
-  animation-iteration-count: 1;
-}
 
 .spinner {
   margin: 100px auto;
