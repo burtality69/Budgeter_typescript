@@ -1,0 +1,29 @@
+{
+  "name": "Budgeter_typescript",
+  "version": "1.0.0",
+  "description": "A simple personal finance app",
+  "main": "Gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/burtality69/Budgeter_typescript.git"
+  },
+  "keywords": [
+    "Finance",
+    "Budgeting",
+    "typescript",
+    "angular"
+  ],
+  "author": "James R McCallum",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/burtality69/Budgeter_typescript/issues"
+  },
+  "homepage": "https://github.com/burtality69/Budgeter_typescript",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-sass": "^2.0.4"
+  }
+}

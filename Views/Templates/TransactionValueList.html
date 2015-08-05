@@ -1,21 +1,24 @@
-<ul class="list-group transactionvalues">
+<div>
     <!--TRANSACTION VALUES-->
-    <div ng-if="!tvListCtrl.listState.addEdit">
-        <li class="transactionValueheader list-group-item clearfix">
-            <div class="clearfix row">
-                <div class="col-xs-2">Starts</div>
-                <div class="col-xs-2">Occurs</div>
-                <div class="col-xs-1">Day</div>
-                <div class="col-xs-2">Ends</div>
-                <div class="col-xs-2">Value</div>
-                <i class="fa fa-plus hvr-pop" ng-if="!tvListCtrl.listState.addEdit" ng-click="transCtrl.addTV()"></i>
-            </div>
-        </li>
-        <!--TRANSACTION VALUES -->
-        <li transaction-value liststate="tvListCtrl.listState" ng-if="!tvListCtrl.listState.addEdit" ng-repeat="tv in ::tvListCtrl.transactionValues"
-        tv="tv"></li>
-        <li class="list-group-item clearfix" ng-click="tvListCtrl.addNew()">Add a new amount</li>
-    </div>
-    <li transaction-value-editor ng-if="tvListCtrl.listState.addEdit" class="transactionValueEditor" transaction-id="transCtrl.trans.ID"
-    list-state="tvListCtrl.listState"></li>
-</ul>
+    <table class="transactionvaluelist" ng-if="!tvListCtrl.listState.addEdit">
+        <thead class="transactionvalueheader tvlistrow">
+            <tr class="tvlistheader">
+                <td class="tvlistcell">Starts</td>
+                <td class="tvlistcell">Occurs</td>
+                <td class="tvlistcell">Day</td>
+                <td class="tvlistcell">Ends</td>
+                <td class="tvlistcell">Value</td>
+            </tr>
+        </thead>
+        <tbody>
+            <!--TRANSACTION VALUES -->
+            <tr transaction-value class="transactionvalue tvlistrow" liststate="tvListCtrl.listState" ng-if="!tvListCtrl.listState.addEdit"
+            ng-repeat="tv in ::tvListCtrl.transactionValues" tv="tv"></tr>
+            <tr>
+                <td class="transactionvalue actionbutton tvlistrow" ng-click="tvListCtrl.addNew()">Add another</td>
+            </tr>
+        </tbody>
+    </table>
+    <div transaction-value-editor class="transactionValueEditor tvlistitem" ng-if="tvListCtrl.listState.addEdit" transaction-id="transCtrl.trans.ID"
+    list-state="tvListCtrl.listState"></div>
+</div>

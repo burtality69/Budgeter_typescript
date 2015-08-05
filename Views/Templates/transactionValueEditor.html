@@ -1,22 +1,22 @@
-<div class="form-inline">
-    <div>
+<form class="form-small">
+    <div class="formfield">
         <label for="startdate">Start Date</label>
         <input class="input-xs-flat" type="date" data-ng-model="tvEditCtrl.tv.Start_date">
     </div>
-    <div>
+    <div class="formfield">
         <label for="startdate">Occurs</label>
         <select class="input-xs-flat" type="text" ng-options="freq.ID as freq.Description for freq in tvEditCtrl.frequencies"
         data-ng-model="tvEditCtrl.tv.FrequencyID"></select>
     </div>
-    <div>
+    <div class="formfield">
         <label for="day">On day</label>
         <input class="input-xs-flat" type="number" min=1 data-ng-model="tvEditCtrl.tv.Day">
     </div>
-    <div>
+    <div class="formfield">
         <label for="Value">Value</label>
         <input class="input-xs-flat" type="number" step=100 data-ng-model="tvEditCtrl.tv.Value">
     </div>
-    <div>
+    <div class="formfield">
         <label for="End_date">End date</label>
         <input class="input-xs-flat" type="date" data-ng-model="tvEditCtrl.tv.End_date">
     </div>
@@ -24,4 +24,4 @@
         <button class="btn btn-xs btn-danger" ng-click="tvEditCtrl.cancel()">Cancel</button>
         <button class="btn btn-xs btn-success" ng-click="tvEditCtrl.submit()">Save</button>
     </div>
-</div>
+</form>

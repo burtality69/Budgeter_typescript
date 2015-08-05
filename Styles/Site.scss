@@ -1,0 +1,145 @@
+
+$action:#6496c8;
+$green:#5cb85c;
+
+html {height: 100%;font-family: 'Open Sans Condensed', sans-serif;margin: 0;}
+
+body {height: 100%;font-size: 16px;margin: 0;}
+
+header, main{display: flex;-webkit-flex-direction: row;flex-direction: row;flex: 1 100%;}
+
+header {justify-content: flex-end; height: 10%;background-color: #4a4444; box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);
+  div {padding: 24px;}
+  .titlebar {flex: 4;}
+  .loginpanel {flex: 1;}
+}
+
+main {margin: 8px;}
+
+/*UI*********************************/
+a {text-decoration: none;}
+
+label{display:inline-block; width:60px;}
+
+button {color: $action; background: rgba(0,0,0,0); border: solid 1px $action;}
+
+button:active {top: 1px;outline: none; -webkit-box-shadow: none; box-shadow: none;}
+
+.form-small {margin-left:10px; margin-right: 10px; font-size: 11px;
+  input, select {width: 50%;}
+}
+
+.actionbutton {color: $action; font-weight: bold;}
+
+.actionbutton:hover {cursor: pointer;}
+
+.formfield {padding-bottom: 10px;}
+
+input, select {background-color: transparent; border: none; border-bottom: solid 1px #CECECE; border-radius: 0; outline: none;}
+
+input::selection {border-bottom: solid 1px $action};
+
+ul {list-style-type: none;}
+
+/* FORECAST *******************************************************************/
+
+#forecast { flex: 3 0 0; flex-direction: column;
+  .forecast-controlbar * { display: inline; }
+}
+
+/* TransactionList ***********************************************************/
+
+#transactionlist {flex: 1 0 0; display: flex; list-style-type: none; flex-direction: column;
+  .transaction {border-left: 6px solid; display: block; margin: 5px; box-shadow: 0 1px 1px rgba(0,0,0,.15);
+    .transactioncompact {margin-left: 5px; padding: 1rem 1rem 1rem 0.5rem;
+      .transactioncontrols {float:right;}
+    }
+    .transactionvaluelist {font-size: 10px;  padding: 0 10px 0 10px; width: 100%;
+        .tvlistcell {display: table-cell;}
+        .transactionvalue { border-bottom: solid .5px #CECECE; padding: 0 5px 0 5px;}
+    }
+  }
+  .payment{border-color: $green;}
+  .deduction{border-color: #f53f3f;}
+  .savings{border-color: #f0ad4e;}
+  .newitem{border-color: $action;}
+ 
+}
+
+
+.graphcontainer { box-shadow: 0 1px 1px rgba(0,0,0,.15);
+  text {fill: black;font: 10px sans-serif;text-anchor: end;}
+  .xaxis line, .xaxis path {fill: none; stroke: #CECECE; image-rendering: crispEdges;}
+  .yaxis line, .yaxis path {fill: none;stroke: #CECECE; image-rendering: crispEdges;}
+  .deduction {fill: #f53f3f;}
+  .payment {fill: $green;}
+  .balanceline {fill: none; stroke: #0066FF; stroke-width: 3px;}
+  .savingsline {fill: none; stroke: #f0ad4e; stroke-width: 3px;}
+}
+
+.headlines {display:flex;justify-content:space-between;padding-top: 10px;
+
+  .headline {padding-left: 15px; padding-right: 15px; padding-bottom: 10px; -webkit-align-content:center; align-content: center; -ms-align-content: center;
+    .headline .headlinename {font-size: small;font-weight: 100;}
+    .headline .headlinevalue {font-size: larger;font-weight: 600;}
+    .headline .headlineimage {width: 30%; font-size: xx-large;}
+    .savings {color: #f0ad4e!important;}
+    .balance {color: #0066FF!important;}
+    .spending {color: #f53f3f!important;}
+    .income {color: $green;}
+  }
+}
+/* GRIDBYMONTH */
+
+
+ /* TRANSACTION LIST */
+
+
+
+.spinner {
+  margin: 100px auto;
+  width: 32px;
+  height: 32px;
+  position: relative;
+}
+
+.cube1, .cube2 {background-color: #2980b9;width: 10px;height: 10px;position: absolute;top: 0;left: 0;
+
+  -webkit-animation: cubemove 1.8s infinite ease-in-out;
+  animation: cubemove 1.8s infinite ease-in-out;
+}
+
+.cube2 {
+  -webkit-animation-delay: -0.9s;
+  animation-delay: -0.9s;
+}
+
+@-webkit-keyframes cubemove {
+  25% { -webkit-transform: translateX(42px) rotate(-90deg) scale(0.5) }
+  50% { -webkit-transform: translateX(42px) translateY(42px) rotate(-180deg) }
+  75% { -webkit-transform: translateX(0px) translateY(42px) rotate(-270deg) scale(0.5) }
+  100% { -webkit-transform: rotate(-360deg) }
+}
+
+@keyframes cubemove {
+  25% {
+    transform: translateX(42px) rotate(-90deg) scale(0.5);
+    -webkit-transform: translateX(42px) rotate(-90deg) scale(0.5);
+  } 
+  50% {
+    transform: translateX(42px) translateY(42px) rotate(-179deg);
+    -webkit-transform: translateX(42px) translateY(42px) rotate(-179deg);
+  } 
+  50.1% {
+    transform: translateX(42px) translateY(42px) rotate(-180deg);
+    -webkit-transform: translateX(42px) translateY(42px) rotate(-180deg);
+  } 
+  75% {
+    transform: translateX(0px) translateY(42px) rotate(-270deg) scale(0.5);
+    -webkit-transform: translateX(0px) translateY(42px) rotate(-270deg) scale(0.5);
+  } 
+  100% {
+    transform: rotate(-360deg);
+    -webkit-transform: rotate(-360deg);
+  }
+}

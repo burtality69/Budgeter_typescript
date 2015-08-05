@@ -1,16 +1,12 @@
-<li class="transactionvalue list-group-item clearfix">
-	<div class="transactionValue clearfix row">
-		<div class="col-xs-2">{{::tvCtrl.tv.Start_date | date:"shortDate": "UTC"}}</div>
-		<div class="col-xs-2">{{::tvCtrl.tv.FrequencyDescription}}</div>
-		<div class="col-xs-1">{{::tvCtrl.tv.Day}}</div>
-		<div class="col-xs-2">{{::tvCtrl.tv.End_date | date:"shortDate": "UTC"}}</div>
-		<div class="col-xs-2">{{::tvCtrl.tv.Value | currency:"$" }}</div>
-		<div class="col-xs-1">
-			<i class="glyphicon glyphicon-pencil" ng-click="tvCtrl.edit()"></i>
-		</div>
-		<div class="col-xs-1">
-			<i class="glyphicon glyphicon-trash" ng-click="tvCtrl.delete()"></i>
-		</div>
+<tr class="transactionvalue tvlistitem">
+	<td class="tvlistcell">{{::tvCtrl.tv.Start_date | date:"shortDate": "UTC"}}</td>
+	<td class="tvlistcell">{{::tvCtrl.tv.FrequencyDescription}}</td>
+	<td class="tvlistcell">{{::tvCtrl.tv.Day}}</td>
+	<td class="tvlistcell">{{::tvCtrl.tv.End_date | date:"shortDate": "UTC"}}</td>
+	<td class="tvlistcell">{{::tvCtrl.tv.Value | currency:"$" }}</td>
+	<td class="actionbutton" ng-click="tvCtrl.edit()">edit</td>
+	<td class="actionbutton" ng-click="tvCtrl.delete()">delete</td>
+	<td>
 		<input type="checkbox" ng-model="tvCtrl.tv.include" ng-click="tvCtrl.toggleInclude()"></input>
-	</div>
-</li>
+	</td>
+</tr>

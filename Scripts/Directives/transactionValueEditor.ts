@@ -52,31 +52,32 @@ module Budgeter.Controllers {
 					.success(d=> {
 						this.notify({ message: 'Item created successfully', classes: 'alert-success' })
 					})
-					.error(e=> {
-						this.notify({ message: 'There was a problem submitting the item', classes: 'alert-danger' })
+					.error((e:Error)=> {
+						this.notify({ message: 'There was a problem submitting the item: ' + e.message, classes: 'alert-danger' })
 					});
 			} else {
 				this.transactionValueMgr.put(this.tv)
 					.success(d=> {
 						this.notify({ message: 'Item created successfully', classes: 'alert-success' })
 					})
-					.error(e=> {
-						this.notify({ message: 'There was a problem submitting the item', classes: 'alert-danger' })
+					.error((e:Error)=> {
+						this.notify({ message: 'There was a problem submitting the item: ' + e.message, classes: 'alert-danger' })
 					});
 			}
 		}
 		
 		cancel() {
 			this.listState.addEdit = false;
+			this.listState.tvToEdit = this.transactionValueMgr.getnewTransactionValue();
 		}
 		
 		delete() {
 			this.transactionValueMgr.delete(this.tv.ID)
-				.success(d=> {
+				.success(()=> {
 					this.notify({message: 'Item deleted successfully',classes: 'alert-success'})
 				})
-				.error(e=> {
-					this.notify({message: 'Error' + e ,classes: 'alert-danger'})
+				.error((e: Error)=> {
+					this.notify({message: 'Error' + e.message ,classes: 'alert-danger'})
 				})
 		}
 	}

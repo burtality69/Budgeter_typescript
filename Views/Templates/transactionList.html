@@ -1,20 +1,15 @@
 <ul class="transactionlist">
-	<li>
-		<span>Payments and deductions</span>
-	</li>
-	<transaction ng-repeat="t in tListCtrl.transactions" ng-show="tListCtrl.isVisible($index)" class="transaction"
-	tListState="tListCtrl.listState" index="$index" trans="t" deletefn="tListCtrl.delete"></transaction>
-	<div class="transaction list-group-item">
+	<span>Payments and deductions</span>
+	<transaction ng-repeat="t in tListCtrl.transactions" ng-show="tListCtrl.isVisible($index)" class="transaction" tListState="tListCtrl.listState"
+	index="$index" trans="t" deletefn="tListCtrl.delete"></transaction>
+	<div class="transaction newitem">
 		<div class="transactioncompact">
-			<div class="row">
-				<div class="col-sm-5">
-					<p style="font-style: italic;">Create new item</p>
-				</div>
-				<div class="col-sm-2">
-					<i ng-click="tListCtrl.toggleAddForm()" tooltip="Click to expand" tooltip-placement="left" ng-class="transEditCtrl.expanded ? 'glyphicon glyphicon-menu-up' : 'glyphicon glyphicon-menu-down'"></i>
-				</div>
+			<span>Create new item</span>
+			<div class="transactioncontrols">
+				<span class="actionbutton" ng-click="tListCtrl.toggleAddForm()">&ctdot;</span>
 			</div>
 		</div>
 	</div>
-	<transaction-editor class="transaction list-group-item clearfix" trans="tListCtrl.listState.transactionToEdit" ng-if="tListCtrl.listState.addMode" liststate="tListCtrl.listState" list="tListCtrl.transactions"></transaction-editor>
+	<transaction-editor class="transaction list-group-item clearfix" trans="tListCtrl.listState.transactionToEdit" ng-if="tListCtrl.listState.addMode"
+	liststate="tListCtrl.listState" list="tListCtrl.transactions"></transaction-editor>
 </ul>

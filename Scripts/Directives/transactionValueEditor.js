@@ -38,7 +38,7 @@ var Budgeter;
                         _this.notify({ message: 'Item created successfully', classes: 'alert-success' });
                     })
                         .error(function (e) {
-                        _this.notify({ message: 'There was a problem submitting the item', classes: 'alert-danger' });
+                        _this.notify({ message: 'There was a problem submitting the item: ' + e.message, classes: 'alert-danger' });
                     });
                 }
                 else {
@@ -47,21 +47,22 @@ var Budgeter;
                         _this.notify({ message: 'Item created successfully', classes: 'alert-success' });
                     })
                         .error(function (e) {
-                        _this.notify({ message: 'There was a problem submitting the item', classes: 'alert-danger' });
+                        _this.notify({ message: 'There was a problem submitting the item: ' + e.message, classes: 'alert-danger' });
                     });
                 }
             };
             transactionValueEditorCtrl.prototype.cancel = function () {
                 this.listState.addEdit = false;
+                this.listState.tvToEdit = this.transactionValueMgr.getnewTransactionValue();
             };
             transactionValueEditorCtrl.prototype.delete = function () {
                 var _this = this;
                 this.transactionValueMgr.delete(this.tv.ID)
-                    .success(function (d) {
+                    .success(function () {
                     _this.notify({ message: 'Item deleted successfully', classes: 'alert-success' });
                 })
                     .error(function (e) {
-                    _this.notify({ message: 'Error' + e, classes: 'alert-danger' });
+                    _this.notify({ message: 'Error' + e.message, classes: 'alert-danger' });
                 });
             };
             transactionValueEditorCtrl.$inject = ['transactionValueMgr', 'notify', '$rootScope', 'listOptionsDataSvc'];

@@ -1,24 +1,13 @@
 <div>
     <!-- COMPACT TRANSACTION VIEW-->
     <div class="transactioncompact" ng-class="{'activetransaction': transCtrl.expanded}">
-        <div class="row">
-            <div class="col-sm-5">
-                <p>{{::transCtrl.trans.Name}}</p>
-            </div>
-            <div class="col-sm-2">
-                <i ng-click="transCtrl.expand()" tooltip="Click to expand" tooltip-placement="left" ng-class="transCtrl.expanded ? 'glyphicon glyphicon-menu-up' : 'glyphicon glyphicon-menu-down'"></i>
-            </div>
-            <div class="col-sm-5">
-                <div class="transactioncontrols" style="float: right;">
-                        <span class="glyphicon glyphicon-pencil" style="padding: 5px;" ng-show="!trans.editable" ng-click="transCtrl.editToggle()"></span>
-                        <span class="glyphicon glyphicon-remove" style="padding: 5px;" ng-show="!trans.editable" ng-click="transCtrl.delete($index)"></span>
-                </div>
-            </div>
+        <span>{{::transCtrl.trans.Name}}</span>
+        <div class="transactioncontrols">
+            <span class="actionbutton" ng-click="transCtrl.expand()">&ctdot;</span>
         </div>
     </div>
     <!--EXPANDED TRANSACTION VIEW-->
     <div class="transactionexpanded" ng-if="transCtrl.expanded" style="padding:2px">
-        <span class="label">{{::transCtrl.trans.TypeDescription}}</span>
         <!--TRANSACTION VALUES-->
         <trans-values-list transaction-values="transCtrl.trans.TransactionValues"></trans-values-list>
     </div>

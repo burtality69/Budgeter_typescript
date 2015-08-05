@@ -47,9 +47,10 @@
     <body data-ng-app="budgeter">
         <!--Header-->
         <header class="NavBar clearfix" ng-show="!loggedIn()" data-ng-controller="AuthController as authCtrl" />
+        <div class="titlebar"></div>
         <div class="loginpanel">
-            <a href="" ng-show="!authCtrl.loggedIn()" ng-click="authCtrl.openModal()">Sign In</a>
-            <a href="" ng-show="authCtrl.loggedIn()" ng-click="authCtrl.logOut()">Sign Out</a>
+            <button ng-show="!authCtrl.loggedIn()" ng-click="authCtrl.openModal()">Sign In</button>
+            <button ng-show="authCtrl.loggedIn()" ng-click="authCtrl.logOut()">Sign Out</button>
         </div>
         </header>
         <main>
