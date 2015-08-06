@@ -14,8 +14,7 @@ module Budgeter.Controllers {
 		listState: Budgeter.Controllers.ITransValueListState;
 		transactionValues: Array<ITransactionValueClientModel>
 		
-		constructor($scope: ITransactionValueListScope ) {
-			this.listState = {tvToEdit: null, addEdit: false}
+		constructor() {
 		}
 		
 		addNew() {
@@ -36,7 +35,7 @@ module Budgeter.Directives {
 			controller: Budgeter.Controllers.transValueListController,
 			bindToController: true,
 			controllerAs: 'tvListCtrl',
-			scope: {transactionValues:'='},
+			scope: {transactionValues:'=', listState: '='},
 		}
 	}
 }

@@ -14,7 +14,7 @@ var Budgeter;
                 }
                 else {
                     this.tv = this.transactionValueMgr.getnewTransactionValue();
-                    this.tv.ID = this.transactionID;
+                    this.tv.TransactionID = this.listState.tID;
                     this.newitem = true;
                 }
                 this.getfrequencies();
@@ -53,7 +53,7 @@ var Budgeter;
             };
             transactionValueEditorCtrl.prototype.cancel = function () {
                 this.listState.addEdit = false;
-                this.listState.tvToEdit = this.transactionValueMgr.getnewTransactionValue();
+                this.listState.tvToEdit = undefined;
             };
             transactionValueEditorCtrl.prototype.delete = function () {
                 var _this = this;

@@ -23,12 +23,12 @@ module Budgeter.Controllers {
 			this.notify = notify; 
 			this.transactionValueMgr = transactionValueMgr;
 			
-			if (this.listState.tvToEdit != undefined) {
+			if (this.listState.tvToEdit!= undefined) {
 				this.tv = this.listState.tvToEdit;
 				this.newitem = false;
 			} else {
 				this.tv = this.transactionValueMgr.getnewTransactionValue();
-				this.tv.ID = this.transactionID;
+				this.tv.TransactionID = this.listState.tID;
 				this.newitem = true;
 			}
 			
@@ -68,7 +68,7 @@ module Budgeter.Controllers {
 		
 		cancel() {
 			this.listState.addEdit = false;
-			this.listState.tvToEdit = this.transactionValueMgr.getnewTransactionValue();
+			this.listState.tvToEdit = undefined;
 		}
 		
 		delete() {

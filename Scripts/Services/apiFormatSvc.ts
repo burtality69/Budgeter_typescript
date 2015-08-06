@@ -17,6 +17,7 @@ module Budgeter.Services{
 				TransactionValues: t.TransactionValues.map(tv => {
 					return this.tvtoServerFmt(tv);
 				})
+				
 			}
 		}
 		
@@ -33,7 +34,7 @@ module Budgeter.Services{
 			}
 		}
 		
-		tvtoServerFmt(t: ITransactionValueClientModel) {
+		tvtoServerFmt(t: ITransactionValueClientModel): ITransactionValueServerModel {
 			return {
 				ID: t.ID,
 				TransactionID: t.TransactionID,
@@ -42,7 +43,8 @@ module Budgeter.Services{
 				FrequencyDescription: t.FrequencyDescription,
 				Day: t.Day,
 				Start_date: Utilities.stringifyDate(t.Start_date),
-				End_date: Utilities.stringifyDate(t.End_date)
+				End_date: Utilities.stringifyDate(t.End_date),
+				include: t.include
 			}
 		}
 		
@@ -55,7 +57,8 @@ module Budgeter.Services{
 				FrequencyDescription: t.FrequencyDescription,
 				Day: t.Day,
 				Start_date: Utilities.getUTCDate(t.Start_date),
-				End_date: Utilities.getUTCDate(t.End_date)
+				End_date: Utilities.getUTCDate(t.End_date),
+				include: true
 			}
 		}
 	}

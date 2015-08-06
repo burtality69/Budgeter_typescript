@@ -34,6 +34,7 @@ module Budgeter.Controllers {
 	export interface ITransValueListState {
 		tvToEdit: ITransactionValueClientModel;
 		addEdit: boolean; 
+		tID: number;
 	}
 	
 	export class transactionController {
@@ -52,7 +53,7 @@ module Budgeter.Controllers {
 		list: Array<ITransactionModel>
 					
 		constructor(transactionMgr: Budgeter.Services.transactionMgr, notify: ng.cgNotify.INotifyService) {
-			this.tvListState = {addEdit: false, tvToEdit: null};
+			this.tvListState = {addEdit: false, tvToEdit: null, tID: this.trans.ID};
 			this.notify = notify;
 			this.transactionMgr = transactionMgr;
 		}

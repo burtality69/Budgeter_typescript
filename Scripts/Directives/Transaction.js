@@ -29,7 +29,7 @@ var Budgeter;
     (function (Controllers) {
         var transactionController = (function () {
             function transactionController(transactionMgr, notify) {
-                this.tvListState = { addEdit: false, tvToEdit: null };
+                this.tvListState = { addEdit: false, tvToEdit: null, tID: this.trans.ID };
                 this.notify = notify;
                 this.transactionMgr = transactionMgr;
             }

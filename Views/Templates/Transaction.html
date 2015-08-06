@@ -9,6 +9,6 @@
     <!--EXPANDED TRANSACTION VIEW-->
     <div class="transactionexpanded" ng-if="transCtrl.expanded" style="padding:2px">
         <!--TRANSACTION VALUES-->
-        <trans-values-list transaction-values="transCtrl.trans.TransactionValues"></trans-values-list>
+        <trans-values-list list-state="transCtrl.tvListState" transaction-values="transCtrl.trans.TransactionValues"></trans-values-list>
     </div>
 </div>

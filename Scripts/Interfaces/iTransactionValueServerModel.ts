@@ -7,6 +7,7 @@ interface ITransactionValueServerModel {
 	FrequencyDescription: string,
 	Day: number,
 	Start_date: string;
-	End_date: string; 
+	End_date: string;
+	include: boolean; 
 }
 

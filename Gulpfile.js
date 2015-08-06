@@ -1,11 +1,13 @@
 var gulp = require('gulp');
 var typescript = require('gulp-tsc');
 var sass = require('gulp-sass');
+var tsconfig = require('./tsconfig.json');
  
 gulp.task('compile', function(){
-  gulp.src(['src/**/*.*'])
-    .pipe(typescript())
-    .pipe(gulp.dest('dist/'))
+  gulp.src(['all.d.ts'])
+    .pipe(typescript(
+        {target: 'es5'}))
+    .pipe(gulp.dest('./'))
 });
 
 gulp.task('styles', function() {
@@ -15,7 +17,7 @@ gulp.task('styles', function() {
 });
 
 gulp.task('watch', function () {
-    gulp.watch('scripts/**/*.*', ['compile']);
+    //gulp.watch('all.d.ts', ['compile']);
     gulp.watch('styles/*.scss',['styles']);
 });
 

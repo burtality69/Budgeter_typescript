@@ -4,8 +4,7 @@ var Budgeter;
     var Controllers;
     (function (Controllers) {
         var transValueListController = (function () {
-            function transValueListController($scope) {
-                this.listState = { tvToEdit: null, addEdit: false };
+            function transValueListController() {
             }
             transValueListController.prototype.addNew = function () {
                 this.listState.addEdit = true;
@@ -29,7 +28,7 @@ var Budgeter;
                 controller: Budgeter.Controllers.transValueListController,
                 bindToController: true,
                 controllerAs: 'tvListCtrl',
-                scope: { transactionValues: '=' },
+                scope: { transactionValues: '=', listState: '=' },
             };
         }
         Directives.transValuesList = transValuesList;
