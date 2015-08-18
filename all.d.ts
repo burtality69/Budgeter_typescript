@@ -4,9 +4,6 @@
 ///<reference path="./typings/d3.d.ts"/>
 ///<reference path="./typings/angular-notify.d.ts"/>
 
-// APP 
-///<reference path="./scripts/Budgeter.ts"/>
-
 //UTILITIES 
 ///<reference path="./scripts/Utilities.ts"/>
 
@@ -48,3 +45,5 @@
 ///<reference path="./scripts/interfaces/ITransactionModel.ts"/>
 ///<reference path="./scripts/interfaces/ITransactionServerModel.ts"/>
 
+// APP 
+///<reference path="./scripts/Budgeter.ts"/>

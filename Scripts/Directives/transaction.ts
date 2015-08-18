@@ -10,7 +10,8 @@ module Budgeter.Directives {
 			require: '^transactionList',
 			bindToController: true,
 			controllerAs: 'transCtrl',
-			scope: { trans: '=', tliststate: '=', index: '=', deletefn: '&', list:'='},
+			//scope: true,
+			//scope: { trans: '=', tliststate: '=', index: '=', deletefn: '&', list:'='},
 			controller: Budgeter.Controllers.transactionController,
 			replace: true,
 			link: function(scope: Budgeter.Controllers.ITransactionScope, el: ng.IAugmentedJQuery,
@@ -29,6 +30,7 @@ module Budgeter.Controllers {
 	
 	export interface ITransactionScope extends ng.IScope {
 		transCtrl: Budgeter.Controllers.transactionController
+		t: ITransactionModel;
 	}
 	
 	export interface ITransValueListState {
@@ -39,7 +41,7 @@ module Budgeter.Controllers {
 	
 	export class transactionController {
 		
-		static $inject = ['transactionMgr','notify'];
+		static $inject = ['$scope','transactionMgr','notify'];
 		
 		trans: ITransactionModel;
 		tliststate: Budgeter.Controllers.IListState;
@@ -48,11 +50,11 @@ module Budgeter.Controllers {
 		index: number;
 		expanded: boolean; 
 		tlist: transactionListController;
-		transactionMgr: Budgeter.Services.transactionMgr; 
-		notify: ng.cgNotify.INotifyService;
 		list: Array<ITransactionModel>
 					
-		constructor(transactionMgr: Budgeter.Services.transactionMgr, notify: ng.cgNotify.INotifyService) {
+		constructor( $scope: ITransactionScope, public transactionMgr: Budgeter.Services.transactionMgr, public notify: ng.cgNotify.INotifyService) {
+			$scope.transCtrl = this;
+			this.trans = $scope.t;
 			this.tvListState = {addEdit: false, tvToEdit: null, tID: this.trans.ID};
 			this.notify = notify;
 			this.transactionMgr = transactionMgr;

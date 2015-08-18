@@ -1,7 +1,8 @@
 {
 	"compilerOptions": {
 		"module" : "amd",
-		"target" : "ES5"
+		"target" : "ES5",
+		"out" : "./release/app.js"
 	},
 	"files": [
 		"./all.d.ts"

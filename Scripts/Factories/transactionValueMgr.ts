@@ -71,7 +71,8 @@ module Budgeter.Services {
 				FrequencyDescription: undefined,
 				Day: undefined,
 				Start_date: undefined,
-				End_date: undefined
+				End_date: undefined,
+				include: true
 			}
 		}
 	}

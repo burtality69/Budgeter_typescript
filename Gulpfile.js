@@ -7,7 +7,7 @@ gulp.task('compile', function(){
   gulp.src(['all.d.ts'])
     .pipe(typescript(
         {target: 'es5'}))
-    .pipe(gulp.dest('./'))
+    .pipe(gulp.dest('./release/app.js'))
 });
 
 gulp.task('styles', function() {
@@ -17,7 +17,7 @@ gulp.task('styles', function() {
 });
 
 gulp.task('watch', function () {
-    //gulp.watch('all.d.ts', ['compile']);
+    gulp.watch('all.d.ts', ['compile']);
     gulp.watch('styles/*.scss',['styles']);
 });
 
