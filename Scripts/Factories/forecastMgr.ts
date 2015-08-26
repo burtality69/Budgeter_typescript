@@ -1,43 +1,69 @@
 ///<reference path="../../all.d.ts"/>
 
 module Budgeter.Services {
-
+	
+	interface IForecastModel {
+		transactions: Array<IForecastRowModel>;
+		headlines: IBudgetHeadLines
+	}
+	
 	export class forecastMgr {
 
-		static $inject = ['$http', 'sessionService', 'forecastParamSvc'];
+		static $inject = ['$http', 'sessionService', 'forecastParamSvc','$q','apiFormatSvc'];
 
-		public http: ng.IHttpService;
 		public config: ng.IRequestConfig;
-		public forecastParams: forecastParamSvc
-		public sessionSrv: Budgeter.Services.sessionService;
 
-		constructor($http: ng.IHttpService, sessionService: Budgeter.Services.sessionService,
-			forecastParamSvc: Budgeter.Services.forecastParamSvc) {
+		constructor(public $http: ng.IHttpService, public sessionService: Budgeter.Services.sessionService,
+			public forecastParamSvc: Budgeter.Services.forecastParamSvc, public $q: ng.IQService, 
+			public apiFormatSvc: apiFormatSvc) {
 
-			this.http = $http;
-			this.sessionSrv = sessionService;
-			this.forecastParams = forecastParamSvc
 			this.config = {
 				method: 'GET',
-				url: this.sessionSrv.apiURL + '/api/Forecast',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': 'Bearer ' + this.sessionSrv.Token
-				},
-				transformResponse: function(data) {
-					var dat = JSON.parse(data);
-					var ret = [];
-					Object.keys(dat).forEach(p=>{
-						ret.push(dat[p]); 
-					})
-					return ret;
-				}
+				url: this.sessionService.apiURL + '/api/Forecast',
+				headers: this.sessionService.httpGetHeaders,
+				transformResponse: (data)=> {return Object.keys(JSON.parse(data)).map(p=>{return data[p]})}
 			}
 		}
-
-		getForecast(): ng.IHttpPromise<any> {
-			this.config.params = this.forecastParams.apiParams;
-			return this.http(this.config)
+		
+		/** Return a promise of forecast model {transactions[], headlines} */
+		getForecast(): ng.IPromise<IForecastModel> {
+			var p = this.$q.defer()
+			var ret: IForecastModel;
+			this.config.params = this.forecastParamSvc.apiParams;
+			
+			this.$http(this.config)
+				.then((data: Array<IForecastRowServerModel>)=>{
+					// Convert the rowmodels  
+					ret.transactions = data.map(f => 
+						this.apiFormatSvc.forecastRowModelToClientFormat(f)
+					);
+					
+					ret.headlines = this.rollupHeadlines(data);
+					
+					p.resolve(ret);
+				}) 
+				
+				.catch(error=>{
+					p.reject(error)
+				})
+				
+				return p.promise;
+		}
+		
+		/** Takes a forecast and summarises it into headlines  */
+		private rollupHeadlines(data: Array<any>): IBudgetHeadLines {
+			var lastrow = data[data.length -1];
+			var headlines: IBudgetHeadLines = {balance:0,savings:0,incoming:0,outgoing:0}
+			
+			for (var i = 0; i < data.length; i++) {
+						headlines.incoming += Math.abs(data[i].total_payments);
+						headlines.outgoing += data[i].total_deductions;
+			}
+			
+			headlines.balance = lastrow.balance;
+			headlines.savings = lastrow.savings;
+			
+			return headlines;
 		}
 	}
 }

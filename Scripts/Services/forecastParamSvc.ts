@@ -5,9 +5,9 @@ module Budgeter.Services{
 	export class forecastParamSvc {
 		private _params: IForecastParams;
 		
-		constructor() {
+		constructor(public apiFormatSvc: Budgeter.Services.apiFormatSvc) {
 			var s: Date = new Date();
-            var e: Date = Budgeter.Utilities.lastDay(s, 3);
+            var e: Date = this.apiFormatSvc.lastDay(s, 3);
 			this._params = {startDate:s, endDate: e, startBal: 0};
 		}
 		
@@ -20,8 +20,8 @@ module Budgeter.Services{
 		}
 		
 		get apiParams(){
-			return {startdate: Budgeter.Utilities.stringifyDate(this.startDate),
-					enddate: Budgeter.Utilities.stringifyDate(this.endDate),
+			return {startdate: this.apiFormatSvc.stringifyDate(this.startDate),
+					enddate: this.apiFormatSvc.stringifyDate(this.endDate),
 					startbal: this.startbal
 				}
 		}

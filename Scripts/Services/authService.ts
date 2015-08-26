@@ -2,7 +2,7 @@
 
 module Budgeter.Services {
 	
-	export class authFactory {
+	export class authSvc {
 		
 		static $inject = ['$http','sessionService'];
 		

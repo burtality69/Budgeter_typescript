@@ -1,4 +1,4 @@
-/// <reference path="../../typings/angularjs/angular.d.ts"/>
+
 ///<reference path="../../all.d.ts"/>"
 budgeterDirectives.directive('gridByMonth',['budgetMgr','clsBudgetModel','$filter','forecastParams',
 function(budgetMgr,clsBudgetModel,$filter,forecastParams) {

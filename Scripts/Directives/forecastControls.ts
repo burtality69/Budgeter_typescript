@@ -9,7 +9,6 @@ module Budgeter.Directives {
 			controllerAs: 'fCtrl',
 			transclude: true,
 			scope: {}
-			
 		};
 	};
 }
@@ -20,13 +19,13 @@ module Budgeter.Controllers {
         forecastview: string;
         mthOffset: number;
         forecastParams: IForecastParams;
-        parametersVisible: boolean;
-        scope: ng.IScope;
+        parametersVisible: boolean;          
         newItemName: string;
 
-        static $inject = ['$scope','forecastParamSvc'];
-        constructor($scope: ng.IScope, paramSvc: Budgeter.Services.forecastParamSvc) {
-            this.scope = $scope;
+        static $inject = ['$rootScope','forecastParamSvc','apiFormatSvc'];
+        
+        constructor(public $rootScope: ng.IRootScopeService, paramSvc: Budgeter.Services.forecastParamSvc
+            ,public apiFormatSvc: Budgeter.Services.apiFormatSvc) {
             this.parametersVisible = true;
             this.forecastview = 'graph';
             this.forecastParams = paramSvc.params;
@@ -34,11 +33,11 @@ module Budgeter.Controllers {
         
         /** advances the view date forward 1 month */
         mthFwd(): void {
-            this.forecastParams.endDate = Budgeter.Utilities.lastDay(this.forecastParams.endDate, +1);
+            this.forecastParams.endDate = this.apiFormatSvc.lastDay(this.forecastParams.endDate, +1);
         }
         /** steps the view date back 1 month */
         mthBk(): void {
-            this.forecastParams.endDate = Budgeter.Utilities.lastDay(this.forecastParams.endDate, -1);
+            this.forecastParams.endDate = this.apiFormatSvc.lastDay(this.forecastParams.endDate, -1);
         }
 
         showParameters(): void {
@@ -46,7 +45,7 @@ module Budgeter.Controllers {
         }
 
         refresh(): void {
-            this.scope.$broadcast('refresh');
+            this.$rootScope.$emit('refresh');
         }
 
     }

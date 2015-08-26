@@ -1,33 +1,11 @@
-///<reference path="../all.d.ts"/>
-var Budgeter;
-(function (Budgeter) {
-    var Utilities;
-    (function (Utilities) {
-        /** takes a date and a month number to offset */
-        function lastDay(date, offset) {
-            return new Date(date.getFullYear(), (date.getMonth() + 1) + offset, 0);
-        }
-        Utilities.lastDay = lastDay;
-        ;
-        function getUTCDate(indate) {
-            var p = new Date(indate);
-            return new Date(p.getUTCFullYear(), p.getUTCMonth(), p.getUTCDate(), p.getUTCHours(), p.getUTCMinutes(), p.getUTCSeconds());
-        }
-        Utilities.getUTCDate = getUTCDate;
-        function stringifyDate(d) {
-            return d.toLocaleDateString();
-        }
-        Utilities.stringifyDate = stringifyDate;
-    })(Utilities = Budgeter.Utilities || (Budgeter.Utilities = {}));
-})(Budgeter || (Budgeter = {}));
 ///<reference path="../../all.d.ts"/>
 var Budgeter;
 (function (Budgeter) {
     var Controllers;
     (function (Controllers) {
         var AuthController = (function () {
-            function AuthController(authFactory, sessionService, modal) {
-                this.authFactory = authFactory;
+            function AuthController(authSvc, sessionService, modal) {
+                this.authSvc = authSvc;
                 this.sessionService = sessionService;
                 this.$modal = modal;
             }
@@ -51,13 +29,13 @@ var Budgeter;
         Controllers.AuthController = AuthController;
         ;
         var LoginModalController = (function () {
-            function LoginModalController(authFactory, sessionService, modalinstance, $rootScope) {
+            function LoginModalController(authSvc, sessionService, modalinstance, $rootScope) {
+                this.authSvc = authSvc;
                 this.tabs = [
                     { Header: "Log in", title: 'Login', url: 'Login.html' },
                     { Header: "Create an account", title: 'Register', url: 'Register.html' }
                 ];
                 this.$rootscope = $rootScope;
-                this.authFactory = authFactory;
                 this.sessionService = sessionService;
                 this.$modalInstance = modalinstance;
                 this.loginForm = { username: '', password: '', errorMessage: '' };
@@ -67,18 +45,18 @@ var Budgeter;
             /** hit the token endpoint, store the access token in cookies */
             LoginModalController.prototype.login = function () {
                 var _this = this;
-                this.authFactory.login(this.loginForm)
-                    .success(function (response) {
+                this.authSvc.login(this.loginForm)
+                    .then(function (response) {
                     _this.sessionService.Token = response.access_token;
                     _this.$modalInstance.close();
                     _this.$rootscope.$broadcast('redrawChart');
                 })
-                    .error(function (err) {
+                    .catch(function (err) {
                     console.log(err.message);
                 });
             };
             LoginModalController.prototype.register = function (registerForm) {
-                this.authFactory.register(this.registerForm)
+                this.authSvc.register(this.registerForm)
                     .then(function (success) { return console.log(success); });
             };
             LoginModalController.prototype.onClickTab = function (tab) {
@@ -87,7 +65,7 @@ var Budgeter;
             LoginModalController.prototype.isActiveTab = function (tabUrl) {
                 return tabUrl === this.currentTab;
             };
-            LoginModalController.$inject = ['authFactory', 'sessionService', '$modalInstance', '$rootScope'];
+            LoginModalController.$inject = ['authSvc', 'sessionService', '$modalInstance', '$rootScope'];
             return LoginModalController;
         })();
         Controllers.LoginModalController = LoginModalController;
@@ -100,26 +78,27 @@ var Budgeter;
     (function (Services) {
         var sessionService = (function () {
             function sessionService($cookies) {
-                this.cookies = $cookies;
+                this.$cookies = $cookies;
                 this._apiURl = 'http://budgeter.azurewebsites.net';
                 //this._apiURl = 'http://localhost:52243/'
             }
             Object.defineProperty(sessionService.prototype, "Token", {
                 get: function () {
-                    if (!this.cookies.get('authToken')) {
+                    if (!this.$cookies.get('authToken')) {
                         return undefined;
                     }
-                    return this.cookies.get('authToken');
+                    return this.$cookies.get('authToken');
                 },
                 set: function (token) {
-                    this.cookies.put('authToken', token);
+                    this.$cookies.put('authToken', token);
                 },
                 enumerable: true,
                 configurable: true
             });
             ;
+            /**Delete the current session, purge cookies */
             sessionService.prototype.destroySession = function () {
-                this.cookies.remove('authToken');
+                this.$cookies.remove('authToken');
             };
             Object.defineProperty(sessionService.prototype, "apiURL", {
                 get: function () {
@@ -154,9 +133,10 @@ var Budgeter;
     var Services;
     (function (Services) {
         var forecastParamSvc = (function () {
-            function forecastParamSvc() {
+            function forecastParamSvc(apiFormatSvc) {
+                this.apiFormatSvc = apiFormatSvc;
                 var s = new Date();
-                var e = Budgeter.Utilities.lastDay(s, 3);
+                var e = this.apiFormatSvc.lastDay(s, 3);
                 this._params = { startDate: s, endDate: e, startBal: 0 };
             }
             Object.defineProperty(forecastParamSvc.prototype, "params", {
@@ -171,8 +151,8 @@ var Budgeter;
             });
             Object.defineProperty(forecastParamSvc.prototype, "apiParams", {
                 get: function () {
-                    return { startdate: Budgeter.Utilities.stringifyDate(this.startDate),
-                        enddate: Budgeter.Utilities.stringifyDate(this.endDate),
+                    return { startdate: this.apiFormatSvc.stringifyDate(this.startDate),
+                        enddate: this.apiFormatSvc.stringifyDate(this.endDate),
                         startbal: this.startbal
                     };
                 },
@@ -221,9 +201,12 @@ var Budgeter;
     (function (Services) {
         var transactionMgr = (function () {
             function transactionMgr($http, sessionService, apiFormatSvc) {
-                this.http = $http;
+                this.$http = $http;
+                this.sessionService = sessionService;
+                this.apiFormatSvc = apiFormatSvc;
+                this.$http = $http;
                 this.url = sessionService.apiURL + '/api/transactions';
-                this.formatter = apiFormatSvc;
+                this.apiFormatSvc = apiFormatSvc;
                 this.sessionService = sessionService;
             }
             transactionMgr.prototype.get = function () {
@@ -232,7 +215,7 @@ var Budgeter;
                     url: this.url,
                     headers: this.sessionService.httpGetHeaders
                 };
-                return this.http(config);
+                return this.$http(config);
             };
             /**Post a single transaction model */
             transactionMgr.prototype.post = function (t) {
@@ -240,9 +223,9 @@ var Budgeter;
                     method: 'POST',
                     url: this.url,
                     headers: this.sessionService.httpGetHeaders,
-                    data: this.formatter.transtoServerFmt(t)
+                    data: this.apiFormatSvc.transtoServerFmt(t)
                 };
-                return this.http(config);
+                return this.$http(config);
             };
             /**Update an existing transaction model */
             transactionMgr.prototype.put = function (t) {
@@ -250,9 +233,9 @@ var Budgeter;
                     method: 'PUT',
                     url: this.url + '/' + t.ID,
                     headers: this.sessionService.httpGetHeaders,
-                    data: this.formatter.transtoServerFmt(t)
+                    data: this.apiFormatSvc.transtoServerFmt(t)
                 };
-                return this.http(config);
+                return this.$http(config);
             };
             transactionMgr.prototype.delete = function (ID) {
                 var config = {
@@ -260,7 +243,7 @@ var Budgeter;
                     url: this.url + '/' + ID,
                     headers: this.sessionService.httpGetHeaders
                 };
-                return this.http(config);
+                return this.$http(config);
             };
             transactionMgr.prototype.newBlankTrans = function () {
                 return {
@@ -348,12 +331,12 @@ var Budgeter;
 (function (Budgeter) {
     var Services;
     (function (Services) {
-        var authFactory = (function () {
-            function authFactory($http, sessionService) {
+        var authSvc = (function () {
+            function authSvc($http, sessionService) {
                 this.http = $http;
                 this.sessionSrv = sessionService;
             }
-            authFactory.prototype.login = function (loginForm) {
+            authSvc.prototype.login = function (loginForm) {
                 var config = {
                     method: 'POST',
                     transformRequest: function (obj) {
@@ -368,7 +351,7 @@ var Budgeter;
                 };
                 return this.http(config);
             };
-            authFactory.prototype.register = function (regForm) {
+            authSvc.prototype.register = function (regForm) {
                 var config = {
                     method: 'POST',
                     url: this.sessionSrv.apiURL + '/api/Account/register',
@@ -377,10 +360,10 @@ var Budgeter;
                 };
                 return this.http(config);
             };
-            authFactory.$inject = ['$http', 'sessionService'];
-            return authFactory;
+            authSvc.$inject = ['$http', 'sessionService'];
+            return authSvc;
         })();
-        Services.authFactory = authFactory;
+        Services.authSvc = authSvc;
     })(Services = Budgeter.Services || (Budgeter.Services = {}));
 })(Budgeter || (Budgeter = {}));
 ///<reference path="../../all.d.ts"/>
@@ -389,32 +372,52 @@ var Budgeter;
     var Services;
     (function (Services) {
         var forecastMgr = (function () {
-            function forecastMgr($http, sessionService, forecastParamSvc) {
-                this.http = $http;
-                this.sessionSrv = sessionService;
-                this.forecastParams = forecastParamSvc;
+            function forecastMgr($http, sessionService, forecastParamSvc, $q, apiFormatSvc) {
+                this.$http = $http;
+                this.sessionService = sessionService;
+                this.forecastParamSvc = forecastParamSvc;
+                this.$q = $q;
+                this.apiFormatSvc = apiFormatSvc;
                 this.config = {
                     method: 'GET',
-                    url: this.sessionSrv.apiURL + '/api/Forecast',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + this.sessionSrv.Token
-                    },
-                    transformResponse: function (data) {
-                        var dat = JSON.parse(data);
-                        var ret = [];
-                        Object.keys(dat).forEach(function (p) {
-                            ret.push(dat[p]);
-                        });
-                        return ret;
-                    }
+                    url: this.sessionService.apiURL + '/api/Forecast',
+                    headers: this.sessionService.httpGetHeaders,
+                    transformResponse: function (data) { return Object.keys(JSON.parse(data)).map(function (p) { return data[p]; }); }
                 };
             }
+            /** Return a promise of forecast model {transactions[], headlines} */
             forecastMgr.prototype.getForecast = function () {
-                this.config.params = this.forecastParams.apiParams;
-                return this.http(this.config);
+                var _this = this;
+                var p = this.$q.defer();
+                var ret;
+                this.config.params = this.forecastParamSvc.apiParams;
+                this.$http(this.config)
+                    .then(function (data) {
+                    // Convert the rowmodels  
+                    ret.transactions = data.map(function (f) {
+                        return _this.apiFormatSvc.forecastRowModelToClientFormat(f);
+                    });
+                    ret.headlines = _this.rollupHeadlines(data);
+                    p.resolve(ret);
+                })
+                    .catch(function (error) {
+                    p.reject(error);
+                });
+                return p.promise;
             };
-            forecastMgr.$inject = ['$http', 'sessionService', 'forecastParamSvc'];
+            /** Takes a forecast and summarises it into headlines  */
+            forecastMgr.prototype.rollupHeadlines = function (data) {
+                var lastrow = data[data.length - 1];
+                var headlines = { balance: 0, savings: 0, incoming: 0, outgoing: 0 };
+                for (var i = 0; i < data.length; i++) {
+                    headlines.incoming += Math.abs(data[i].total_payments);
+                    headlines.outgoing += data[i].total_deductions;
+                }
+                headlines.balance = lastrow.balance;
+                headlines.savings = lastrow.savings;
+                return headlines;
+            };
+            forecastMgr.$inject = ['$http', 'sessionService', 'forecastParamSvc', '$q', 'apiFormatSvc'];
             return forecastMgr;
         })();
         Services.forecastMgr = forecastMgr;
@@ -465,6 +468,7 @@ var Budgeter;
 (function (Budgeter) {
     var Services;
     (function (Services) {
+        /** Service to handle transforming API data to javascript friendly data and back */
         var apiFormatSvc = (function () {
             function apiFormatSvc() {
             }
@@ -503,8 +507,8 @@ var Budgeter;
                     FrequencyID: t.FrequencyID,
                     FrequencyDescription: t.FrequencyDescription,
                     Day: t.Day,
-                    Start_date: Budgeter.Utilities.stringifyDate(t.Start_date),
-                    End_date: Budgeter.Utilities.stringifyDate(t.End_date),
+                    Start_date: this.stringifyDate(t.Start_date),
+                    End_date: this.stringifyDate(t.End_date),
                     include: t.include
                 };
             };
@@ -516,10 +520,38 @@ var Budgeter;
                     FrequencyID: t.FrequencyID,
                     FrequencyDescription: t.FrequencyDescription,
                     Day: t.Day,
-                    Start_date: Budgeter.Utilities.getUTCDate(t.Start_date),
-                    End_date: Budgeter.Utilities.getUTCDate(t.End_date),
+                    Start_date: this.getUTCDate(t.Start_date),
+                    End_date: this.getUTCDate(t.End_date),
                     include: true
                 };
+            };
+            /** Converts ISO string dates to dates */
+            apiFormatSvc.prototype.forecastRowModelToClientFormat = function (t) {
+                return {
+                    caldate: this.getUTCDate(t.caldate),
+                    payment_details: t.payment_details,
+                    total_payments: t.total_payments,
+                    deduction_details: t.deduction_details,
+                    total_deductions: t.total_deductions,
+                    savings_details: t.savings_details,
+                    total_savings: t.total_savings,
+                    balance: t.balance,
+                    savings: t.savings
+                };
+            };
+            /** Return the last day of the month for a given date offset by x months */
+            apiFormatSvc.prototype.lastDay = function (date, offset) {
+                return new Date(date.getFullYear(), (date.getMonth() + 1) + offset, 0);
+            };
+            ;
+            /** converts a date string (.net ISO8601) to UTC javascript Date */
+            apiFormatSvc.prototype.getUTCDate = function (indate) {
+                var p = new Date(indate);
+                return new Date(p.getUTCFullYear(), p.getUTCMonth(), p.getUTCDate(), p.getUTCHours(), p.getUTCMinutes(), p.getUTCSeconds());
+            };
+            /** stringifies a date for API post */
+            apiFormatSvc.prototype.stringifyDate = function (d) {
+                return d.toLocaleDateString();
             };
             return apiFormatSvc;
         })();
@@ -552,27 +584,28 @@ var Budgeter;
     (function (Controllers) {
         /** Manages the viewstate and parameters for the main view */
         var forecastController = (function () {
-            function forecastController($scope, paramSvc) {
-                this.scope = $scope;
+            function forecastController($rootScope, paramSvc, apiFormatSvc) {
+                this.$rootScope = $rootScope;
+                this.apiFormatSvc = apiFormatSvc;
                 this.parametersVisible = true;
                 this.forecastview = 'graph';
                 this.forecastParams = paramSvc.params;
             }
             /** advances the view date forward 1 month */
             forecastController.prototype.mthFwd = function () {
-                this.forecastParams.endDate = Budgeter.Utilities.lastDay(this.forecastParams.endDate, +1);
+                this.forecastParams.endDate = this.apiFormatSvc.lastDay(this.forecastParams.endDate, +1);
             };
             /** steps the view date back 1 month */
             forecastController.prototype.mthBk = function () {
-                this.forecastParams.endDate = Budgeter.Utilities.lastDay(this.forecastParams.endDate, -1);
+                this.forecastParams.endDate = this.apiFormatSvc.lastDay(this.forecastParams.endDate, -1);
             };
             forecastController.prototype.showParameters = function () {
                 this.parametersVisible = !this.parametersVisible;
             };
             forecastController.prototype.refresh = function () {
-                this.scope.$broadcast('refresh');
+                this.$rootScope.$emit('refresh');
             };
-            forecastController.$inject = ['$scope', 'forecastParamSvc'];
+            forecastController.$inject = ['$rootScope', 'forecastParamSvc', 'apiFormatSvc'];
             return forecastController;
         })();
         Controllers.forecastController = forecastController;
@@ -732,11 +765,15 @@ var Budgeter;
                             .enter().append("svg:title")
                             .text(function (d) { return JSON.stringify(d); });
                         ctrl.spin = false;
-                        ctrl.data = [];
                     }
                     ;
-                    ctrl.refresh();
-                    ctrl.scope.$on('chartData', function () { render(ctrl.data); });
+                    ctrl.forecastMgr.getForecast().then(function (data) {
+                        render(data.transactions);
+                    });
+                    ctrl.$rootScope.$on('chartData', function () {
+                        ctrl.spin = true;
+                        render(ctrl.data);
+                    });
                 }
             };
         }
@@ -748,49 +785,28 @@ var Budgeter;
     var Controllers;
     (function (Controllers) {
         var stackedBarController = (function () {
-            function stackedBarController($scope, forecastParamSvc, forecastMgr) {
+            function stackedBarController($rootScope, forecastParamSvc, forecastMgr, notify) {
                 var _this = this;
+                this.$rootScope = $rootScope;
+                this.forecastMgr = forecastMgr;
+                this.notify = notify;
                 this.spin = true;
                 this.params = forecastParamSvc.params;
-                this.forecastMgr = forecastMgr;
-                this.scope = $scope;
-                this.headlines = { balance: 0, savings: 0, incoming: 0, outgoing: 0 };
-                this.scope.$on('refresh', function (evt) { return _this.refresh(); });
+                this.$rootScope.$on('refresh', function () { return _this.refresh(); });
             }
             stackedBarController.prototype.refresh = function () {
                 var _this = this;
-                this.forecastMgr.getForecast()
-                    .success(function (response) {
-                    _this.data = response.map(function (f) { return {
-                        caldate: Budgeter.Utilities.getUTCDate(f.caldate),
-                        payment_details: f.payment_details,
-                        total_payments: f.total_payments,
-                        deduction_details: f.deduction_details,
-                        total_deductions: f.total_deductions,
-                        savings_details: f.savings_details,
-                        total_savings: f.total_savings,
-                        balance: f.balance,
-                        savings: f.savings
-                    }; });
-                    var lastrow = response[response.length - 1];
-                    var income = 0;
-                    var outgoing = 0;
-                    for (var i = 0; i < response.length; i++) {
-                        income += Math.abs(response[i].total_payments);
-                        outgoing += response[i].total_deductions;
-                    }
-                    _this.headlines.balance = lastrow.balance;
-                    _this.headlines.savings = lastrow.savings;
-                    _this.headlines.incoming = income;
-                    _this.headlines.outgoing = outgoing;
+                this.forecastMgr.getForecast().then(function (d) {
+                    _this.data = d.transactions;
+                    _this.headlines = d.headlines;
                     _this.spin = false;
-                    _this.scope.$broadcast('chartData');
+                    _this.$rootScope.$emit('chartData');
                 })
-                    .error(function (err) {
-                    console.log(err.message);
+                    .catch(function (e) {
+                    _this.notify({ message: 'Error loading data', classes: 'alert-danger' });
                 });
             };
-            stackedBarController.$inject = ['$scope', 'forecastParamSvc', 'forecastMgr'];
+            stackedBarController.$inject = ['$rootScope', 'forecastParamSvc', 'forecastMgr', 'notify'];
             return stackedBarController;
         })();
         Controllers.stackedBarController = stackedBarController;
@@ -1257,7 +1273,7 @@ var Budgeter;
     var app = angular.module('budgeter', ['ngRoute', 'ngCookies', 'ui.bootstrap', 'ngAnimate', 'cgNotify']);
     app.service('sessionService', Budgeter.Services.sessionService);
     app.service('forecastParamSvc', Budgeter.Services.forecastParamSvc);
-    app.service('authFactory', Budgeter.Services.authFactory);
+    app.service('authSvc', Budgeter.Services.authSvc);
     app.service('apiFormatSvc', Budgeter.Services.apiFormatSvc);
     app.service('forecastMgr', Budgeter.Services.forecastMgr);
     app.service('transactionMgr', Budgeter.Services.transactionMgr);

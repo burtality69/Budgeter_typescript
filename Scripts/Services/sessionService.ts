@@ -7,28 +7,26 @@ module Budgeter.Services {
 		
 		private user: string;
 		public _apiURl: string;
-		public cookies: ng.cookies.ICookiesService
 
-		constructor($cookies: ng.cookies.ICookiesService) {
-			this.cookies = $cookies;
+		constructor(public $cookies: ng.cookies.ICookiesService) {
 			this._apiURl = 'http://budgeter.azurewebsites.net'
 			//this._apiURl = 'http://localhost:52243/'
 		}
 
 		set Token(token: string) {
-			this.cookies.put('authToken',token); 
+			this.$cookies.put('authToken',token); 
 		}
 
 		get Token(): string {
-			if (!this.cookies.get('authToken')) {
+			if (!this.$cookies.get('authToken')) {
 					return undefined;
 				}	
-			return this.cookies.get('authToken');	
+			return this.$cookies.get('authToken');	
 		};
 		
-		
+		/**Delete the current session, purge cookies */
 		destroySession() {
-			this.cookies.remove('authToken');
+			this.$cookies.remove('authToken');
 		}
 		
 		get apiURL() {

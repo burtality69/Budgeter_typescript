@@ -23,7 +23,7 @@
             <input type="text" class="input-xs-flat" id="emailAddress" placeholder="Username" ng-model="loginModalCtrl.registerForm.Email">
             <input type="password" class="input-xs-flat" id="password" placeholder="Password" ng-model="loginModalCtrl.registerForm.password">
             <input type="password" class="input-xs-flat" id="password" placeholder="Confirm Password" ng-model="loginModalCtrl.registerForm.confirmpassword">
-            <button class="btn btn-xs btn-primary" ng-click="register(registerForm)">Register</button>
+            <button class="btn btn-xs btn-primary" ng-click="loginModalCtrl.register(registerForm)">Register</button>
             <p ng-if="loginForm.errorMessage">{{loginForm.errorMessage}}</p>
         </form>
     </script>

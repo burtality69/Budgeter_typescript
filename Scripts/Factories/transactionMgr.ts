@@ -5,17 +5,13 @@ module Budgeter.Services {
 	export class transactionMgr {
 
 		static $inject = ['$http', 'sessionService','apiFormatSvc'];
-
-		public http: ng.IHttpService;
 		public url: string;
-		public sessionService: Budgeter.Services.sessionService;
-		formatter: Budgeter.Services.apiFormatSvc;
 
-		constructor($http: ng.IHttpService, sessionService: Budgeter.Services.sessionService,
-			apiFormatSvc: Budgeter.Services.apiFormatSvc) {
-			this.http = $http;
+		constructor(public $http: ng.IHttpService, public sessionService: Budgeter.Services.sessionService,
+			public apiFormatSvc: Budgeter.Services.apiFormatSvc) {
+			this.$http = $http;
 			this.url = sessionService.apiURL + '/api/transactions'
-			this.formatter = apiFormatSvc;
+			this.apiFormatSvc = apiFormatSvc;
 			this.sessionService = sessionService;
 		}
 
@@ -25,7 +21,7 @@ module Budgeter.Services {
 				url: this.url,
 				headers: this.sessionService.httpGetHeaders
 			};
-			return this.http(config);
+			return this.$http(config);
 		}
 		
 		/**Post a single transaction model */
@@ -34,9 +30,9 @@ module Budgeter.Services {
 				method: 'POST',
 				url: this.url,
 				headers: this.sessionService.httpGetHeaders,
-				data: this.formatter.transtoServerFmt(t)
+				data: this.apiFormatSvc.transtoServerFmt(t)
 			}
-			return this.http(config);
+			return this.$http(config);
 		}
 		
 		/**Update an existing transaction model */
@@ -45,9 +41,9 @@ module Budgeter.Services {
 				method: 'PUT',
 				url: this.url + '/' + t.ID,
 				headers: this.sessionService.httpGetHeaders,
-				data: this.formatter.transtoServerFmt(t)
+				data: this.apiFormatSvc.transtoServerFmt(t)
 			}
-			return this.http(config);
+			return this.$http(config);
 		}
 
 		delete(ID: number): ng.IHttpPromise<any> {
@@ -56,7 +52,7 @@ module Budgeter.Services {
 				url: this.url + '/' + ID,
 				headers: this.sessionService.httpGetHeaders
 			}
-			return this.http(config);
+			return this.$http(config);
 		}
 
 		newBlankTrans(): ITransactionModel {

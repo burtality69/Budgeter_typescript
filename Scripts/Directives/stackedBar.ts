@@ -160,12 +160,16 @@ module Budgeter.Directives {
                         .text(d => { return JSON.stringify(d); });
 
                     ctrl.spin = false;
-                    ctrl.data = [];
                 };
 
-                ctrl.refresh();
+                ctrl.forecastMgr.getForecast().then(data=>{
+                    render(data.transactions);
+                })
 
-                ctrl.scope.$on('chartData', function() { render(ctrl.data) });
+                ctrl.$rootScope.$on('chartData', function() { 
+                    ctrl.spin = true;
+                    render(ctrl.data) 
+                });
 
             }
         }
@@ -176,58 +180,30 @@ module Budgeter.Controllers {
 
 	export class stackedBarController {
 
-		public headlines: IBudgetHeadLines;
-		static $inject = ['$scope', 'forecastParamSvc', 'forecastMgr'];
+		static $inject = ['$rootScope', 'forecastParamSvc', 'forecastMgr','notify'];
+        public headlines: IBudgetHeadLines;
 		public data: Array<IForecastRowModel>;
 		public forecastController: Budgeter.Controllers.forecastController
-		public forecastMgr: Budgeter.Services.forecastMgr;
 		public params: IForecastParams;
 		public spin: boolean;
-		public scope: ng.IScope;
 
-		constructor($scope: ng.IScope, forecastParamSvc: Budgeter.Services.forecastParamSvc,
-			forecastMgr: Budgeter.Services.forecastMgr) {
+		constructor(public $rootScope: ng.IRootScopeService, forecastParamSvc: Budgeter.Services.forecastParamSvc,
+			public forecastMgr: Budgeter.Services.forecastMgr, public notify: ng.cgNotify.INotifyService) {
 			this.spin = true;
 			this.params = forecastParamSvc.params;
-			this.forecastMgr = forecastMgr;
-			this.scope = $scope;
-            this.headlines = { balance: 0, savings: 0, incoming: 0, outgoing: 0 }
-			this.scope.$on('refresh', evt => this.refresh());
+			this.$rootScope.$on('refresh', () => this.refresh());
 		}
-
+        
 		refresh() {
-			this.forecastMgr.getForecast()
-				.success((response: Array<any>) => {
-					this.data = response.map(f => <IForecastRowModel>{
-						caldate: Budgeter.Utilities.getUTCDate(f.caldate),
-						payment_details: f.payment_details,
-						total_payments: f.total_payments,
-						deduction_details: f.deduction_details,
-						total_deductions: f.total_deductions,
-						savings_details: f.savings_details,
-						total_savings: f.total_savings,
-						balance: f.balance,
-						savings: f.savings
-					})
-
-					var lastrow = response[response.length - 1];
-					var income = 0;
-					var outgoing = 0;
-
-					for (var i = 0; i < response.length; i++) {
-						income += Math.abs(response[i].total_payments);
-						outgoing += response[i].total_deductions;
-					}
-					this.headlines.balance = lastrow.balance;
-					this.headlines.savings = lastrow.savings;
-					this.headlines.incoming = income;
-					this.headlines.outgoing = outgoing;
+			this.forecastMgr.getForecast().then(d=>{
+                    this.data = d.transactions;
+                    this.headlines = d.headlines;                
 					this.spin = false;
-					this.scope.$broadcast('chartData');
+					this.$rootScope.$emit('chartData');
 				})
-				.error((err: Error) => {
-					console.log(err.message);
-				})
+                .catch(e=>{
+                    this.notify({message: 'Error loading data',classes: 'alert-danger'})
+                })
 		}
 
 	}
