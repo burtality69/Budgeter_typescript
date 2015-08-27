@@ -23,7 +23,7 @@ var Budgeter;
             AuthController.prototype.logOut = function () {
                 this.sessionService.destroySession();
             };
-            AuthController.$inject = ['authFactory', 'sessionService', '$modal'];
+            AuthController.$inject = ['authSvc', 'sessionService', '$modal'];
             return AuthController;
         })();
         Controllers.AuthController = AuthController;
@@ -382,22 +382,27 @@ var Budgeter;
                     method: 'GET',
                     url: this.sessionService.apiURL + '/api/Forecast',
                     headers: this.sessionService.httpGetHeaders,
-                    transformResponse: function (data) { return Object.keys(JSON.parse(data)).map(function (p) { return data[p]; }); }
+                    transformResponse: function (data) {
+                        var p = JSON.parse(data);
+                        return Object.keys(p).map(function (d) {
+                            return p[d];
+                        });
+                    }
                 };
             }
             /** Return a promise of forecast model {transactions[], headlines} */
             forecastMgr.prototype.getForecast = function () {
                 var _this = this;
                 var p = this.$q.defer();
-                var ret;
+                var ret = { transactions: undefined, headlines: undefined };
                 this.config.params = this.forecastParamSvc.apiParams;
                 this.$http(this.config)
-                    .then(function (data) {
+                    .then(function (response) {
                     // Convert the rowmodels  
-                    ret.transactions = data.map(function (f) {
+                    ret.transactions = response.data.map(function (f) {
                         return _this.apiFormatSvc.forecastRowModelToClientFormat(f);
                     });
-                    ret.headlines = _this.rollupHeadlines(data);
+                    ret.headlines = _this.rollupHeadlines(response.data);
                     p.resolve(ret);
                 })
                     .catch(function (error) {
@@ -650,17 +655,7 @@ var Budgeter;
                 controller: Budgeter.Controllers.stackedBarController,
                 controllerAs: 'graphCtrl',
                 transclude: true,
-                template: '<div class="graphloading spinner" ng-show="graphCtrl.spin">' +
-                    '<div class="cube1"></div>' +
-                    '<div class="cube2"></div>' +
-                    '</div>' +
-                    '<div class="headlines">' +
-                    '<headline-item class="headline income" icon="glyphicon glyphicon-arrow-up" name="Earned" value="graphCtrl.headlines.incoming"></headline-item>' +
-                    '<headline-item class="headline spending" icon="glyphicon glyphicon-arrow-down" name="Spent" value="graphCtrl.headlines.outgoing"></headline-item>' +
-                    '<headline-item class="headline savings" icon="glyphicon glyphicon-piggy-bank" name="Saved" value="graphCtrl.headlines.savings"></headline-item>' +
-                    '<headline-item class="headline balance" icon="glyphicon glyphicon-usd" name="Remaining" value="graphCtrl.headlines.balance"></headline-item>' +
-                    '</div>' +
-                    '<div id="graphdiv" class="graphcontainer clearfix" ng-show="!graphCtrl.spin"></div>',
+                templateUrl: './Views/Templates/Stackedbar.htm',
                 link: function (scope, el, att, ctrl) {
                     function render(data) {
                         //container size 
@@ -796,6 +791,7 @@ var Budgeter;
             }
             stackedBarController.prototype.refresh = function () {
                 var _this = this;
+                this.spin = true;
                 this.forecastMgr.getForecast().then(function (d) {
                     _this.data = d.transactions;
                     _this.headlines = d.headlines;
@@ -918,11 +914,9 @@ var Budgeter;
                 templateUrl: '/Views/Templates/Transaction.html',
                 require: '^transactionList',
                 bindToController: true,
-                controllerAs: 'transCtrl',
-                //scope: true,
-                //scope: { trans: '=', tliststate: '=', index: '=', deletefn: '&', list:'='},
                 controller: Budgeter.Controllers.transactionController,
                 replace: true,
+                scope: false,
                 link: function (scope, el, att) {
                     var v = scope.transCtrl.trans.TypeDescription;
                     var barclass = v == 'Income' ? 'payment' : (v == 'Savings' ? 'savings' : 'deduction');
@@ -942,6 +936,7 @@ var Budgeter;
                 this.transactionMgr = transactionMgr;
                 this.notify = notify;
                 $scope.transCtrl = this;
+                this.tliststate = $scope.$parent.tListCtrl.listState;
                 this.trans = $scope.t;
                 this.tvListState = { addEdit: false, tvToEdit: null, tID: this.trans.ID };
                 this.notify = notify;

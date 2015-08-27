@@ -4,7 +4,7 @@ module Budgeter.Controllers {
 	
 	export class AuthController {
 		
-		public static $inject = ['authFactory','sessionService','$modal']; 
+		public static $inject = ['authSvc','sessionService','$modal']; 
 		
 		public $modal: ng.ui.bootstrap.IModalService
 		public $modalInstance: ng.ui.bootstrap.IModalServiceInstance;

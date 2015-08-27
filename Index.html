@@ -1,6 +1,5 @@
 <!doctype html>
-<html>
-    
+<html>   
     <head>
         <title>Budgeter</title>
         <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
@@ -17,29 +16,28 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js" charset="utf-8"></script>
         <script src="Scripts\3rdParty\angular-notify.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.1/ui-bootstrap-tpls.min.js"></script>
-        <!--Utilities-->
-        <script src="Scripts\Utilities.js"></script>
         <!--App-->
-        <script src="Release\app.js"></script>
-            
+        <script src="Release\app.js"></script>        
     </head>
     
     <body data-ng-app="budgeter">
         <!--Header-->
-        <header class="NavBar clearfix" ng-show="!loggedIn()" data-ng-controller="AuthController as authCtrl" />
-        <div class="titlebar"></div>
-        <div class="loginpanel">
-            <button ng-show="!authCtrl.loggedIn()" ng-click="authCtrl.openModal()">Sign In</button>
-            <button ng-show="authCtrl.loggedIn()" ng-click="authCtrl.logOut()">Sign Out</button>
-        </div>
-        </header>
+        <nav class="navbar navbar-default" ng-show="!loggedIn()" data-ng-controller="AuthController as authCtrl" />
+            <div class="container-fluid">
+                <div class="titlebar"></div>
+                <div class="loginpanel nav navbar-nav navbar-right">
+                    <button ng-show="!authCtrl.loggedIn()" ng-click="authCtrl.openModal()">Sign In</button>
+                    <button ng-show="authCtrl.loggedIn()" ng-click="authCtrl.logOut()">Sign Out</button>
+                </div>
+            </div>
+        </nav>
         <main>
             <!--FORECAST-->
             <div id="forecast" class="forecast col-lg-8">
             <forecast-controls></forecast-controls>
             </div>
             <!-- Transactions table -->
-            <aside id="transactionlist" class="col-lg-4 transactionlistcontainer">
+            <aside id="transactionlist standard-box-shadow" class="col-lg-4 transactionlistcontainer">
                 <transaction-list class="list-group transactionlist"></transaction-list>
             </aside>
         </main>

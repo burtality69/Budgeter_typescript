@@ -21,24 +21,29 @@ module Budgeter.Services {
 				method: 'GET',
 				url: this.sessionService.apiURL + '/api/Forecast',
 				headers: this.sessionService.httpGetHeaders,
-				transformResponse: (data)=> {return Object.keys(JSON.parse(data)).map(p=>{return data[p]})}
+				transformResponse: (data)=> {
+					var p = JSON.parse(data);
+					return Object.keys(p).map(d=> {
+						return p[d];
+						}
+					)}
 			}
 		}
 		
 		/** Return a promise of forecast model {transactions[], headlines} */
 		getForecast(): ng.IPromise<IForecastModel> {
 			var p = this.$q.defer()
-			var ret: IForecastModel;
+			var ret: IForecastModel = {transactions:undefined, headlines: undefined};
 			this.config.params = this.forecastParamSvc.apiParams;
 			
 			this.$http(this.config)
-				.then((data: Array<IForecastRowServerModel>)=>{
+				.then((response:any)=>{
 					// Convert the rowmodels  
-					ret.transactions = data.map(f => 
+					ret.transactions = response.data.map(f => 
 						this.apiFormatSvc.forecastRowModelToClientFormat(f)
 					);
 					
-					ret.headlines = this.rollupHeadlines(data);
+					ret.headlines = this.rollupHeadlines(response.data);
 					
 					p.resolve(ret);
 				}) 

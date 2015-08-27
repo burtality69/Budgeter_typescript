@@ -20,19 +20,7 @@ module Budgeter.Directives {
             controller: Budgeter.Controllers.stackedBarController,
             controllerAs: 'graphCtrl',
             transclude: true,
-            template: 
-            '<div class="graphloading spinner" ng-show="graphCtrl.spin">' +
-                '<div class="cube1"></div>' +
-                '<div class="cube2"></div>' +
-            '</div>' +
-            '<div class="headlines">' +
-                '<headline-item class="headline income" icon="glyphicon glyphicon-arrow-up" name="Earned" value="graphCtrl.headlines.incoming"></headline-item>' +
-                '<headline-item class="headline spending" icon="glyphicon glyphicon-arrow-down" name="Spent" value="graphCtrl.headlines.outgoing"></headline-item>' +
-                '<headline-item class="headline savings" icon="glyphicon glyphicon-piggy-bank" name="Saved" value="graphCtrl.headlines.savings"></headline-item>' +
-                '<headline-item class="headline balance" icon="glyphicon glyphicon-usd" name="Remaining" value="graphCtrl.headlines.balance"></headline-item>' +
-            '</div>' +
-            '<div id="graphdiv" class="graphcontainer clearfix" ng-show="!graphCtrl.spin"></div>',
-
+            templateUrl: './Views/Templates/Stackedbar.htm',
             link: function(scope: ng.IScope, el: JQuery,
                 att: ng.IAttributes, ctrl: Budgeter.Controllers.stackedBarController) {
 
@@ -195,6 +183,7 @@ module Budgeter.Controllers {
 		}
         
 		refresh() {
+            this.spin = true;
 			this.forecastMgr.getForecast().then(d=>{
                     this.data = d.transactions;
                     this.headlines = d.headlines;                

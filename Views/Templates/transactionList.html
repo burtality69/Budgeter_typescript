@@ -1,6 +1,6 @@
 <ul class="transactionlist">
 	<span>Payments and deductions</span>
-	<transaction ng-repeat="t in tListCtrl.transactions" ng-show="tListCtrl.isVisible($index)" class="transaction" tListState="tListCtrl.listState"
+	<transaction ng-repeat="t in tListCtrl.transactions" ng-show="tListCtrl.isVisible($index)" class="transaction" liststate="tListCtrl.listState"
 	index="$index" trans="t" deletefn="tListCtrl.delete"></transaction>
 	<div class="transaction newitem">
 		<div class="transactioncompact">

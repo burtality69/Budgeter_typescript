@@ -9,11 +9,9 @@ module Budgeter.Directives {
 			templateUrl: '/Views/Templates/Transaction.html',
 			require: '^transactionList',
 			bindToController: true,
-			controllerAs: 'transCtrl',
-			//scope: true,
-			//scope: { trans: '=', tliststate: '=', index: '=', deletefn: '&', list:'='},
 			controller: Budgeter.Controllers.transactionController,
 			replace: true,
+			scope: false,
 			link: function(scope: Budgeter.Controllers.ITransactionScope, el: ng.IAugmentedJQuery,
 				att: ng.IAttributes) {
 					
@@ -54,6 +52,7 @@ module Budgeter.Controllers {
 					
 		constructor( $scope: ITransactionScope, public transactionMgr: Budgeter.Services.transactionMgr, public notify: ng.cgNotify.INotifyService) {
 			$scope.transCtrl = this;
+			this.tliststate = $scope.$parent.tListCtrl.listState;
 			this.trans = $scope.t;
 			this.tvListState = {addEdit: false, tvToEdit: null, tID: this.trans.ID};
 			this.notify = notify;
