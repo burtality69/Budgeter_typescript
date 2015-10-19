@@ -4,33 +4,34 @@ module Budgeter.Services {
 	
 	export class listOptionsDataSvc {
 		
-		static $inject = ['sessionService','$http'];
-		_transactionfrequencies: string;
-		_transactiontypes: string;
-		sessionService: Budgeter.Services.sessionService;
-		http: ng.IHttpService;
+		static $inject = ['sessionService','$http','$q'];
 		
-		constructor(sessionService: Budgeter.Services.sessionService, $http: ng.IHttpService) {
-			this.http = $http;
-			this.sessionService = sessionService;
+		private _transactionfrequencies: string;
+		private _transactiontypes: string;
+		
+		constructor(public sessionService: Budgeter.Services.sessionService, public $http: ng.IHttpService,
+					public $q: ng.IQService) {
 		}
 		
-		get transactiontypes(): ng.IHttpPromise<any> {
+		get transactiontypes(): ng.IPromise<string[]> {
+			
 			var config: ng.IRequestConfig = {
 				method: 'GET',
 				url: this.sessionService.apiURL + '/api/admin/transactiontypes',
 				headers: this.sessionService.httpGetHeaders,
 			}
-			return this.http(config);
+			
+			return this.$http(config)				
 		}
 		
-		get transactionfrequencies(): ng.IHttpPromise<any> {
+		get transactionfrequencies(): ng.IPromise<string[]> {
+			
 			var config: ng.IRequestConfig ={
 				method: 'GET',
 				url: this.sessionService.apiURL + '/api/admin/transactionfrequencies',
 				headers: this.sessionService.httpGetHeaders
 			}
-			return this.http(config);
+			return this.$http(config);
 		}
 	}
 }

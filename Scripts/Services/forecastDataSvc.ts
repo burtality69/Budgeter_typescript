@@ -7,20 +7,24 @@ module Budgeter.Services {
 		headlines: IBudgetHeadLines
 	}
 	
-	export class forecastMgr {
+	export class forecastDataSvc {
 
 		static $inject = ['$http', 'sessionService', 'forecastParamSvc','$q','apiFormatSvc'];
-
-		public config: ng.IRequestConfig;
 
 		constructor(public $http: ng.IHttpService, public sessionService: Budgeter.Services.sessionService,
 			public forecastParamSvc: Budgeter.Services.forecastParamSvc, public $q: ng.IQService, 
 			public apiFormatSvc: apiFormatSvc) {
-
-			this.config = {
+		}
+		
+		/** Return a promise of forecast model {transactions[], headlines} */
+		getForecast(): ng.IPromise<IForecastModel> {
+			
+			var baseUrl = this.sessionService.apiURL + '/api/Forecast';
+			var config  = {
 				method: 'GET',
-				url: this.sessionService.apiURL + '/api/Forecast',
+				url: baseUrl,
 				headers: this.sessionService.httpGetHeaders,
+				data: '',
 				transformResponse: (data)=> {
 					var p = JSON.parse(data);
 					return Object.keys(p).map(d=> {
@@ -28,15 +32,14 @@ module Budgeter.Services {
 						}
 					)}
 			}
-		}
-		
-		/** Return a promise of forecast model {transactions[], headlines} */
-		getForecast(): ng.IPromise<IForecastModel> {
-			var p = this.$q.defer()
-			var ret: IForecastModel = {transactions:undefined, headlines: undefined};
-			this.config.params = this.forecastParamSvc.apiParams;
 			
-			this.$http(this.config)
+			var p = this.$q.defer()
+			
+			var ret: IForecastModel = {transactions:undefined, headlines: undefined};
+			config.url = baseUrl + this.forecastParamSvc.queryString;
+			config.headers = this.sessionService.httpGetHeaders;
+			
+			this.$http(config)
 				.then((response:any)=>{
 					// Convert the rowmodels  
 					ret.transactions = response.data.map(f => 
@@ -58,17 +61,44 @@ module Budgeter.Services {
 		/** Takes a forecast and summarises it into headlines  */
 		private rollupHeadlines(data: Array<any>): IBudgetHeadLines {
 			var lastrow = data[data.length -1];
-			var headlines: IBudgetHeadLines = {balance:0,savings:0,incoming:0,outgoing:0}
+			var incoming: number = 0; 
+			var outgoing: number = 0;
+			var bal = lastrow.balance;
+			var sav = lastrow.savings; 
 			
 			for (var i = 0; i < data.length; i++) {
-						headlines.incoming += Math.abs(data[i].total_payments);
-						headlines.outgoing += data[i].total_deductions;
+						incoming += Math.abs(data[i].total_payments);
+						outgoing += data[i].total_deductions;
 			}
 			
-			headlines.balance = lastrow.balance;
-			headlines.savings = lastrow.savings;
-			
+			var headlines: IBudgetHeadLines= {
+				balance: bal,
+				savings: sav, 
+				incoming: incoming, 
+				outgoing: outgoing
+			}; 
+						
 			return headlines;
+		}
+		
+		getBudget(): ng.IPromise<iBudgetRowModel> {
+			
+			var baseUrl = this.sessionService.apiURL + '/api/Forecast/getbudget';
+			var config  = {
+				method: 'GET',
+				url: baseUrl,
+				headers: this.sessionService.httpGetHeaders,
+				data: '',
+				transformResponse: (data)=> {
+					var p = JSON.parse(data);
+					return Object.keys(p).map(d=> {
+						return p[d];
+						}
+					)}
+			}
+			
+			return this.$http(config);
+				
 		}
 	}
 }

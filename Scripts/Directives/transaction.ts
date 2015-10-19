@@ -83,7 +83,7 @@ module Budgeter.Controllers {
 				this.notify({message: 'Item deleted successfully', classes: 'alert-success'});
 			})
 			.error(d=>{
-				this.notify({message:'There was a problem deleting this item',classes:'alert-danger',duration: 5000});
+				this.notify({message:'There was a problem deleting this item',classes:'alert-danger'});
 			})
 		}
 	}

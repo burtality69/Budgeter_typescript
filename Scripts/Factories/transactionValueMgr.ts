@@ -62,10 +62,10 @@ module Budgeter.Services {
 			return this.http(config); 
 		}
 				
-		getnewTransactionValue(): ITransactionValueClientModel {
+		getnewTransactionValue(TransactionID: number): ITransactionValueClientModel {
 			return {
 				ID: undefined,
-				TransactionID: undefined,
+				TransactionID: TransactionID,
 				Value: undefined,
 				FrequencyID: undefined,
 				FrequencyDescription: undefined,

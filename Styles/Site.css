@@ -9,7 +9,8 @@ body {
   margin: 0; }
 
 main {
-  margin: 8px; }
+  margin: 8px; 
+  display: flex;}
 
 .standard-box-shadow {
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15); 
@@ -60,9 +61,6 @@ input, select {
 input::selection {
   border-bottom: solid 1px #6496c8; }
 
-ul {
-  list-style-type: none; }
-
 /* FORECAST *******************************************************************/
 #forecast {
   flex: 3 0 0;
@@ -74,6 +72,7 @@ ul {
 #transactionlist {
   flex: 1 0 0;
   display: flex;
+  font-size: 8px;
   list-style-type: none;
   flex-direction: column; }
   #transactionlist .transaction {
@@ -120,7 +119,7 @@ ul {
   .graphcontainer .deduction {
     fill: #f53f3f; }
   .graphcontainer .payment {
-    fill: #5cb85c; }
+    fill: rgb(161, 217, 155); }
   .graphcontainer .balanceline {
     fill: none;
     stroke: #0066FF;

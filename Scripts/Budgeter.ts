@@ -6,7 +6,7 @@ module Budgeter {
   app.service('forecastParamSvc', Budgeter.Services.forecastParamSvc);
   app.service('authSvc', Budgeter.Services.authSvc);
   app.service('apiFormatSvc',Budgeter.Services.apiFormatSvc);
-  app.service('forecastMgr', Budgeter.Services.forecastMgr);
+  app.service('forecastDataSvc', Budgeter.Services.forecastDataSvc);
   app.service('transactionMgr', Budgeter.Services.transactionMgr);
   app.service('transactionValueMgr', Budgeter.Services.transactionValueMgr);
   app.service('listOptionsDataSvc',Budgeter.Services.listOptionsDataSvc);

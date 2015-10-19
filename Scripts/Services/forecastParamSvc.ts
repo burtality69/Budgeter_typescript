@@ -19,12 +19,13 @@ module Budgeter.Services{
 			this._params = p;
 		}
 		
-		get apiParams(){
-			return {startdate: this.apiFormatSvc.stringifyDate(this.startDate),
-					enddate: this.apiFormatSvc.stringifyDate(this.endDate),
-					startbal: this.startbal
-				}
+		get queryString() {
+			var qs = '?startdate=' + this.apiFormatSvc.dateforQueryString(this.startDate)+ '&enddate=' 
+				+ this.apiFormatSvc.dateforQueryString(this.endDate) + '&startbal=' + this.startbal
+			
+			return qs;
 		}
+		
 		
 		get startbal(): number {
 			return this._params.startBal;

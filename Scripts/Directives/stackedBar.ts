@@ -150,7 +150,7 @@ module Budgeter.Directives {
                     ctrl.spin = false;
                 };
 
-                ctrl.forecastMgr.getForecast().then(data=>{
+                ctrl.forecastDataSvc.getForecast().then(data=>{
                     render(data.transactions);
                 })
 
@@ -168,23 +168,27 @@ module Budgeter.Controllers {
 
 	export class stackedBarController {
 
-		static $inject = ['$rootScope', 'forecastParamSvc', 'forecastMgr','notify'];
+		static $inject = ['$rootScope', 'forecastParamSvc', 'forecastDataSvc','notify'];
         public headlines: IBudgetHeadLines;
 		public data: Array<IForecastRowModel>;
-		public forecastController: Budgeter.Controllers.forecastController
+		public forecastController: Budgeter.Controllers.forecastController;
 		public params: IForecastParams;
 		public spin: boolean;
 
 		constructor(public $rootScope: ng.IRootScopeService, forecastParamSvc: Budgeter.Services.forecastParamSvc,
-			public forecastMgr: Budgeter.Services.forecastMgr, public notify: ng.cgNotify.INotifyService) {
+			public forecastDataSvc: Budgeter.Services.forecastDataSvc, public notify: ng.cgNotify.INotifyService) {
 			this.spin = true;
 			this.params = forecastParamSvc.params;
-			this.$rootScope.$on('refresh', () => this.refresh());
+            
+			this.$rootScope.$on('refresh', () => {
+                this.refresh()
+            });
 		}
         
 		refresh() {
             this.spin = true;
-			this.forecastMgr.getForecast().then(d=>{
+			this.forecastDataSvc.getForecast()
+                .then(d=>{
                     this.data = d.transactions;
                     this.headlines = d.headlines;                
 					this.spin = false;

@@ -1,8 +1,8 @@
-<ul class="transactionlist">
+<ul class="transactionlist list-group">
 	<span>Payments and deductions</span>
-	<transaction ng-repeat="t in tListCtrl.transactions" ng-show="tListCtrl.isVisible($index)" class="transaction" liststate="tListCtrl.listState"
+	<transaction ng-repeat="t in tListCtrl.transactions" ng-show="tListCtrl.isVisible($index)" class="list-group-item transaction" liststate="tListCtrl.listState"
 	index="$index" trans="t" deletefn="tListCtrl.delete"></transaction>
-	<div class="transaction newitem">
+	<div class="transaction newitem list-group-item">
 		<div class="transactioncompact">
 			<span>Create new item</span>
 			<div class="transactioncontrols">

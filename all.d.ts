@@ -13,7 +13,7 @@
 ///<reference path="./scripts/factories/transactionMgr.ts"/>
 ///<reference path="./scripts/factories/transactionValueMgr.ts"/>
 ///<reference path="./scripts/services/authService.ts"/>
-///<reference path="./scripts/factories/forecastMgr.ts"/>
+///<reference path="./scripts/services/forecastDataSvc.ts"/>
 ///<reference path="./scripts/Services/listOptionsDataSvc.ts"/>
 ///<reference path="./scripts/Services/apiFormatSvc.ts"/>
 

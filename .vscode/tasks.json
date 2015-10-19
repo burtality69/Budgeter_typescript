@@ -18,7 +18,7 @@
 	"isShellCommand": true,
 	
 	"windows": {
-		"command": "tsc"
+		"command": "tsc.cmd"
 	},
 
 	// Show the output window only if unrecognized errors occur. 

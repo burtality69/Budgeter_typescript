@@ -101,6 +101,18 @@ module Budgeter.Services {
 		stringifyDate(d: Date): string {
 			return d.toLocaleDateString();
 		}
-
+		
+		dateforQueryString(d: Date): string {
+			var y = d.getFullYear()
+			var m = d.getMonth()+1; 
+			var dy = d.getDate();
+			
+			var mth = m < 10 ? '0'+m : m;
+			var day = dy < 10 ? '0'+ dy : dy;
+			
+			var r: string = y + '-' + mth + '-' + day; 
+			
+			return r;
+		}
 	}
 }

@@ -9,13 +9,11 @@ module Budgeter.Services {
 
 		constructor(public $http: ng.IHttpService, public sessionService: Budgeter.Services.sessionService,
 			public apiFormatSvc: Budgeter.Services.apiFormatSvc) {
-			this.$http = $http;
+				
 			this.url = sessionService.apiURL + '/api/transactions'
-			this.apiFormatSvc = apiFormatSvc;
-			this.sessionService = sessionService;
 		}
 
-		get(): ng.IHttpPromise<any> {
+		get(): ng.IHttpPromise<Array<ITransactionServerModel>> {
 			var config: ng.IRequestConfig = {
 				method: 'GET',
 				url: this.url,
@@ -25,7 +23,7 @@ module Budgeter.Services {
 		}
 		
 		/**Post a single transaction model */
-		post(t: ITransactionModel): ng.IHttpPromise<any> {
+		post(t: ITransactionModel): ng.IPromise<ITransactionModel> {
 			var config: ng.IRequestConfig = {
 				method: 'POST',
 				url: this.url,
