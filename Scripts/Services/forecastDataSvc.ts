@@ -9,53 +9,47 @@ module Budgeter.Services {
 	
 	export class forecastDataSvc {
 
-		static $inject = ['$http', 'sessionService', 'forecastParamSvc','$q','apiFormatSvc'];
+		static $inject = ['$http', 'sessionService', 'forecastParamSvc','apiFormatSvc'];
 
 		constructor(public $http: ng.IHttpService, public sessionService: Budgeter.Services.sessionService,
-			public forecastParamSvc: Budgeter.Services.forecastParamSvc, public $q: ng.IQService, 
+			public forecastParamSvc: Budgeter.Services.forecastParamSvc,
 			public apiFormatSvc: apiFormatSvc) {
 		}
 		
 		/** Return a promise of forecast model {transactions[], headlines} */
-		getForecast(): ng.IPromise<IForecastModel> {
+		getForecast(): Promise<IForecastModel> {
 			
-			var baseUrl = this.sessionService.apiURL + '/api/Forecast';
-			var config  = {
+			let baseUrl = this.sessionService.apiURL + '/api/Forecast';
+			let config  = {
 				method: 'GET',
 				url: baseUrl,
 				headers: this.sessionService.httpGetHeaders,
 				data: '',
 				transformResponse: (data)=> {
-					var p = JSON.parse(data);
-					return Object.keys(p).map(d=> {
-						return p[d];
-						}
-					)}
+					let p = JSON.parse(data);
+					return Object.keys(p).map(d=> {return p[d];})
+				}
 			}
 			
-			var p = this.$q.defer()
-			
-			var ret: IForecastModel = {transactions:undefined, headlines: undefined};
+			let ret: IForecastModel = {transactions:undefined, headlines: undefined};
 			config.url = baseUrl + this.forecastParamSvc.queryString;
 			config.headers = this.sessionService.httpGetHeaders;
 			
-			this.$http(config)
-				.then((response:any)=>{
-					// Convert the rowmodels  
-					ret.transactions = response.data.map(f => 
-						this.apiFormatSvc.forecastRowModelToClientFormat(f)
-					);
-					
-					ret.headlines = this.rollupHeadlines(response.data);
-					
-					p.resolve(ret);
-				}) 
-				
-				.catch(error=>{
-					p.reject(error)
-				})
-				
-				return p.promise;
+			return new Promise((resolve,reject)=>{
+                this.$http(config)
+                    .then((response:any)=>{
+                        ret.transactions = response.data.map(f => this.apiFormatSvc.forecastRowModelToClientFormat(f));
+                        
+                        ret.headlines = this.rollupHeadlines(response.data);
+                        
+                        resolve(ret);
+                    }) 
+                    
+                    .catch(error=>{
+                        reject(error)
+                    })
+                    
+                    })
 		}
 		
 		/** Takes a forecast and summarises it into headlines  */

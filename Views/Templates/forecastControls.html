@@ -1,25 +1,26 @@
 <div class="forecastcontainer">
-      <div class="forecast-controlbar">
-                  <span>Forecast to</span>
-                  <span class="actionbutton" ng-click="fCtrl.mthBk()">&#x022B3</span>
-                  <span style="width: 10%; ">{{fCtrl.forecastParams.endDate | date:"mediumDate" : "UTC" }}</span>
-                  <span class="actionbutton" ng-click="fCtrl.mthFwd()">&#x022B2</span>
-                  <span>Starting balance</span>
-                  <input type="number" style="width:10%;" class="input-xs-flat" ng-model="fCtrl.forecastParams.startBal"
-                  step="100" id="startbal"></input>
-                  <div class="forecastviewmode">
-                        <label for="graphview">Graph View</label>
-                        <input id="graphview" type="radio" name="content" ng-model="fCtrl.forecastview" value="graph">
-                        <label for="tableview">Table View</label>
-                        <input id="tableview" type="radio" name="content" ng-model="fCtrl.forecastview" value="table">
-                  </div>
-                  <span class="actionbutton" ng-click="fCtrl.refresh()">&#x021BB;</span>
-      </div>
-      <div ng-if="fCtrl.forecastview=='graph'">
-            <stacked-bar class="graphcontainer clearfix" params="fCtrl.forecastParams"></stacked-bar>
-      </div>
-      <!--TABLE-->
-      <div ng-if="fCtrl.forecastview == 'table'">
-            <grid-by-month class="gridByMonth" params="fCtrl.forecastParams"></grid-by-month>
-      </div>
+    <div class="forecast-controlbar">
+        <span>Forecast to</span>
+        <div>
+            <span class="actionbutton" ng-click="fCtrl.mthBk()">&#x022B2</span>
+            <span style="width: 10%; ">{{fCtrl.forecastParams.endDate | date:"mediumDate" : "UTC" }}</span>
+            <span class="actionbutton" ng-click="fCtrl.mthFwd()">&#x022B3</span>
+        </div>
+        <span>Starting balance</span>
+        <input type="number" style="width:10%;" class="input-xs-flat" ng-model="fCtrl.forecastParams.startBal" step="100" id="startbal"></input>
+        <div class="forecastviewmode">
+            <label for="graphview">Graph View</label>
+            <input id="graphview" type="radio" name="content" ng-model="fCtrl.forecastview" value="graph">
+            <label for="tableview">Table View</label>
+            <input id="tableview" type="radio" name="content" ng-model="fCtrl.forecastview" value="table">
+        </div>
+        <span class="actionbutton" ng-click="fCtrl.refresh()">&#x021BB;</span>
+    </div>
+    <div ng-if="fCtrl.forecastview=='graph'">
+        <stacked-bar class="graphcontainer clearfix" params="fCtrl.forecastParams"></stacked-bar>
+    </div>
+    <!--TABLE-->
+    <div ng-if="fCtrl.forecastview == 'table'">
+        <grid-by-month class="gridByMonth" params="fCtrl.forecastParams"></grid-by-month>
+    </div>
 </div>

@@ -52,7 +52,7 @@ var Budgeter;
                     _this.$rootScope.$broadcast('redrawChart');
                 })
                     .catch(function (err) {
-                    console.log(err.message);
+                    _this.loginForm.errorMessage = err.message;
                 });
             };
             LoginModalController.prototype.register = function (registerForm) {
@@ -197,42 +197,58 @@ var Budgeter;
 (function (Budgeter) {
     var Services;
     (function (Services) {
-        var transactionMgr = (function () {
-            function transactionMgr($http, sessionService, apiFormatSvc) {
+        var trxDataService = (function () {
+            function trxDataService($http, sessionService, apiFormatSvc) {
                 this.$http = $http;
                 this.sessionService = sessionService;
                 this.apiFormatSvc = apiFormatSvc;
                 this.url = sessionService.apiURL + '/api/transactions';
             }
-            transactionMgr.prototype.get = function () {
-                var config = {
-                    method: 'GET',
-                    url: this.url,
-                    headers: this.sessionService.httpGetHeaders
-                };
-                return this.$http(config);
+            trxDataService.prototype.get = function () {
+                var _this = this;
+                return new Promise(function (resolve, reject) {
+                    var config = {
+                        method: 'GET',
+                        url: _this.url,
+                        headers: _this.sessionService.httpGetHeaders,
+                        transformResponse: function (d, h) { return (_this.apiFormatSvc.transtoClientFmt(d)); }
+                    };
+                    _this.$http(config)
+                        .then(function (d) { return resolve(d.data); })
+                        .catch(function (e) { reject(e); });
+                });
             };
             /**Post a single transaction model */
-            transactionMgr.prototype.post = function (t) {
-                var config = {
-                    method: 'POST',
-                    url: this.url,
-                    headers: this.sessionService.httpGetHeaders,
-                    data: this.apiFormatSvc.transtoServerFmt(t)
-                };
-                return this.$http(config);
+            trxDataService.prototype.post = function (t) {
+                var _this = this;
+                return new Promise(function (resolve, reject) {
+                    var config = {
+                        method: 'POST',
+                        url: _this.url,
+                        headers: _this.sessionService.httpGetHeaders,
+                        data: _this.apiFormatSvc.transtoServerFmt(t)
+                    };
+                    _this.$http(config)
+                        .then(function (d) { resolve(d); })
+                        .catch(function (e) { reject(e); });
+                });
             };
             /**Update an existing transaction model */
-            transactionMgr.prototype.put = function (t) {
-                var config = {
-                    method: 'PUT',
-                    url: this.url + '/' + t.ID,
-                    headers: this.sessionService.httpGetHeaders,
-                    data: this.apiFormatSvc.transtoServerFmt(t)
-                };
-                return this.$http(config);
+            trxDataService.prototype.put = function (t) {
+                var _this = this;
+                return new Promise(function (resolve, reject) {
+                    var config = {
+                        method: 'PUT',
+                        url: _this.url + '/' + t.ID,
+                        headers: _this.sessionService.httpGetHeaders,
+                        data: _this.apiFormatSvc.transtoServerFmt(t)
+                    };
+                    _this.$http(config)
+                        .then(function (d) { return resolve(d); })
+                        .catch(function (e) { return reject(e); });
+                });
             };
-            transactionMgr.prototype.delete = function (ID) {
+            trxDataService.prototype.delete = function (ID) {
                 var config = {
                     method: 'DELETE',
                     url: this.url + '/' + ID,
@@ -240,7 +256,7 @@ var Budgeter;
                 };
                 return this.$http(config);
             };
-            transactionMgr.prototype.newBlankTrans = function () {
+            trxDataService.prototype.newBlankTrans = function () {
                 return {
                     ID: undefined,
                     Name: undefined,
@@ -250,10 +266,10 @@ var Budgeter;
                     TransactionValues: []
                 };
             };
-            transactionMgr.$inject = ['$http', 'sessionService', 'apiFormatSvc'];
-            return transactionMgr;
+            trxDataService.$inject = ['$http', 'sessionService', 'apiFormatSvc'];
+            return trxDataService;
         })();
-        Services.transactionMgr = transactionMgr;
+        Services.trxDataService = trxDataService;
     })(Services = Budgeter.Services || (Budgeter.Services = {}));
 })(Budgeter || (Budgeter = {}));
 ///<reference path="../../all.d.ts"/>
@@ -261,48 +277,48 @@ var Budgeter;
 (function (Budgeter) {
     var Services;
     (function (Services) {
-        var transactionValueMgr = (function () {
-            function transactionValueMgr($http, sessionService, apiFormatSvc) {
-                this.http = $http;
-                this.url = sessionService.apiURL + '/api/transactionValues';
-                this.formatter = apiFormatSvc;
+        var trxdetailDataSvc = (function () {
+            function trxdetailDataSvc($http, sessionService, apiFormatSvc) {
+                this.$http = $http;
                 this.sessionService = sessionService;
+                this.apiFormatSvc = apiFormatSvc;
+                this.url = sessionService.apiURL + '/api/transactionValues';
             }
-            transactionValueMgr.prototype.get = function () {
+            trxdetailDataSvc.prototype.get = function () {
                 var config = {
                     method: 'GET',
                     url: this.url,
                     headers: this.sessionService.httpGetHeaders
                 };
-                return this.http(config);
+                return this.$http(config);
             };
-            transactionValueMgr.prototype.post = function (t) {
+            trxdetailDataSvc.prototype.post = function (t) {
                 var config = {
                     method: 'POST',
                     url: this.url,
                     headers: this.sessionService.httpGetHeaders,
-                    data: this.formatter.tvtoServerFmt(t)
+                    data: this.apiFormatSvc.tvtoServerFmt(t)
                 };
-                return this.http(config);
+                return this.$http(config);
             };
-            transactionValueMgr.prototype.put = function (t) {
+            trxdetailDataSvc.prototype.put = function (t) {
                 var config = {
                     method: 'PUT',
                     url: this.url + '/' + t.ID,
                     headers: this.sessionService.httpGetHeaders,
-                    data: this.formatter.tvtoServerFmt(t)
+                    data: this.apiFormatSvc.tvtoServerFmt(t)
                 };
-                return this.http(config);
+                return this.$http(config);
             };
-            transactionValueMgr.prototype.delete = function (ID) {
+            trxdetailDataSvc.prototype.delete = function (ID) {
                 var config = {
                     method: 'DELETE',
                     url: this.url + '/' + ID,
                     headers: this.sessionService.httpGetHeaders,
                 };
-                return this.http(config);
+                return this.$http(config);
             };
-            transactionValueMgr.prototype.getnewTransactionValue = function (TransactionID) {
+            trxdetailDataSvc.prototype.getnewTransactionValue = function (TransactionID) {
                 return {
                     ID: undefined,
                     TransactionID: TransactionID,
@@ -315,10 +331,10 @@ var Budgeter;
                     include: true
                 };
             };
-            transactionValueMgr.$inject = ['$http', 'sessionService', 'apiFormatSvc'];
-            return transactionValueMgr;
+            trxdetailDataSvc.$inject = ['$http', 'sessionService', 'apiFormatSvc'];
+            return trxdetailDataSvc;
         })();
-        Services.transactionValueMgr = transactionValueMgr;
+        Services.trxdetailDataSvc = trxdetailDataSvc;
     })(Services = Budgeter.Services || (Budgeter.Services = {}));
 })(Budgeter || (Budgeter = {}));
 ///<reference path="../../all.d.ts"/>
@@ -366,50 +382,44 @@ var Budgeter;
 (function (Budgeter) {
     var Services;
     (function (Services) {
-        var forecastMgr = (function () {
-            function forecastMgr($http, sessionService, forecastParamSvc, $q, apiFormatSvc) {
+        var forecastDataSvc = (function () {
+            function forecastDataSvc($http, sessionService, forecastParamSvc, apiFormatSvc) {
                 this.$http = $http;
                 this.sessionService = sessionService;
                 this.forecastParamSvc = forecastParamSvc;
-                this.$q = $q;
                 this.apiFormatSvc = apiFormatSvc;
-                this.baseUrl = this.sessionService.apiURL + '/api/Forecast';
-                this.config = {
+            }
+            /** Return a promise of forecast model {transactions[], headlines} */
+            forecastDataSvc.prototype.getForecast = function () {
+                var _this = this;
+                var baseUrl = this.sessionService.apiURL + '/api/Forecast';
+                var config = {
                     method: 'GET',
-                    url: this.baseUrl,
+                    url: baseUrl,
                     headers: this.sessionService.httpGetHeaders,
                     data: '',
                     transformResponse: function (data) {
                         var p = JSON.parse(data);
-                        return Object.keys(p).map(function (d) {
-                            return p[d];
-                        });
+                        return Object.keys(p).map(function (d) { return p[d]; });
                     }
                 };
-            }
-            /** Return a promise of forecast model {transactions[], headlines} */
-            forecastMgr.prototype.getForecast = function () {
-                var _this = this;
-                var p = this.$q.defer();
                 var ret = { transactions: undefined, headlines: undefined };
-                this.config.url = this.baseUrl + this.forecastParamSvc.queryString;
-                this.config.headers = this.sessionService.httpGetHeaders;
-                this.$http(this.config)
-                    .then(function (response) {
-                    // Convert the rowmodels  
-                    ret.transactions = response.data.map(function (f) {
-                        return _this.apiFormatSvc.forecastRowModelToClientFormat(f);
+                config.url = baseUrl + this.forecastParamSvc.queryString;
+                config.headers = this.sessionService.httpGetHeaders;
+                return new Promise(function (resolve, reject) {
+                    _this.$http(config)
+                        .then(function (response) {
+                        ret.transactions = response.data.map(function (f) { return _this.apiFormatSvc.forecastRowModelToClientFormat(f); });
+                        ret.headlines = _this.rollupHeadlines(response.data);
+                        resolve(ret);
+                    })
+                        .catch(function (error) {
+                        reject(error);
                     });
-                    ret.headlines = _this.rollupHeadlines(response.data);
-                    p.resolve(ret);
-                })
-                    .catch(function (error) {
-                    p.reject(error);
                 });
-                return p.promise;
             };
             /** Takes a forecast and summarises it into headlines  */
-            forecastMgr.prototype.rollupHeadlines = function (data) {
+            forecastDataSvc.prototype.rollupHeadlines = function (data) {
                 var lastrow = data[data.length - 1];
                 var incoming = 0;
                 var outgoing = 0;
@@ -427,10 +437,26 @@ var Budgeter;
                 };
                 return headlines;
             };
-            forecastMgr.$inject = ['$http', 'sessionService', 'forecastParamSvc', '$q', 'apiFormatSvc'];
-            return forecastMgr;
+            forecastDataSvc.prototype.getBudget = function () {
+                var baseUrl = this.sessionService.apiURL + '/api/Forecast/getbudget';
+                var config = {
+                    method: 'GET',
+                    url: baseUrl,
+                    headers: this.sessionService.httpGetHeaders,
+                    data: '',
+                    transformResponse: function (data) {
+                        var p = JSON.parse(data);
+                        return Object.keys(p).map(function (d) {
+                            return p[d];
+                        });
+                    }
+                };
+                return this.$http(config);
+            };
+            forecastDataSvc.$inject = ['$http', 'sessionService', 'forecastParamSvc', 'apiFormatSvc'];
+            return forecastDataSvc;
         })();
-        Services.forecastMgr = forecastMgr;
+        Services.forecastDataSvc = forecastDataSvc;
     })(Services = Budgeter.Services || (Budgeter.Services = {}));
 })(Budgeter || (Budgeter = {}));
 ///<reference path="../../all.d.ts"/>
@@ -439,10 +465,9 @@ var Budgeter;
     var Services;
     (function (Services) {
         var listOptionsDataSvc = (function () {
-            function listOptionsDataSvc(sessionService, $http, $q) {
+            function listOptionsDataSvc(sessionService, $http) {
                 this.sessionService = sessionService;
                 this.$http = $http;
-                this.$q = $q;
             }
             Object.defineProperty(listOptionsDataSvc.prototype, "transactiontypes", {
                 get: function () {
@@ -468,7 +493,7 @@ var Budgeter;
                 enumerable: true,
                 configurable: true
             });
-            listOptionsDataSvc.$inject = ['sessionService', '$http', '$q'];
+            listOptionsDataSvc.$inject = ['sessionService', '$http'];
             return listOptionsDataSvc;
         })();
         Services.listOptionsDataSvc = listOptionsDataSvc;
@@ -587,7 +612,7 @@ var Budgeter;
             return {
                 restrict: 'EA',
                 templateUrl: '/Views/Templates/forecastControls.html',
-                controller: Budgeter.Controllers.forecastController,
+                controller: forecastController,
                 bindToController: true,
                 controllerAs: 'fCtrl',
                 transclude: true,
@@ -598,39 +623,35 @@ var Budgeter;
         ;
     })(Directives = Budgeter.Directives || (Budgeter.Directives = {}));
 })(Budgeter || (Budgeter = {}));
-var Budgeter;
-(function (Budgeter) {
-    var Controllers;
-    (function (Controllers) {
-        /** Manages the viewstate and parameters for the main view */
-        var forecastController = (function () {
-            function forecastController($rootScope, paramSvc, apiFormatSvc) {
-                this.$rootScope = $rootScope;
-                this.apiFormatSvc = apiFormatSvc;
-                this.parametersVisible = true;
-                this.forecastview = 'graph';
-                this.forecastParams = paramSvc.params;
-            }
-            /** advances the view date forward 1 month */
-            forecastController.prototype.mthFwd = function () {
-                this.forecastParams.endDate = this.apiFormatSvc.lastDay(this.forecastParams.endDate, +1);
-            };
-            /** steps the view date back 1 month */
-            forecastController.prototype.mthBk = function () {
-                this.forecastParams.endDate = this.apiFormatSvc.lastDay(this.forecastParams.endDate, -1);
-            };
-            forecastController.prototype.showParameters = function () {
-                this.parametersVisible = !this.parametersVisible;
-            };
-            forecastController.prototype.refresh = function () {
-                this.$rootScope.$emit('refresh');
-            };
-            forecastController.$inject = ['$rootScope', 'forecastParamSvc', 'apiFormatSvc'];
-            return forecastController;
-        })();
-        Controllers.forecastController = forecastController;
-    })(Controllers = Budgeter.Controllers || (Budgeter.Controllers = {}));
-})(Budgeter || (Budgeter = {}));
+/** Manages the viewstate and parameters for the main view */
+var forecastController = (function () {
+    function forecastController($rootScope, paramSvc, apiFormatSvc) {
+        this.$rootScope = $rootScope;
+        this.paramSvc = paramSvc;
+        this.apiFormatSvc = apiFormatSvc;
+        this.parametersVisible = true;
+        this.forecastview = 'graph';
+        this.forecastParams = paramSvc.params;
+    }
+    /** advances the view date forward 1 month */
+    forecastController.prototype.mthFwd = function () {
+        this.forecastParams.endDate = this.apiFormatSvc.lastDay(this.forecastParams.endDate, +1);
+    };
+    /** steps the view date back 1 month */
+    forecastController.prototype.mthBk = function () {
+        this.forecastParams.endDate = this.apiFormatSvc.lastDay(this.forecastParams.endDate, -1);
+    };
+    /** Toggles the parameter view */
+    forecastController.prototype.showParameters = function () {
+        this.parametersVisible = !this.parametersVisible;
+    };
+    /** Sends refresh on the rootscope */
+    forecastController.prototype.refresh = function () {
+        this.$rootScope.$emit('refresh');
+    };
+    forecastController.$inject = ['$rootScope', 'forecastParamSvc', 'apiFormatSvc'];
+    return forecastController;
+})();
 ///<reference path="../../all.d.ts"/>
 var Budgeter;
 (function (Budgeter) {
@@ -667,16 +688,17 @@ var Budgeter;
             return {
                 restrict: 'EA',
                 bindToController: true,
-                controller: Budgeter.Controllers.stackedBarController,
-                controllerAs: 'graphCtrl',
+                controller: stackedBarController,
+                controllerAs: 'ctrl',
                 transclude: true,
                 templateUrl: './Views/Templates/Stackedbar.htm',
-                link: function (scope, el, att, ctrl) {
+                link: function (s, e, a) {
+                    var panel = d3.select('#forecast');
                     function render(data) {
                         //container size 
                         var margin = { top: 40, right: 40, bottom: 60, left: 40 };
-                        var width = parseInt(d3.select('#forecast').style('width')) - (margin.left + margin.right);
-                        var height = parseInt(d3.select('#forecast').style('height')) - (margin.top + margin.bottom);
+                        var width = 700 - (margin.left + margin.right);
+                        var height = 500 - (margin.top + margin.bottom);
                         //X axis 
                         var x = d3.time.scale().range([0, width]);
                         // X domain is the dates
@@ -752,21 +774,23 @@ var Budgeter;
                             .attr("y", y(0))
                             .attr("height", 0)
                             .attr("class", "payment")
-                            .on('click', function (d) { console.log(d); })
-                            .transition().duration(1000)
+                            .on('click', function (d) { return console.log(d); });
+                        payments.transition()
+                            .duration(1000)
                             .attr("y", function (d) { return y(d.total_payments); })
                             .attr("height", function (d) { return y(0) - y(Math.abs(d.total_payments)); });
                         //Create deductions
                         var deductions = svg.selectAll("deduction")
                             .data(data.filter(function (d) { return Math.abs(d.total_deductions) > 0; }))
                             .enter().append("rect")
-                            .attr("transform", function (d) { return "translate(" + x(d.caldate) + ",0)"; })
+                            .attr("transform", function (d) { return ("translate(" + x(d.caldate) + ",0)"); })
                             .attr("width", width / data.length)
                             .attr("class", "deduction")
                             .attr("y", y(0))
                             .attr("height", 0)
                             .on("click", function (d) { console.log(d); });
-                        deductions.transition().duration(1000)
+                        deductions.transition()
+                            .duration(1000)
                             .attr("y", y(0))
                             .attr("height", function (d) { return y(d.total_deductions) - y(0); });
                         //Create the labels
@@ -774,15 +798,18 @@ var Budgeter;
                             .data(data)
                             .enter().append("svg:title")
                             .text(function (d) { return JSON.stringify(d); });
-                        ctrl.spin = false;
+                        s.ctrl.spin = false;
                     }
                     ;
-                    ctrl.forecastMgr.getForecast().then(function (data) {
-                        render(data.transactions);
-                    });
-                    ctrl.$rootScope.$on('chartData', function () {
-                        ctrl.spin = true;
-                        render(ctrl.data);
+                    refresh();
+                    function refresh() {
+                        s.ctrl.spin = true;
+                        s.ctrl.getData()
+                            .then(function (data) { return render(data.transactions); })
+                            .catch(function (e) { return s.ctrl.notify({ message: "Problem loading: " + e.message, classes: 'alert-danger' }); });
+                    }
+                    s.ctrl.$rootScope.$on('refresh', function () {
+                        refresh();
                     });
                 }
             };
@@ -790,39 +817,19 @@ var Budgeter;
         Directives.stackedBar = stackedBar;
     })(Directives = Budgeter.Directives || (Budgeter.Directives = {}));
 })(Budgeter || (Budgeter = {}));
-var Budgeter;
-(function (Budgeter) {
-    var Controllers;
-    (function (Controllers) {
-        var stackedBarController = (function () {
-            function stackedBarController($rootScope, forecastParamSvc, forecastMgr, notify) {
-                var _this = this;
-                this.$rootScope = $rootScope;
-                this.forecastMgr = forecastMgr;
-                this.notify = notify;
-                this.spin = true;
-                this.params = forecastParamSvc.params;
-                this.$rootScope.$on('refresh', function () { return _this.refresh(); });
-            }
-            stackedBarController.prototype.refresh = function () {
-                var _this = this;
-                this.spin = true;
-                this.forecastMgr.getForecast().then(function (d) {
-                    _this.data = d.transactions;
-                    _this.headlines = d.headlines;
-                    _this.spin = false;
-                    _this.$rootScope.$emit('chartData');
-                })
-                    .catch(function (e) {
-                    _this.notify({ message: 'Error loading data', classes: 'alert-danger' });
-                });
-            };
-            stackedBarController.$inject = ['$rootScope', 'forecastParamSvc', 'forecastMgr', 'notify'];
-            return stackedBarController;
-        })();
-        Controllers.stackedBarController = stackedBarController;
-    })(Controllers = Budgeter.Controllers || (Budgeter.Controllers = {}));
-})(Budgeter || (Budgeter = {}));
+var stackedBarController = (function () {
+    function stackedBarController($rootScope, forecastDataSvc, notify) {
+        this.$rootScope = $rootScope;
+        this.forecastDataSvc = forecastDataSvc;
+        this.notify = notify;
+        this.spin = true;
+    }
+    stackedBarController.prototype.getData = function () {
+        return this.forecastDataSvc.getForecast();
+    };
+    stackedBarController.$inject = ['$rootScope', 'forecastDataSvc', 'notify'];
+    return stackedBarController;
+})();
 ///<reference path="../../all.d.ts"/>
 var Budgeter;
 (function (Budgeter) {
@@ -832,7 +839,7 @@ var Budgeter;
             return {
                 templateUrl: 'Views/Templates/transactionList.html',
                 controllerAs: 'tListCtrl',
-                controller: Budgeter.Controllers.transactionListController,
+                controller: transactionListController,
                 scope: {},
                 link: function (scope, el, att, ctrl) {
                     ctrl.refresh();
@@ -840,12 +847,6 @@ var Budgeter;
             };
         }
         Directives.transactionList = transactionList;
-    })(Directives = Budgeter.Directives || (Budgeter.Directives = {}));
-})(Budgeter || (Budgeter = {}));
-var Budgeter;
-(function (Budgeter) {
-    var Controllers;
-    (function (Controllers) {
         ;
         var transactionListController = (function () {
             function transactionListController(transactionMgr, notify, $rootScope, transactionValueMgr, apiFormatSvc) {
@@ -865,9 +866,7 @@ var Budgeter;
                 var _this = this;
                 this.transactionMgr.get()
                     .then(function (data) {
-                    _this.transactions = data.map(function (d) {
-                        return _this.apiFormatSvc.transtoClientFmt(d);
-                    });
+                    _this.transactions = data.map(function (d) { return _this.apiFormatSvc.transtoClientFmt(d); });
                 })
                     .catch(function (err) {
                     _this.notify({ message: 'Error loading data', classes: 'alert-danger' });
@@ -894,7 +893,7 @@ var Budgeter;
                         _this.$rootScope.$broadcast('renderChart');
                         _this.notify({ message: 'Transaction added', classes: 'alert-success' });
                         _this.transactions.push(s);
-                        _this.listState.addMode = false;
+                        _this.toggleAddForm();
                     })
                         .catch(function (err) {
                         return _this.notify({ message: err, classes: 'alert-danger' });
@@ -926,8 +925,7 @@ var Budgeter;
             transactionListController.$inject = ['transactionMgr', 'transactionValueMgr', 'notify', '$rootScope', 'apiFormatSvc'];
             return transactionListController;
         })();
-        Controllers.transactionListController = transactionListController;
-    })(Controllers = Budgeter.Controllers || (Budgeter.Controllers = {}));
+    })(Directives = Budgeter.Directives || (Budgeter.Directives = {}));
 })(Budgeter || (Budgeter = {}));
 ///<reference path="../../all.d.ts"/>
 var Budgeter;
@@ -940,7 +938,7 @@ var Budgeter;
                 templateUrl: '/Views/Templates/Transaction.html',
                 require: '^transactionList',
                 bindToController: true,
-                controller: Budgeter.Controllers.transactionController,
+                controller: transactionController,
                 replace: true,
                 scope: false,
                 link: function (scope, el, att) {
@@ -953,54 +951,45 @@ var Budgeter;
         Directives.transaction = transaction;
     })(Directives = Budgeter.Directives || (Budgeter.Directives = {}));
 })(Budgeter || (Budgeter = {}));
-var Budgeter;
-(function (Budgeter) {
-    var Controllers;
-    (function (Controllers) {
-        var transactionController = (function () {
-            function transactionController($scope, transactionMgr, notify) {
-                this.transactionMgr = transactionMgr;
-                this.notify = notify;
-                $scope.transCtrl = this;
-                this.tliststate = $scope.$parent.tListCtrl.listState;
-                this.trans = $scope.t;
-                this.tvListState = { addEdit: false, tvToEdit: null, tID: this.trans.ID };
-                this.notify = notify;
-                this.transactionMgr = transactionMgr;
-            }
-            /**expand this transaction - trigger the contraction of all others */
-            transactionController.prototype.expand = function () {
-                if (!this.expanded) {
-                    this.tliststate.selectedItem = this.index;
-                    this.expanded = true;
-                }
-                else {
-                    this.tliststate.selectedItem = null;
-                    this.expanded = false;
-                }
-            };
-            transactionController.prototype.editToggle = function () {
-                this.tliststate.transactionToEdit = this.trans;
-                this.tliststate.addMode = true;
-            };
-            /** inheriting from the list controller */
-            transactionController.prototype.delete = function (idx) {
-                var _this = this;
-                this.transactionMgr.delete(this.trans.ID)
-                    .success(function (d) {
-                    _this.list.splice(idx, 1);
-                    _this.notify({ message: 'Item deleted successfully', classes: 'alert-success' });
-                })
-                    .error(function (d) {
-                    _this.notify({ message: 'There was a problem deleting this item', classes: 'alert-danger', duration: 5000 });
-                });
-            };
-            transactionController.$inject = ['$scope', 'transactionMgr', 'notify'];
-            return transactionController;
-        })();
-        Controllers.transactionController = transactionController;
-    })(Controllers = Budgeter.Controllers || (Budgeter.Controllers = {}));
-})(Budgeter || (Budgeter = {}));
+var transactionController = (function () {
+    function transactionController($scope, trxService, notify) {
+        this.trxService = trxService;
+        this.notify = notify;
+        $scope.transCtrl = this;
+        this.tliststate = $scope.$parent.tListCtrl.listState;
+        this.trans = $scope.t;
+        this.tvListState = { addEdit: false, tvToEdit: null, tID: this.trans.ID };
+    }
+    /**expand this transaction - trigger the contraction of all others */
+    transactionController.prototype.expand = function () {
+        if (!this.expanded) {
+            this.tliststate.selectedItem = this.index;
+            this.expanded = true;
+        }
+        else {
+            this.tliststate.selectedItem = null;
+            this.expanded = false;
+        }
+    };
+    transactionController.prototype.editToggle = function () {
+        this.tliststate.transactionToEdit = this.trans;
+        this.tliststate.addMode = true;
+    };
+    /** inheriting from the list controller */
+    transactionController.prototype.delete = function (idx) {
+        var _this = this;
+        this.trxService.delete(this.trans.ID)
+            .then(function (d) {
+            _this.list.splice(idx, 1);
+            _this.notify({ message: 'Item deleted successfully', classes: 'alert-success' });
+        })
+            .catch(function (e) {
+            _this.notify({ message: "Problem deleting: " + e.message, classes: 'alert-danger' });
+        });
+    };
+    transactionController.$inject = ['$scope', 'transactionMgr', 'notify'];
+    return transactionController;
+})();
 ///<reference path ="../../all.d.ts"/>
 var Budgeter;
 (function (Budgeter) {
@@ -1282,31 +1271,26 @@ var Budgeter;
                     _this.notify({ message: 'Error' + e.message, classes: 'alert-danger' });
                 });
             };
-            transactionValueEditorCtrl.$inject = ['transactionValueMgr', 'notify', '$rootScope', 'listOptionsDataSvc'];
+            transactionValueEditorCtrl.$inject = ['trxdetailDataSvc', 'notify', '$rootScope', 'listOptionsDataSvc'];
             return transactionValueEditorCtrl;
         })();
         Controllers.transactionValueEditorCtrl = transactionValueEditorCtrl;
     })(Controllers = Budgeter.Controllers || (Budgeter.Controllers = {}));
 })(Budgeter || (Budgeter = {}));
-///<reference path="../../all.d.ts"/>
-///<reference path="../../all.d.ts"/>
-///<reference path="../../all.d.ts"/>
-///<reference path="../../all.d.ts"/>
-///<reference path="../../all.d.ts"/>
 /// <reference path="../all.d.ts"/>
 var Budgeter;
 (function (Budgeter) {
-    var app = angular.module('budgeter', ['ngRoute', 'ngCookies', 'ui.bootstrap', 'ngAnimate', 'cgNotify']);
-    app.service('sessionService', Budgeter.Services.sessionService);
-    app.service('forecastParamSvc', Budgeter.Services.forecastParamSvc);
-    app.service('authSvc', Budgeter.Services.authSvc);
-    app.service('apiFormatSvc', Budgeter.Services.apiFormatSvc);
-    app.service('forecastMgr', Budgeter.Services.forecastMgr);
-    app.service('transactionMgr', Budgeter.Services.transactionMgr);
-    app.service('transactionValueMgr', Budgeter.Services.transactionValueMgr);
-    app.service('listOptionsDataSvc', Budgeter.Services.listOptionsDataSvc);
-    app.controller(Budgeter.Controllers);
-    app.directive(Budgeter.Directives);
+    var app = angular.module('budgeter', ['ngRoute', 'ngCookies', 'ui.bootstrap', 'ngAnimate', 'cgNotify'])
+        .service('sessionService', Budgeter.Services.sessionService)
+        .service('forecastParamSvc', Budgeter.Services.forecastParamSvc)
+        .service('authSvc', Budgeter.Services.authSvc)
+        .service('apiFormatSvc', Budgeter.Services.apiFormatSvc)
+        .service('forecastDataSvc', Budgeter.Services.forecastDataSvc)
+        .service('trxDataService', Budgeter.Services.trxDataService)
+        .service('trxdetailDataSvc', Budgeter.Services.trxdetailDataSvc)
+        .service('listOptionsDataSvc', Budgeter.Services.listOptionsDataSvc)
+        .controller(Budgeter.Controllers)
+        .directive(Budgeter.Directives);
     var ConfigFunction = function ($routeProvider, $locationProvider) {
         $locationProvider.hashPrefix('!').html5Mode(true);
         $routeProvider

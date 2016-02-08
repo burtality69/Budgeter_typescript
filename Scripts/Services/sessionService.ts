@@ -8,7 +8,7 @@ module Budgeter.Services {
 		private user: string;
 		public _apiURl: string;
 
-		constructor(public $cookies: ng.cookies.ICookiesService) {
+		constructor(private $cookies: ng.cookies.ICookiesService) {
 			this._apiURl = 'http://budgeter.azurewebsites.net'
 			//this._apiURl = 'http://localhost:52243/'
 		}

@@ -4,7 +4,7 @@ module Budgeter.Directives {
 		return {
 			restrict: 'EA',
 			templateUrl: '/Views/Templates/forecastControls.html',
-			controller: Controllers.forecastController,
+			controller: forecastController,
 			bindToController: true,
 			controllerAs: 'fCtrl',
 			transclude: true,
@@ -13,40 +13,41 @@ module Budgeter.Directives {
 	};
 }
 
-module Budgeter.Controllers {
-    /** Manages the viewstate and parameters for the main view */
-    export class forecastController {
-        forecastview: string;
-        mthOffset: number;
-        forecastParams: IForecastParams;
-        parametersVisible: boolean;          
-        newItemName: string;
+/** Manages the viewstate and parameters for the main view */
+class forecastController {
+    
+    private forecastview: string;
+    private mthOffset: number;
+    private forecastParams: IForecastParams;
+    private parametersVisible: boolean;          
 
-        static $inject = ['$rootScope','forecastParamSvc','apiFormatSvc'];
-        
-        constructor(public $rootScope: ng.IRootScopeService, paramSvc: Budgeter.Services.forecastParamSvc
-            ,public apiFormatSvc: Budgeter.Services.apiFormatSvc) {
-            this.parametersVisible = true;
-            this.forecastview = 'graph';
-            this.forecastParams = paramSvc.params;
-        }
-        
-        /** advances the view date forward 1 month */
-        mthFwd(): void {
-            this.forecastParams.endDate = this.apiFormatSvc.lastDay(this.forecastParams.endDate, +1);
-        }
-        /** steps the view date back 1 month */
-        mthBk(): void {
-            this.forecastParams.endDate = this.apiFormatSvc.lastDay(this.forecastParams.endDate, -1);
-        }
-
-        showParameters(): void {
-            this.parametersVisible = !this.parametersVisible;
-        }
-
-        refresh(): void {
-            this.$rootScope.$emit('refresh');
-        }
-
+    static $inject = ['$rootScope','forecastParamSvc','apiFormatSvc'];
+    
+    constructor(public $rootScope: ng.IRootScopeService, private paramSvc: Budgeter.Services.forecastParamSvc
+        ,public apiFormatSvc: Budgeter.Services.apiFormatSvc) {
+            
+        this.parametersVisible = true;
+        this.forecastview = 'graph';
+        this.forecastParams = paramSvc.params;
     }
+    
+    /** advances the view date forward 1 month */
+    mthFwd(): void {
+        this.forecastParams.endDate = this.apiFormatSvc.lastDay(this.forecastParams.endDate, +1);
+    }
+    /** steps the view date back 1 month */
+    mthBk(): void {
+        this.forecastParams.endDate = this.apiFormatSvc.lastDay(this.forecastParams.endDate, -1);
+    }
+    
+    /** Toggles the parameter view */
+    showParameters(): void {
+        this.parametersVisible = !this.parametersVisible;
+    }
+    
+    /** Sends refresh on the rootscope */
+    refresh(): void {
+        this.$rootScope.$emit('refresh');
+    }
+
 }

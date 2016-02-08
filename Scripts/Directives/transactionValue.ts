@@ -30,7 +30,7 @@ module Budgeter.Controllers {
 		public liststate: ITransValueListState;
 		public tv: ITransactionValueClientModel;
 
-		constructor(public transactionValueMgr: Budgeter.Services.transactionValueMgr,
+		constructor(public transactionValueMgr: Services.trxDataService,
 			public notify: ng.cgNotify.INotifyService) {
 		}
 

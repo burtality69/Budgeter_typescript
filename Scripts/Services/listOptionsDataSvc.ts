@@ -4,13 +4,9 @@ module Budgeter.Services {
 	
 	export class listOptionsDataSvc {
 		
-		static $inject = ['sessionService','$http','$q'];
-		
-		private _transactionfrequencies: string;
-		private _transactiontypes: string;
-		
-		constructor(public sessionService: Budgeter.Services.sessionService, public $http: ng.IHttpService,
-					public $q: ng.IQService) {
+		static $inject = ['sessionService','$http'];
+				
+		constructor(public sessionService: Budgeter.Services.sessionService, public $http: ng.IHttpService) {
 		}
 		
 		get transactiontypes(): ng.IPromise<string[]> {

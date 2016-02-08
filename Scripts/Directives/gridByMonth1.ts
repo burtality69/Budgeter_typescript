@@ -14,10 +14,10 @@ module Budgeter.Directives {
       controller: forecastGridCtrl,
       link: (scope, el, attr, fctrl) => {
 
-        var render = (data: iBudgetRowModel[]) => {
+        let render = (data: iBudgetRowModel[]) => {
 
-          var descriptions = [];
-          var columns = [];
+          let descriptions = [];
+          let columns = [];
 
           if (el.children[0]) { el.children[0].remove(); }
           
@@ -32,18 +32,18 @@ module Budgeter.Directives {
           })
           
           //Build a table
-          var table:HTMLTableElement = document.createElement('table');
-          var tHead: HTMLTableSectionElement = document.createElement('thead');
-          var tBody: HTMLTableSectionElement = document.createElement('tbody');
+          let table:HTMLTableElement = document.createElement('table');
+          let tHead: HTMLTableSectionElement = document.createElement('thead');
+          let tBody: HTMLTableSectionElement = document.createElement('tbody');
                
           table.classList.add('datagrid table');
           
           //Build header
           
-          var tRow: HTMLTableRowElement = document.createElement('tr');
+          let tRow: HTMLTableRowElement = document.createElement('tr');
           
-          columns.forEach(c=>{
-            var th = document.createElement('th');
+          columns.forEach(c=> {
+            let th = document.createElement('th');
             th.innerHTML = c;
             th.classList.add('col-md-1');
           })
@@ -51,7 +51,10 @@ module Budgeter.Directives {
           tHead.appendChild(tRow);
           table.appendChild(tHead);
           
-          //Build the table body
+          descriptions.forEach(d=>{
+            let row = document.createElement('tr');
+            row.appendChild(document.createElement('th'))
+          })
         }
       }
     }
@@ -61,12 +64,15 @@ module Budgeter.Directives {
 
     static $inject = ['forecastDataSvc', '$filter', 'forecastParamSvc'];
 
-    constructor(forecastDataSvc: Services.forecastDataSvc,
-      $filter: ng.IFilterService,
-      forecastParamSvc: Services.forecastParamSvc) {
+    constructor(public forecastDataSvc: Services.forecastDataSvc,
+      public $filter: ng.IFilterService,
+      public forecastParamSvc: Services.forecastParamSvc) {
 
     }
-
+    
+    refresh(){
+      
+    }
 
   }
 }

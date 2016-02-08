@@ -1,14 +1,9 @@
 <div>
-    <!-- COMPACT TRANSACTION VIEW-->
     <div class="transactioncompact" ng-class="{'activetransaction': transCtrl.expanded}">
         <span>{{::transCtrl.trans.Name}}</span>
         <div class="transactioncontrols">
             <span class="actionbutton" ng-click="transCtrl.expand()">&ctdot;</span>
         </div>
     </div>
-    <!--EXPANDED TRANSACTION VIEW-->
-    <div class="transactionexpanded" ng-if="transCtrl.expanded" style="padding:2px">
-        <!--TRANSACTION VALUES-->
-        <trans-values-list list-state="transCtrl.tvListState" transaction-values="transCtrl.trans.TransactionValues"></trans-values-list>
-    </div>
+    <trans-values-list transaction-values="transCtrl.trans.TransactionValues"></trans-values-list>
 </div>

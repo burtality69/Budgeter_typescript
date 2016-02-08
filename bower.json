@@ -1,9 +1,0 @@
-{
-  "name": "Budgeter",
-  "dependencies": {
-    "angular-chart.js": "~0.5.3",
-    "angular-moment": "~0.10.0",
-    "ng-notifications-bar": "~0.0.12",
-    "bootstrap": "~3.3.4"
-  }
-}

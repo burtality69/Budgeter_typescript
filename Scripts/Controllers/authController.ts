@@ -42,7 +42,7 @@ module Budgeter.Controllers {
 		static $inject = ['authSvc', 'sessionService', '$modalInstance', '$rootScope'];
 
 		constructor(public authSvc: Budgeter.Services.authSvc, private sessionService: Budgeter.Services.sessionService,
-			private $modalInstance: ng.ui.bootstrap.IModalServiceInstance, private $rootScope: ng.IRootScopeService) {
+			private $modalInstance: angular.ui.bootstrap.IModalServiceInstance, private $rootScope: ng.IRootScopeService) {
 
 			this.tabs = [
 				{ Header: "Log in", title: 'Login', url: 'Login.html' },
@@ -63,7 +63,7 @@ module Budgeter.Controllers {
 					this.$rootScope.$broadcast('redrawChart');
 				})
 				.catch((err: Error) => {
-					console.log(err.message)
+					this.loginForm.errorMessage = err.message;
 				})
 		}
 

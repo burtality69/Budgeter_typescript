@@ -1,7 +1,8 @@
 html {
   height: 100%;
   font-family: 'Open Sans Condensed', sans-serif;
-  margin: 0; }
+  margin: 0; 
+ }
 
 body {
   height: 100%;
@@ -74,7 +75,9 @@ input::selection {
   display: flex;
   font-size: 8px;
   list-style-type: none;
-  flex-direction: column; }
+  flex-direction: column; 
+  }
+  
   #transactionlist .transaction {
     border-left: 6px solid;
     display: block;

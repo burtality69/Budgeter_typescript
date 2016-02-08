@@ -18,7 +18,7 @@ module Budgeter.Controllers {
 
 	export class transactionValueEditorCtrl {
 
-		static $inject = ['transactionValueMgr', 'notify', '$rootScope', 'listOptionsDataSvc'];
+		static $inject = ['trxdetailDataSvc', 'notify', '$rootScope', 'listOptionsDataSvc'];
 
 		public tv: ITransactionValueClientModel;
 		public frequencies: Array<string>;
@@ -26,7 +26,7 @@ module Budgeter.Controllers {
 		public listState: ITransValueListState;
 		public transactionID: number;
 
-		constructor(public transactionValueMgr: Services.transactionValueMgr, public notify: ng.cgNotify.INotifyService
+		constructor(public transactionValueMgr: Services.trxdetailDataSvc, public notify: ng.cgNotify.INotifyService
 			, public $rootscope: ng.IRootScopeService, public listOptionsDataSvc: Budgeter.Services.listOptionsDataSvc) {
 			
 			// If there's already a transactionvalue to edit then load it - otherwise give us a new one. 

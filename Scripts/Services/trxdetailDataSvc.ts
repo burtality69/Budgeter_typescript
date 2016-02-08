@@ -2,22 +2,17 @@
 
 module Budgeter.Services {
 
-	export class transactionValueMgr {
+	export class trxdetailDataSvc {
 
 		static $inject = ['$http', 'sessionService','apiFormatSvc'];
 
-		url: string;
-		http: ng.IHttpService;
-		sessionService: Budgeter.Services.sessionService;
-		formatter: Budgeter.Services.apiFormatSvc;
+		private url: string;
 
-		constructor($http: ng.IHttpService, sessionService: Budgeter.Services.sessionService,
-			apiFormatSvc: Budgeter.Services.apiFormatSvc) {
-
-			this.http = $http;
+		constructor(private $http: ng.IHttpService, private sessionService: Budgeter.Services.sessionService,
+			private apiFormatSvc: Budgeter.Services.apiFormatSvc) {
+				
 			this.url = sessionService.apiURL + '/api/transactionValues'
-			this.formatter = apiFormatSvc;
-			this.sessionService = sessionService;
+
 		}
 		
 		get(): ng.IHttpPromise<any> {
@@ -27,7 +22,7 @@ module Budgeter.Services {
 				headers: this.sessionService.httpGetHeaders
 			};
 
-			return this.http(config);
+			return this.$http(config);
 		}
 		
 		post(t: ITransactionValueClientModel): ng.IHttpPromise<any> {
@@ -35,10 +30,10 @@ module Budgeter.Services {
 				method: 'POST',
 				url: this.url,
 				headers: this.sessionService.httpGetHeaders,
-				data: this.formatter.tvtoServerFmt(t)		
+				data: this.apiFormatSvc.tvtoServerFmt(t)		
 			};
 
-			return this.http(config);
+			return this.$http(config);
 		}
 		
 		put(t: ITransactionValueClientModel): ng.IHttpPromise<any> {
@@ -46,10 +41,10 @@ module Budgeter.Services {
 				method: 'PUT',
 				url: this.url + '/' + t.ID,
 				headers: this.sessionService.httpGetHeaders,
-				data: this.formatter.tvtoServerFmt(t)				
+				data: this.apiFormatSvc.tvtoServerFmt(t)				
 			}
 			
-			return this.http(config); 
+			return this.$http(config); 
 		}
 		
 		delete(ID: number): ng.IHttpPromise<any> {
@@ -59,7 +54,7 @@ module Budgeter.Services {
 				headers: this.sessionService.httpGetHeaders,
 			}
 			
-			return this.http(config); 
+			return this.$http(config); 
 		}
 				
 		getnewTransactionValue(TransactionID: number): ITransactionValueClientModel {

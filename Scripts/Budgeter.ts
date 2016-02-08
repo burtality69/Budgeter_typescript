@@ -1,21 +1,19 @@
 /// <reference path="../all.d.ts"/>
 
 module Budgeter {
-  var app = angular.module('budgeter', ['ngRoute', 'ngCookies', 'ui.bootstrap', 'ngAnimate', 'cgNotify'])
-  app.service('sessionService', Budgeter.Services.sessionService);
-  app.service('forecastParamSvc', Budgeter.Services.forecastParamSvc);
-  app.service('authSvc', Budgeter.Services.authSvc);
-  app.service('apiFormatSvc',Budgeter.Services.apiFormatSvc);
-  app.service('forecastDataSvc', Budgeter.Services.forecastDataSvc);
-  app.service('transactionMgr', Budgeter.Services.transactionMgr);
-  app.service('transactionValueMgr', Budgeter.Services.transactionValueMgr);
-  app.service('listOptionsDataSvc',Budgeter.Services.listOptionsDataSvc);
-  app.controller(Budgeter.Controllers);
-  app.directive(Budgeter.Directives);
-    
-  var ConfigFunction: Function = function($routeProvider,
-    $locationProvider: ng.ILocationProvider) {
-      
+  let app = angular.module('budgeter', ['ngRoute', 'ngCookies', 'ui.bootstrap', 'ngAnimate', 'cgNotify'])
+    .service('sessionService', Budgeter.Services.sessionService)
+    .service('forecastParamSvc', Budgeter.Services.forecastParamSvc)
+    .service('authSvc', Budgeter.Services.authSvc)
+    .service('apiFormatSvc', Budgeter.Services.apiFormatSvc)
+    .service('forecastDataSvc', Budgeter.Services.forecastDataSvc)
+    .service('trxDataService', Budgeter.Services.trxDataService)
+    .service('trxdetailDataSvc', Budgeter.Services.trxdetailDataSvc)
+    .service('listOptionsDataSvc', Budgeter.Services.listOptionsDataSvc)
+    .controller(Budgeter.Controllers)
+    .directive(Budgeter.Directives);
+
+  let ConfigFunction = ($routeProvider, $locationProvider: ng.ILocationProvider) => {
     $locationProvider.hashPrefix('!').html5Mode(true);
 
     $routeProvider
@@ -27,7 +25,7 @@ module Budgeter {
         redirectTo: '/'
       });
   };
-  
+
   ConfigFunction.$inject = ['$routeProvider', '$locationProvider'];
   app.config(ConfigFunction);
 }

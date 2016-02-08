@@ -1,11 +1,11 @@
-<div class="graphloading spinner" ng-show="graphCtrl.spin">
+<div class="graphloading spinner" ng-show="ctrl.spin">
 	<div class="cube1"></div>
 	<div class="cube2"></div>
 </div>
-<div class="headlines" ng-show="!graphCtrl.spin">
-	<headline-item class="headline income" icon="glyphicon glyphicon-arrow-up" name="Earned" value="graphCtrl.headlines.incoming"></headline-item>
-	<headline-item class="headline spending" icon="glyphicon glyphicon-arrow-down" name="Spent" value="graphCtrl.headlines.outgoing"></headline-item>
-	<headline-item class="headline savings" icon="glyphicon glyphicon-piggy-bank" name="Saved" value="graphCtrl.headlines.savings"></headline-item>
-	<headline-item class="headline balance" icon="glyphicon glyphicon-usd" name="Remaining" value="graphCtrl.headlines.balance"></headline-item>
+<div class="headlines" ng-show="!ctrl.spin">
+	<headline-item class="headline income" icon="glyphicon glyphicon-arrow-up" name="Earned" value="ctrl.headlines.incoming"></headline-item>
+	<headline-item class="headline spending" icon="glyphicon glyphicon-arrow-down" name="Spent" value="ctrl.headlines.outgoing"></headline-item>
+	<headline-item class="headline savings" icon="glyphicon glyphicon-piggy-bank" name="Saved" value="ctrl.headlines.savings"></headline-item>
+	<headline-item class="headline balance" icon="glyphicon glyphicon-usd" name="Remaining" value="ctrl.headlines.balance"></headline-item>
 </div>
-<div id="graphdiv" class="graphcontainer clearfix" ng-show="!graphCtrl.spin"></div>
+<div id="graphdiv" class="graphcontainer clearfix" ng-show="!ctrl.spin"></div>
