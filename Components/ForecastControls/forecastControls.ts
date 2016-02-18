@@ -3,7 +3,7 @@ module Budgeter.Directives {
 	export function forecastControls() : ng.IDirective {
 		return {
 			restrict: 'EA',
-			templateUrl: '/Views/Templates/forecastControls.html',
+			templateUrl: '/Components/ForecastControls/forecastControls.htm',
 			controller: forecastController,
 			bindToController: true,
 			controllerAs: 'fCtrl',

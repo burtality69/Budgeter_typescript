@@ -1,0 +1,8 @@
+<ul class="transactionlist list-group">
+    <span>Payments and deductions</span>
+    <li ng-repeat="t in ctrl.trxList.list"
+        class="list-group-item"> 
+        {{t.Name}}
+        <span ng-click="ctrl.view(t.ID)" class="badge">{{t.CurrentValue}}</span>
+    </li>
+</ul>

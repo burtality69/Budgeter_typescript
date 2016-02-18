@@ -2,16 +2,17 @@
 
 module Budgeter {
   let app = angular.module('budgeter', ['ngRoute', 'ngCookies', 'ui.bootstrap', 'ngAnimate', 'cgNotify'])
-    .service('sessionService', Budgeter.Services.sessionService)
-    .service('forecastParamSvc', Budgeter.Services.forecastParamSvc)
-    .service('authSvc', Budgeter.Services.authSvc)
-    .service('apiFormatSvc', Budgeter.Services.apiFormatSvc)
-    .service('forecastDataSvc', Budgeter.Services.forecastDataSvc)
-    .service('trxDataService', Budgeter.Services.trxDataService)
-    .service('trxdetailDataSvc', Budgeter.Services.trxdetailDataSvc)
-    .service('listOptionsDataSvc', Budgeter.Services.listOptionsDataSvc)
-    .controller(Budgeter.Controllers)
-    .directive(Budgeter.Directives);
+    .service('sessionService', Services.sessionService)
+    .service('forecastParamSvc', Services.forecastParamSvc)
+    .service('authSvc', Services.authSvc)
+    .service('apiFormatSvc', Services.apiFormatSvc)
+    .service('forecastDataSvc', Services.forecastDataSvc)
+    .service('trxDataService', Services.trxDataService)
+    .service('trxdetailDataService', Services.trxdetailDataSvc)
+    .service('listOptionsDataSvc', Services.listOptionsDataSvc)
+    .service('trxList',Services.TrxList)
+    .controller(Controllers)
+    .directive(Directives);
 
   let ConfigFunction = ($routeProvider, $locationProvider: ng.ILocationProvider) => {
     $locationProvider.hashPrefix('!').html5Mode(true);

@@ -2,7 +2,7 @@
 
 module Budgeter.Directives {
 
-    interface stackedBarScope {
+    interface stackedBarScope extends ng.IScope{
         ctrl: stackedBarController;
     }
 
@@ -24,7 +24,7 @@ module Budgeter.Directives {
             controller: stackedBarController,
             controllerAs: 'ctrl',
             transclude: true,
-            templateUrl: './Views/Templates/Stackedbar.htm',
+            templateUrl: './Components/Stackedbar/Stackedbar.htm',
             link: (s: stackedBarScope, e: ng.IAugmentedJQuery,a: ng.IAttributes) => {
                     
                 let panel = d3.select('#forecast');
@@ -117,7 +117,7 @@ module Budgeter.Directives {
                         .attr("d", savingsline);
 
                     //Create payments 
-                    var payments = svg.selectAll("payment")
+                    let payments = svg.selectAll("payment")
                         .data(data.filter(d=> Math.abs(d.total_payments) > 0 ))
                         .enter().append("rect")
                         .attr("transform", d => { return "translate(" + x(d.caldate) + ",0)"; })
@@ -129,8 +129,8 @@ module Budgeter.Directives {
                       
                     payments.transition()   
                         .duration(1000)
-                        .attr("y", (d: IForecastRowModel) => y(d.total_payments))
-                        .attr("height", (d: IForecastRowModel) => y(0) - y(Math.abs(d.total_payments)));
+                        .attr("y", d  => y(d.total_payments))
+                        .attr("height", d => y(0) - y(Math.abs(d.total_payments)));
                     
                     //Create deductions
                     let deductions = svg.selectAll("deduction")
@@ -155,6 +155,7 @@ module Budgeter.Directives {
                         .text(d => { return JSON.stringify(d); });
 
                     s.ctrl.spin = false;
+                    s.$apply;
                 };
 
                 refresh();

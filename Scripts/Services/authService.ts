@@ -9,10 +9,10 @@ module Budgeter.Services {
 		private params: ng.IRequestConfig;
 
 		constructor(public $http: ng.IHttpService,
-			public sessionService: Budgeter.Services.sessionService) {
+			public sessionService: Services.sessionService) {
 		}
 
-		login(loginForm: ILoginModel): ng.IPromise<ITokenResponse> {
+		login(loginForm: ILoginModel): ng.IHttpPromise<IAuthToken> {
 
 			var config: ng.IRequestConfig = {
 				method: 'POST',

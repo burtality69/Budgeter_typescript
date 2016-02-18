@@ -5,11 +5,20 @@ module Budgeter.Services {
 	export class listOptionsDataSvc {
 		
 		static $inject = ['sessionService','$http'];
+        public trxTypes: string[];
+        public trxFreqs: string[];
 				
-		constructor(public sessionService: Budgeter.Services.sessionService, public $http: ng.IHttpService) {
-		}
+		constructor(private sessionService: Services.sessionService, private $http: ng.IHttpService) {
+		  
+          this.getTrxTypes()
+            .then(d=>this.trxTypes = d.data);
+          
+          this.getTrxFrequencies()
+            .then(d=>this.trxFreqs = d.data);
+        
+        }
 		
-		get transactiontypes(): ng.IPromise<string[]> {
+		private getTrxTypes(): ng.IHttpPromise<string[]> {
 			
 			var config: ng.IRequestConfig = {
 				method: 'GET',
@@ -20,7 +29,7 @@ module Budgeter.Services {
 			return this.$http(config)				
 		}
 		
-		get transactionfrequencies(): ng.IPromise<string[]> {
+		private getTrxFrequencies(): ng.IHttpPromise<string[]> {
 			
 			var config: ng.IRequestConfig ={
 				method: 'GET',

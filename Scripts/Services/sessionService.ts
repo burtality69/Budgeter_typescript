@@ -33,7 +33,7 @@ module Budgeter.Services {
 			return this._apiURl;
 		}
 		
-		get httpGetHeaders(): Object {
+		get httpGetHeaders(): ng.IHttpRequestConfigHeaders {
 			return {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.Token };
 		}
 		

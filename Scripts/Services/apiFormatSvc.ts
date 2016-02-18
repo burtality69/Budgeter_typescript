@@ -23,15 +23,21 @@ module Budgeter.Services {
 		}
 
 		transtoClientFmt(t: ITransactionServerModel): ITransactionModel {
-			return {
+			
+            let tvs = t.TransactionValues.map(tv => {
+					return this.tvToClientFmt(tv);
+            })
+            let today = new Date();
+            let curVal = tvs.filter(t=>(t.Start_date <= today && t.End_date >= today));
+            
+            return {
 				ID: t.ID,
 				Name: t.Name,
 				TypeID: t.TypeID,
 				UserID: t.UserID,
 				TypeDescription: t.TypeDescription,
-				TransactionValues: t.TransactionValues.map(tv => {
-					return this.tvToClientFmt(tv);
-				})
+				TransactionValues: tvs,
+                CurrentValue: curVal.length? curVal[0].Value:0
 			}
 		}
 

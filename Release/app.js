@@ -46,13 +46,13 @@ var Budgeter;
             LoginModalController.prototype.login = function () {
                 var _this = this;
                 this.authSvc.login(this.loginForm)
-                    .then(function (response) {
-                    _this.sessionService.Token = response.data.access_token;
+                    .then(function (r) {
+                    _this.sessionService.Token = r.data.access_token;
                     _this.$modalInstance.close();
-                    _this.$rootScope.$broadcast('redrawChart');
+                    _this.$rootScope.$emit('refresh');
                 })
                     .catch(function (err) {
-                    _this.loginForm.errorMessage = err.message;
+                    _this.loginForm.errorMessage = err.data.error_description;
                 });
             };
             LoginModalController.prototype.register = function (registerForm) {
@@ -211,7 +211,12 @@ var Budgeter;
                         method: 'GET',
                         url: _this.url,
                         headers: _this.sessionService.httpGetHeaders,
-                        transformResponse: function (d, h) { return (_this.apiFormatSvc.transtoClientFmt(d)); }
+                        transformResponse: function (d, h) {
+                            var p = JSON.parse(d);
+                            return p.map(function (d) {
+                                return _this.apiFormatSvc.transtoClientFmt(d);
+                            });
+                        }
                     };
                     _this.$http(config)
                         .then(function (d) { return resolve(d.data); })
@@ -335,6 +340,74 @@ var Budgeter;
             return trxdetailDataSvc;
         })();
         Services.trxdetailDataSvc = trxdetailDataSvc;
+    })(Services = Budgeter.Services || (Budgeter.Services = {}));
+})(Budgeter || (Budgeter = {}));
+///<reference path="../../all.d.ts"/>
+var Budgeter;
+(function (Budgeter) {
+    var Services;
+    (function (Services) {
+        var TrxList = (function () {
+            function TrxList($rootScope, trxDataSvc, notify) {
+                this.$rootScope = $rootScope;
+                this.trxDataSvc = trxDataSvc;
+                this.notify = notify;
+                this._list = [];
+                this.load();
+            }
+            TrxList.prototype.add = function (t) {
+                this._list.push(t);
+                this.broadcastChange();
+            };
+            /** return the index of element with the given ID */
+            TrxList.prototype.find = function (id) {
+                for (var i = 0; i < this._list.length; i++) {
+                    if (this._list[i].ID == id) {
+                        return i;
+                    }
+                }
+            };
+            /**Return element by ID */
+            TrxList.prototype.element = function (id) {
+                return this.list[this.find(id)];
+            };
+            /** Remove item from list -return a promise */
+            TrxList.prototype.remove = function (id) {
+                var _this = this;
+                return new Promise(function (res, rej) {
+                    try {
+                        _this._list.splice(_this.find(id), 1);
+                        _this.broadcastChange();
+                        res("Trx " + id + " deleted successfully");
+                    }
+                    catch (e) {
+                        rej(e);
+                    }
+                });
+            };
+            TrxList.prototype.edit = function () {
+            };
+            /** Populate the underlying list from the data service */
+            TrxList.prototype.load = function () {
+                var _this = this;
+                this.trxDataSvc.get()
+                    .then(function (d) { return _this._list = d; })
+                    .catch(function (e) { return _this.notify({ message: "Error loading data " + e.message, classes: 'alert-danger' }); });
+            };
+            TrxList.prototype.broadcastChange = function () {
+                this.$rootScope.$emit('refresh');
+            };
+            Object.defineProperty(TrxList.prototype, "list", {
+                get: function () {
+                    return this._list;
+                },
+                enumerable: true,
+                configurable: true
+            });
+            TrxList.$inject = ['$rootScope', 'trxDataService', 'notify'];
+            return TrxList;
+        })();
+        Services.TrxList = TrxList;
     })(Services = Budgeter.Services || (Budgeter.Services = {}));
 })(Budgeter || (Budgeter = {}));
 ///<reference path="../../all.d.ts"/>
@@ -466,33 +539,30 @@ var Budgeter;
     (function (Services) {
         var listOptionsDataSvc = (function () {
             function listOptionsDataSvc(sessionService, $http) {
+                var _this = this;
                 this.sessionService = sessionService;
                 this.$http = $http;
+                this.getTrxTypes()
+                    .then(function (d) { return _this.trxTypes = d.data; });
+                this.getTrxFrequencies()
+                    .then(function (d) { return _this.trxFreqs = d.data; });
             }
-            Object.defineProperty(listOptionsDataSvc.prototype, "transactiontypes", {
-                get: function () {
-                    var config = {
-                        method: 'GET',
-                        url: this.sessionService.apiURL + '/api/admin/transactiontypes',
-                        headers: this.sessionService.httpGetHeaders,
-                    };
-                    return this.$http(config);
-                },
-                enumerable: true,
-                configurable: true
-            });
-            Object.defineProperty(listOptionsDataSvc.prototype, "transactionfrequencies", {
-                get: function () {
-                    var config = {
-                        method: 'GET',
-                        url: this.sessionService.apiURL + '/api/admin/transactionfrequencies',
-                        headers: this.sessionService.httpGetHeaders
-                    };
-                    return this.$http(config);
-                },
-                enumerable: true,
-                configurable: true
-            });
+            listOptionsDataSvc.prototype.getTrxTypes = function () {
+                var config = {
+                    method: 'GET',
+                    url: this.sessionService.apiURL + '/api/admin/transactiontypes',
+                    headers: this.sessionService.httpGetHeaders,
+                };
+                return this.$http(config);
+            };
+            listOptionsDataSvc.prototype.getTrxFrequencies = function () {
+                var config = {
+                    method: 'GET',
+                    url: this.sessionService.apiURL + '/api/admin/transactionfrequencies',
+                    headers: this.sessionService.httpGetHeaders
+                };
+                return this.$http(config);
+            };
             listOptionsDataSvc.$inject = ['sessionService', '$http'];
             return listOptionsDataSvc;
         })();
@@ -524,15 +594,19 @@ var Budgeter;
             };
             apiFormatSvc.prototype.transtoClientFmt = function (t) {
                 var _this = this;
+                var tvs = t.TransactionValues.map(function (tv) {
+                    return _this.tvToClientFmt(tv);
+                });
+                var today = new Date();
+                var curVal = tvs.filter(function (t) { return (t.Start_date <= today && t.End_date >= today); });
                 return {
                     ID: t.ID,
                     Name: t.Name,
                     TypeID: t.TypeID,
                     UserID: t.UserID,
                     TypeDescription: t.TypeDescription,
-                    TransactionValues: t.TransactionValues.map(function (tv) {
-                        return _this.tvToClientFmt(tv);
-                    })
+                    TransactionValues: tvs,
+                    CurrentValue: curVal.length ? curVal[0].Value : 0
                 };
             };
             apiFormatSvc.prototype.tvtoServerFmt = function (t) {
@@ -611,7 +685,7 @@ var Budgeter;
         function forecastControls() {
             return {
                 restrict: 'EA',
-                templateUrl: '/Views/Templates/forecastControls.html',
+                templateUrl: '/Components/ForecastControls/forecastControls.htm',
                 controller: forecastController,
                 bindToController: true,
                 controllerAs: 'fCtrl',
@@ -691,7 +765,7 @@ var Budgeter;
                 controller: stackedBarController,
                 controllerAs: 'ctrl',
                 transclude: true,
-                templateUrl: './Views/Templates/Stackedbar.htm',
+                templateUrl: './Components/Stackedbar/Stackedbar.htm',
                 link: function (s, e, a) {
                     var panel = d3.select('#forecast');
                     function render(data) {
@@ -799,6 +873,7 @@ var Budgeter;
                             .enter().append("svg:title")
                             .text(function (d) { return JSON.stringify(d); });
                         s.ctrl.spin = false;
+                        s.$apply;
                     }
                     ;
                     refresh();
@@ -837,93 +912,48 @@ var Budgeter;
     (function (Directives) {
         function transactionList() {
             return {
-                templateUrl: 'Views/Templates/transactionList.html',
-                controllerAs: 'tListCtrl',
-                controller: transactionListController,
+                templateUrl: './Components/TrxList/transactionList.htm',
+                controllerAs: 'ctrl',
+                controller: trxListController,
                 scope: {},
-                link: function (scope, el, att, ctrl) {
-                    ctrl.refresh();
-                }
+                link: function (s, e, a) { }
             };
         }
         Directives.transactionList = transactionList;
-        ;
-        var transactionListController = (function () {
-            function transactionListController(transactionMgr, notify, $rootScope, transactionValueMgr, apiFormatSvc) {
-                this.transactionMgr = transactionMgr;
+        var trxListController = (function () {
+            function trxListController(trxList, notify, $modal) {
+                this.trxList = trxList;
                 this.notify = notify;
-                this.$rootScope = $rootScope;
-                this.transactionValueMgr = transactionValueMgr;
-                this.apiFormatSvc = apiFormatSvc;
-                this.listState = {
-                    addMode: false,
-                    selectedItem: null,
-                    transactionToEdit: null
-                };
+                this.$modal = $modal;
             }
-            /** get the list */
-            transactionListController.prototype.refresh = function () {
-                var _this = this;
-                this.transactionMgr.get()
-                    .then(function (data) {
-                    _this.transactions = data.map(function (d) { return _this.apiFormatSvc.transtoClientFmt(d); });
-                })
-                    .catch(function (err) {
-                    _this.notify({ message: 'Error loading data', classes: 'alert-danger' });
+            trxListController.prototype.view = function (id) {
+                var t = this.trxList.element(id);
+                this.$modalInstance = this.$modal.open({
+                    templateUrl: '/Components/TrxList/trxEditModal.htm',
+                    controllerAs: 'ctrl',
+                    controller: trxModalCtrl,
+                    bindToController: true,
+                    size: 'md',
+                    resolve: { trx: function () { return t; } }
                 });
             };
-            transactionListController.prototype.delete = function (t, idx) {
-                var _this = this;
-                this.transactionMgr.delete(t.ID)
-                    .then(function (d) {
-                    _this.$rootScope.$broadcast('renderChart');
-                    _this.notify({ message: 'Transaction deleted', classes: 'alert-success' });
-                    _this.transactions.splice(idx, 1);
-                    _this.listState.selectedItem = null;
-                })
-                    .catch(function (e) {
-                    _this.notify({ message: 'There was a problem deleting the item ' + e, classes: 'alert-danger' });
-                });
+            trxListController.$inject = ['trxList', 'notify', '$modal'];
+            return trxListController;
+        })();
+        var trxModalCtrl = (function () {
+            function trxModalCtrl(trxList, listOptionsDataSvc, $modalInstance, trx) {
+                this.trxList = trxList;
+                this.listOptionsDataSvc = listOptionsDataSvc;
+                this.$modalInstance = $modalInstance;
+                this.trx = trx;
+                this.trxTypes = this.listOptionsDataSvc.trxTypes;
+                this.trxFreqs = this.listOptionsDataSvc.trxFreqs;
+            }
+            trxModalCtrl.prototype.close = function () {
+                this.$modalInstance.close();
             };
-            transactionListController.prototype.add = function (t) {
-                var _this = this;
-                if (t.ID == undefined) {
-                    this.transactionMgr.post(t)
-                        .then(function (s) {
-                        _this.$rootScope.$broadcast('renderChart');
-                        _this.notify({ message: 'Transaction added', classes: 'alert-success' });
-                        _this.transactions.push(s);
-                        _this.toggleAddForm();
-                    })
-                        .catch(function (err) {
-                        return _this.notify({ message: err, classes: 'alert-danger' });
-                    });
-                }
-                else {
-                    this.transactionMgr.put(t)
-                        .then(function (r) {
-                        _this.notify({ message: 'Transaction updated', classes: 'alert-success' });
-                    })
-                        .catch(function (e) {
-                        _this.notify({ message: 'There was a problem updating the item ' + e, classes: 'alert-danger' });
-                    });
-                }
-            };
-            transactionListController.prototype.toggleAddForm = function () {
-                this.listState.addMode = !this.listState.addMode;
-            };
-            /** should the passed transaction be visible? */
-            transactionListController.prototype.isVisible = function (idx) {
-                var t = this.listState;
-                if (t.addMode) {
-                    return false;
-                }
-                else if (t.selectedItem == null || t.selectedItem == idx) {
-                    return true;
-                }
-            };
-            transactionListController.$inject = ['transactionMgr', 'transactionValueMgr', 'notify', '$rootScope', 'apiFormatSvc'];
-            return transactionListController;
+            trxModalCtrl.$inject = ['trxList', 'listOptionsDataSvc', '$modalInstance', 'trx'];
+            return trxModalCtrl;
         })();
     })(Directives = Budgeter.Directives || (Budgeter.Directives = {}));
 })(Budgeter || (Budgeter = {}));
@@ -935,16 +965,17 @@ var Budgeter;
         function transaction() {
             return {
                 restrict: 'EA',
-                templateUrl: '/Views/Templates/Transaction.html',
+                templateUrl: '/Components/Trx/Transaction.htm',
                 require: '^transactionList',
                 bindToController: true,
                 controller: transactionController,
+                controllerAs: 'ctrl',
                 replace: true,
-                scope: false,
-                link: function (scope, el, att) {
-                    var v = scope.transCtrl.trans.TypeDescription;
+                scope: { trx: '=' },
+                link: function (s, e, a) {
+                    var v = s.ctrl.trx.TypeDescription;
                     var barclass = v == 'Income' ? 'payment' : (v == 'Savings' ? 'savings' : 'deduction');
-                    angular.element(el[0]).addClass(barclass);
+                    angular.element(e[0]).addClass(barclass);
                 }
             };
         }
@@ -952,42 +983,9 @@ var Budgeter;
     })(Directives = Budgeter.Directives || (Budgeter.Directives = {}));
 })(Budgeter || (Budgeter = {}));
 var transactionController = (function () {
-    function transactionController($scope, trxService, notify) {
-        this.trxService = trxService;
-        this.notify = notify;
-        $scope.transCtrl = this;
-        this.tliststate = $scope.$parent.tListCtrl.listState;
-        this.trans = $scope.t;
-        this.tvListState = { addEdit: false, tvToEdit: null, tID: this.trans.ID };
+    function transactionController(notify) {
     }
-    /**expand this transaction - trigger the contraction of all others */
-    transactionController.prototype.expand = function () {
-        if (!this.expanded) {
-            this.tliststate.selectedItem = this.index;
-            this.expanded = true;
-        }
-        else {
-            this.tliststate.selectedItem = null;
-            this.expanded = false;
-        }
-    };
-    transactionController.prototype.editToggle = function () {
-        this.tliststate.transactionToEdit = this.trans;
-        this.tliststate.addMode = true;
-    };
-    /** inheriting from the list controller */
-    transactionController.prototype.delete = function (idx) {
-        var _this = this;
-        this.trxService.delete(this.trans.ID)
-            .then(function (d) {
-            _this.list.splice(idx, 1);
-            _this.notify({ message: 'Item deleted successfully', classes: 'alert-success' });
-        })
-            .catch(function (e) {
-            _this.notify({ message: "Problem deleting: " + e.message, classes: 'alert-danger' });
-        });
-    };
-    transactionController.$inject = ['$scope', 'transactionMgr', 'notify'];
+    transactionController.$inject = ['notify'];
     return transactionController;
 })();
 ///<reference path ="../../all.d.ts"/>
@@ -1017,15 +1015,15 @@ var Budgeter;
     var Controllers;
     (function (Controllers) {
         var transactionEditorController = (function () {
-            function transactionEditorController(transactionMgr, listOptionsDataSvc, notify) {
-                this.transactionMgr = transactionMgr;
+            function transactionEditorController(trxDataService, listOptionsDataSvc, notify) {
+                this.trxDataService = trxDataService;
                 this.listOptionsDataSvc = listOptionsDataSvc;
                 this.notify = notify;
                 this.listSvc = listOptionsDataSvc;
                 this.gettransactiontypes();
                 this.gettransactionvalues();
                 if (this.liststate.transactionToEdit == undefined) {
-                    this.trans = this.transactionMgr.newBlankTrans();
+                    this.trans = this.trxDataService.newBlankTrans();
                     this.newrecord = true;
                 }
                 else {
@@ -1064,7 +1062,7 @@ var Budgeter;
                 }
             };
             transactionEditorController.prototype.clear = function () {
-                this.trans = this.transactionMgr.newBlankTrans();
+                this.trans = this.trxDataService.newBlankTrans();
             };
             transactionEditorController.prototype.cancel = function () {
                 this.liststate.addMode = false;
@@ -1072,7 +1070,7 @@ var Budgeter;
             transactionEditorController.prototype.submit = function () {
                 var _this = this;
                 if (this.newrecord) {
-                    this.transactionMgr.post(this.trans)
+                    this.trxDataService.post(this.trans)
                         .then(function (t) {
                         _this.notify({ message: 'Item created successfully: ', classes: 'alert-success' });
                         _this.liststate.addMode = false;
@@ -1082,7 +1080,7 @@ var Budgeter;
                     });
                 }
                 else {
-                    this.transactionMgr.put(this.trans)
+                    this.trxDataService.put(this.trans)
                         .then(function (t) {
                         _this.notify({ message: 'Item updated successfully: ', classes: 'alert-success' });
                         _this.liststate.addMode = false;
@@ -1092,45 +1090,10 @@ var Budgeter;
                     });
                 }
             };
-            transactionEditorController.$inject = ['transactionMgr', 'listOptionsDataSvc', 'notify'];
+            transactionEditorController.$inject = ['trxDataService', 'listOptionsDataSvc', 'notify'];
             return transactionEditorController;
         })();
         Controllers.transactionEditorController = transactionEditorController;
-    })(Controllers = Budgeter.Controllers || (Budgeter.Controllers = {}));
-})(Budgeter || (Budgeter = {}));
-///<reference path="../../all.d.ts"/>
-var Budgeter;
-(function (Budgeter) {
-    var Directives;
-    (function (Directives) {
-        function transValuesList() {
-            return {
-                restrict: 'EA',
-                require: 'transaction',
-                templateUrl: 'Views/Templates/transactionValueList.html',
-                replace: true,
-                controller: Budgeter.Controllers.transValueListController,
-                bindToController: true,
-                controllerAs: 'tvListCtrl',
-                scope: { transactionValues: '=', listState: '=' },
-            };
-        }
-        Directives.transValuesList = transValuesList;
-    })(Directives = Budgeter.Directives || (Budgeter.Directives = {}));
-})(Budgeter || (Budgeter = {}));
-var Budgeter;
-(function (Budgeter) {
-    var Controllers;
-    (function (Controllers) {
-        var transValueListController = (function () {
-            function transValueListController() {
-            }
-            transValueListController.prototype.addNew = function () {
-                this.listState.addEdit = true;
-            };
-            return transValueListController;
-        })();
-        Controllers.transValueListController = transValueListController;
     })(Controllers = Budgeter.Controllers || (Budgeter.Controllers = {}));
 })(Budgeter || (Budgeter = {}));
 ///<reference path="../../all.d.ts"/>
@@ -1193,20 +1156,14 @@ var Budgeter;
                 require: '^transaction',
                 controllerAs: 'tvEditCtrl',
                 bindToController: true,
-                controller: Budgeter.Controllers.transactionValueEditorCtrl,
+                controller: transactionValueEditorCtrl,
                 templateUrl: 'Views/Templates/TransactionValueEditor.html'
             };
         }
         Directives.transactionValueEditor = transactionValueEditor;
-    })(Directives = Budgeter.Directives || (Budgeter.Directives = {}));
-})(Budgeter || (Budgeter = {}));
-var Budgeter;
-(function (Budgeter) {
-    var Controllers;
-    (function (Controllers) {
         var transactionValueEditorCtrl = (function () {
-            function transactionValueEditorCtrl(transactionValueMgr, notify, $rootscope, listOptionsDataSvc) {
-                this.transactionValueMgr = transactionValueMgr;
+            function transactionValueEditorCtrl(trxdetailDataService, notify, $rootscope, listOptionsDataSvc) {
+                this.trxdetailDataService = trxdetailDataService;
                 this.notify = notify;
                 this.$rootscope = $rootscope;
                 this.listOptionsDataSvc = listOptionsDataSvc;
@@ -1216,7 +1173,7 @@ var Budgeter;
                     this.newitem = false;
                 }
                 else {
-                    this.tv = this.transactionValueMgr.getnewTransactionValue(this.listState.tID);
+                    this.tv = this.trxdetailDataService.getnewTransactionValue(this.listState.tID);
                     this.newitem = true;
                 }
                 this.getfrequencies();
@@ -1236,7 +1193,7 @@ var Budgeter;
             transactionValueEditorCtrl.prototype.submit = function () {
                 var _this = this;
                 if (this.newitem) {
-                    this.transactionValueMgr.post(this.tv)
+                    this.trxdetailDataService.post(this.tv)
                         .success(function (d) {
                         _this.notify({ message: 'Item created successfully', classes: 'alert-success' });
                         _this.clearandClose();
@@ -1246,7 +1203,7 @@ var Budgeter;
                     });
                 }
                 else {
-                    this.transactionValueMgr.put(this.tv)
+                    this.trxdetailDataService.put(this.tv)
                         .success(function (d) {
                         _this.notify({ message: 'Item created successfully', classes: 'alert-success' });
                         _this.clearandClose();
@@ -1262,7 +1219,7 @@ var Budgeter;
             };
             transactionValueEditorCtrl.prototype.delete = function () {
                 var _this = this;
-                this.transactionValueMgr.delete(this.tv.ID)
+                this.trxdetailDataService.delete(this.tv.ID)
                     .then(function () {
                     _this.notify({ message: 'Item deleted successfully', classes: 'alert-success' });
                     _this.clearandClose();
@@ -1274,8 +1231,7 @@ var Budgeter;
             transactionValueEditorCtrl.$inject = ['trxdetailDataSvc', 'notify', '$rootScope', 'listOptionsDataSvc'];
             return transactionValueEditorCtrl;
         })();
-        Controllers.transactionValueEditorCtrl = transactionValueEditorCtrl;
-    })(Controllers = Budgeter.Controllers || (Budgeter.Controllers = {}));
+    })(Directives = Budgeter.Directives || (Budgeter.Directives = {}));
 })(Budgeter || (Budgeter = {}));
 /// <reference path="../all.d.ts"/>
 var Budgeter;
@@ -1287,8 +1243,9 @@ var Budgeter;
         .service('apiFormatSvc', Budgeter.Services.apiFormatSvc)
         .service('forecastDataSvc', Budgeter.Services.forecastDataSvc)
         .service('trxDataService', Budgeter.Services.trxDataService)
-        .service('trxdetailDataSvc', Budgeter.Services.trxdetailDataSvc)
+        .service('trxdetailDataService', Budgeter.Services.trxdetailDataSvc)
         .service('listOptionsDataSvc', Budgeter.Services.listOptionsDataSvc)
+        .service('trxList', Budgeter.Services.TrxList)
         .controller(Budgeter.Controllers)
         .directive(Budgeter.Directives);
     var ConfigFunction = function ($routeProvider, $locationProvider) {

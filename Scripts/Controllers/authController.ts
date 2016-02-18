@@ -31,7 +31,8 @@ module Budgeter.Controllers {
 	}
 
 	interface tab { Header: string, title: string, url: string };
-
+    
+    interface IAuthError {error:string, error_description: string}
 	class LoginModalController {
 
 		public loginForm: ILoginModel;
@@ -41,7 +42,7 @@ module Budgeter.Controllers {
 
 		static $inject = ['authSvc', 'sessionService', '$modalInstance', '$rootScope'];
 
-		constructor(public authSvc: Budgeter.Services.authSvc, private sessionService: Budgeter.Services.sessionService,
+		constructor(public authSvc: Services.authSvc, private sessionService: Services.sessionService,
 			private $modalInstance: angular.ui.bootstrap.IModalServiceInstance, private $rootScope: ng.IRootScopeService) {
 
 			this.tabs = [
@@ -53,17 +54,17 @@ module Budgeter.Controllers {
 			this.registerForm = { Email: '', password: '', confirmPassword: '', errorMessage: '' }
 			this.currentTab = 'Login.html'
 		}
-		
+       
 		/** hit the token endpoint, store the access token in cookies */
 		login() {
 			this.authSvc.login(this.loginForm)
-				.then((response: ITokenResponse) => {
-					this.sessionService.Token = response.data.access_token;
+				.then(r => {
+					this.sessionService.Token = r.data.access_token;
 					this.$modalInstance.close();
-					this.$rootScope.$broadcast('redrawChart');
+					this.$rootScope.$emit('refresh');
 				})
-				.catch((err: Error) => {
-					this.loginForm.errorMessage = err.message;
+				.catch((err: ng.IHttpPromiseCallbackArg<IAuthError>) => {
+					this.loginForm.errorMessage = err.data.error_description;
 				})
 		}
 

@@ -1,0 +1,42 @@
+<div>
+    <div class="modal-body">
+        <form class="form">
+            <div class="form-group">
+                <label for="newitemName">Name</label>
+                <input class="form-control" type="text" ng-model="ctrl.trx.Name" placeholder="name" />
+                <label for="newitemDescription">Type</label>
+                <select class="form-control" type="text" ng-options="type.ID as type.Description for type in ::ctrl.trxTypes" placeholder="type"
+                ng-model="ctrl.trx.TypeID"></select>
+            </div>
+        </form>
+        <h3> Recurrence </h3>
+        <ul class="list-group">
+            <li ng-repeat="s in ctrl.trx.TransactionValues" class="list-group-item">
+                <form class="form-horizontal">
+                    <div class="form-group-sm">
+                        <label for="newitemAmount">Amount</label>
+                        <input class="form-control input-sm" type="number" step=10 ng-model="s.Value" placeholder="amount" />
+                    </div>
+                </form>
+                <form class="form-inline">
+                    <label for="newitemFreq">Occurs</label>
+                    <select class="form-control input-sm" type="text" ng-options="freq.ID as freq.Description for freq in ::ctrl.trxFreqs"
+                    placeholder="frequency" ng-model="s.FrequencyID"></select>
+
+                    <label for="newitemDay">On Day</label>
+                    <input class="form-control input-sm" type="number" step=1 max="30" ng-model="s.Day" placeholder="day" />
+                </form>
+                <form class="form inline">
+                        <label for="newitemStart">From</label>
+                        <input class="form-control input-sm" type="date" ng-model="s.Start_date" />
+                        <label for="newitemStart">To</label>
+                        <input class="form-control input-sm" type="date" ng-model="s.End_date" />
+                </form>
+            </li>
+        </ul>
+        <div class="modal-footer">
+            <i class="glyphicon glyphicon-ok" ng-click="transEditCtrl.submit()"></i>
+            <i class="glyphicon glyphicon-remove" ng-click="ctrl.close()"></i>
+        </div>
+    </div>
+</div>

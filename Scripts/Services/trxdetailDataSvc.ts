@@ -8,8 +8,8 @@ module Budgeter.Services {
 
 		private url: string;
 
-		constructor(private $http: ng.IHttpService, private sessionService: Budgeter.Services.sessionService,
-			private apiFormatSvc: Budgeter.Services.apiFormatSvc) {
+		constructor(private $http: ng.IHttpService, private sessionService: Services.sessionService,
+			private apiFormatSvc: Services.apiFormatSvc) {
 				
 			this.url = sessionService.apiURL + '/api/transactionValues'
 

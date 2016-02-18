@@ -8,15 +8,13 @@ module Budgeter.Directives {
 			require: '^transaction',
 			controllerAs: 'tvEditCtrl',
 			bindToController: true,
-			controller: Budgeter.Controllers.transactionValueEditorCtrl,
+			controller: transactionValueEditorCtrl,
 			templateUrl: 'Views/Templates/TransactionValueEditor.html'
 		}
 	}
-}
 
-module Budgeter.Controllers {
 
-	export class transactionValueEditorCtrl {
+	class transactionValueEditorCtrl {
 
 		static $inject = ['trxdetailDataSvc', 'notify', '$rootScope', 'listOptionsDataSvc'];
 
@@ -26,7 +24,7 @@ module Budgeter.Controllers {
 		public listState: ITransValueListState;
 		public transactionID: number;
 
-		constructor(public transactionValueMgr: Services.trxdetailDataSvc, public notify: ng.cgNotify.INotifyService
+		constructor(public trxdetailDataService: Services.trxdetailDataSvc, public notify: ng.cgNotify.INotifyService
 			, public $rootscope: ng.IRootScopeService, public listOptionsDataSvc: Budgeter.Services.listOptionsDataSvc) {
 			
 			// If there's already a transactionvalue to edit then load it - otherwise give us a new one. 
@@ -34,7 +32,7 @@ module Budgeter.Controllers {
 				this.tv = this.listState.tvToEdit;
 				this.newitem = false;
 			} else {
-				this.tv = this.transactionValueMgr.getnewTransactionValue(this.listState.tID);
+				this.tv = this.trxdetailDataService.getnewTransactionValue(this.listState.tID);
 				this.newitem = true;
 			}
 
@@ -55,7 +53,7 @@ module Budgeter.Controllers {
 		/** either post or put a transactionvalue depending on values in liststate */
 		submit() {
 			if (this.newitem) {
-				this.transactionValueMgr.post(this.tv)
+				this.trxdetailDataService.post(this.tv)
 					.success(d=> {
 						this.notify({ message: 'Item created successfully', classes: 'alert-success' })
 						this.clearandClose();
@@ -64,7 +62,7 @@ module Budgeter.Controllers {
 						this.notify({ message: 'There was a problem submitting the item: ' + e.message, classes: 'alert-danger' })
 					});
 			} else {
-				this.transactionValueMgr.put(this.tv)
+				this.trxdetailDataService.put(this.tv)
 					.success(d=> {
 						this.notify({ message: 'Item created successfully', classes: 'alert-success' })
 						this.clearandClose();
@@ -81,7 +79,7 @@ module Budgeter.Controllers {
 		}
 
 		delete() {
-			this.transactionValueMgr.delete(this.tv.ID)
+			this.trxdetailDataService.delete(this.tv.ID)
 				.then(() => {
 					this.notify({ message: 'Item deleted successfully', classes: 'alert-success' })
 					this.clearandClose();

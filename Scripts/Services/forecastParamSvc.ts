@@ -5,7 +5,7 @@ module Budgeter.Services{
 	export class forecastParamSvc {
 		private _params: IForecastParams;
 		
-		constructor(public apiFormatSvc: Budgeter.Services.apiFormatSvc) {
+		constructor(public apiFormatSvc: Services.apiFormatSvc) {
 			var s: Date = new Date();
             var e: Date = this.apiFormatSvc.lastDay(s, 3);
 			this._params = {startDate:s, endDate: e, startBal: 0};

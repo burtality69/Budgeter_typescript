@@ -7,14 +7,6 @@ interface IAuthToken {
 	expires: Date
 }
 
-interface ITokenResponse {
-	data: IAuthToken,
-	status: number,
-	headers: Object,
-	config: Object,
-	statusText: string
-}
-
 interface IBudgetHeadLines {
 	balance: number,
 	savings: number,
@@ -84,6 +76,7 @@ interface ITransactionModel {
 	UserID: string,
 	TypeDescription: string,
 	TransactionValues: Array<ITransactionValueClientModel>
+    CurrentValue: number;
 }
 
 interface ITransactionServerModel {
@@ -107,7 +100,7 @@ interface ITransactionValueClientModel {
 	include: boolean
 }
 
-interface ITransactionValueServerModel {}
+interface ITransactionValueServerModel {
 	ID: number,
 	TransactionID: number,
 	Value: number,

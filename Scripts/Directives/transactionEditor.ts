@@ -21,7 +21,7 @@ module Budgeter.Controllers {
 
 	export class transactionEditorController {
 
-		static $inject = ['transactionMgr', 'listOptionsDataSvc', 'notify'];
+		static $inject = ['trxDataService', 'listOptionsDataSvc', 'notify'];
 
 		private newrecord: boolean;
 		public expanded: boolean;
@@ -31,7 +31,7 @@ module Budgeter.Controllers {
 		public types: Array<string>;
 		public frequencies: Array<string>;
 
-		constructor(public transactionMgr: Services.transactionMgr,
+		constructor(public trxDataService: Services.trxDataService,
 			public listOptionsDataSvc: Services.listOptionsDataSvc,
 			public notify: ng.cgNotify.INotifyService) {
 
@@ -40,7 +40,7 @@ module Budgeter.Controllers {
 			this.gettransactionvalues();
 
 			if (this.liststate.transactionToEdit == undefined) {
-				this.trans = this.transactionMgr.newBlankTrans();
+				this.trans = this.trxDataService.newBlankTrans();
 				this.newrecord = true;
 			} else {
 				this.trans = this.liststate.transactionToEdit;
@@ -80,7 +80,7 @@ module Budgeter.Controllers {
 		}
 
 		clear() {
-			this.trans = this.transactionMgr.newBlankTrans()
+			this.trans = this.trxDataService.newBlankTrans()
 		}
 
 		cancel() {
@@ -90,7 +90,7 @@ module Budgeter.Controllers {
 		submit() {
 
 			if (this.newrecord) {
-				this.transactionMgr.post(this.trans)
+				this.trxDataService.post(this.trans)
 					.then(t => {
 						this.notify({ message: 'Item created successfully: ', classes: 'alert-success' })
 						this.liststate.addMode = false;
@@ -99,7 +99,7 @@ module Budgeter.Controllers {
 						this.notify({ message: 'There was a problem submitting this item: ' + e, classes: 'alert-danger' })
 					})
 			} else {
-				this.transactionMgr.put(this.trans)
+				this.trxDataService.put(this.trans)
 					.then(t => {
 						this.notify({ message: 'Item updated successfully: ', classes: 'alert-success' })
 						this.liststate.addMode = false;

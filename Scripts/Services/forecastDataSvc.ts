@@ -11,8 +11,8 @@ module Budgeter.Services {
 
 		static $inject = ['$http', 'sessionService', 'forecastParamSvc','apiFormatSvc'];
 
-		constructor(public $http: ng.IHttpService, public sessionService: Budgeter.Services.sessionService,
-			public forecastParamSvc: Budgeter.Services.forecastParamSvc,
+		constructor(public $http: ng.IHttpService, public sessionService: Services.sessionService,
+			public forecastParamSvc: Services.forecastParamSvc,
 			public apiFormatSvc: apiFormatSvc) {
 		}
 		
@@ -75,7 +75,7 @@ module Budgeter.Services {
 			return headlines;
 		}
 		
-		getBudget(): ng.IPromise<iBudgetRowModel> {
+		getBudget(): ng.IHttpPromise<iBudgetRowModel> {
 			
 			var baseUrl = this.sessionService.apiURL + '/api/Forecast/getbudget';
 			var config  = {
